@@ -50,7 +50,7 @@
 
 #define ACPI_MAX_INIT_TABLES		(64)	/* Number of ACPI tables */
 
-#define MAX_SEMAPHORES			(1024)	/* For semaphore tracking */
+#define MAX_SEMAPHORES			(2048)	/* For semaphore tracking */
 #define MAX_THREADS			(128)	/* For thread tracking */
 
 #define MAX_WAIT_TIMEOUT		(20)	/* Seconds */
