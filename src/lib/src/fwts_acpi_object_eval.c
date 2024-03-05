@@ -1222,6 +1222,13 @@ int fwts_evaluate_method(fwts_framework *fw,
 		}
 	}
 
+	if (ACPI_FAILURE(status)) {
+		const char *exception = AcpiFormatException(status);
+		fwts_log_info(fw, "ACPICA Exception %s during lookup of method %s",
+			      exception, name);
+		return FWTS_ERROR;
+	}
+
 	return FWTS_OK;
 }
 
