@@ -224,6 +224,8 @@ static int uefivarinfo_test1(fwts_framework *fw)
 		fwts_log_info_verbatim(fw, "  %" PRIu64 " variables, storage used: %" PRIu64 " bytes", usedvars, usedvarssize);
 	}
 
+	fwts_passed(fw, "UEFI variable info query test passed.");
+
 	return FWTS_OK;
 }
 
