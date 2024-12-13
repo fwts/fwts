@@ -304,6 +304,7 @@ static ACPI_STATUS madt_processor_handler(ACPI_HANDLE ObjHandle, uint32_t level,
 			return status;
 		}
 		listint->value = obj.Processor.ProcId;
+		printf("Testing!!! Found Processor with ProcId: %u\n", obj.Processor.ProcId);
 		break;
 	case ACPI_TYPE_DEVICE:
 		status = AcpiEvaluateObject(ObjHandle, "_UID", NULL, &buf);
@@ -312,6 +313,7 @@ static ACPI_STATUS madt_processor_handler(ACPI_HANDLE ObjHandle, uint32_t level,
 			return status;
 		}
 		listint->value = obj.Integer.Value;
+		printf("Testing!!! Found Device with UID: %u\n", obj.Integer.Value);
 		break;
 	default:
 		free(listint);
@@ -332,6 +334,8 @@ static ACPI_OBJECT_TYPE madt_find_processor_uid(fwts_framework *fw,
 
 	fwts_list_foreach(item, &processor_uids) {
 		struct acpi_integer *listint = fwts_list_data(struct acpi_integer *, item);
+		
+		printf("Testing!!! Provided UID: %" PRIu64 ", Current listint->value: %" PRIu64 "\n", uid, listint->value);
 		if (uid == listint->value) {
 			fwts_passed(fw, "MADT %s has matching processor "
 				    "UID %" PRIu64 ".", table_name, uid);
