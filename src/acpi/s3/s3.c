@@ -96,7 +96,8 @@ static int read_wakeup_source(fwts_list *source)
 	/* skip first line */
 	while (c = fgetc(fp), c != '\n' && c != EOF);
 
-	while (fscanf(fp, "%s\t%lu\t\t%lu\t\t%lu\t\t%lu\t\t%ld\t\t%ld\t\t%ld\t\t%ld\t\t%ld\n",
+	/* NB: important to specify the max len fscanf reads for name to avoid stack smashing */
+	while (fscanf(fp, "%31s\t%lu\t\t%lu\t\t%lu\t\t%lu\t\t%ld\t\t%ld\t\t%ld\t\t%ld\t\t%ld\n",
 			name, &active_count, &event_count,
 			&wakeup_count, &expire_count, &active_since,
 			&total_time, &max_time, &last_change,
