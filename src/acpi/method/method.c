@@ -4738,7 +4738,8 @@ static void method_test_DDC_return(
 	ACPI_OBJECT *obj,
 	void *private)
 {
-	uint32_t requested = *(uint32_t*)private;
+	uint32_t arg = *(uint32_t*)private;
+	uint32_t requested = arg * 128;
 
 	FWTS_UNUSED(buf);
 
@@ -4763,10 +4764,10 @@ static void method_test_DDC_return(
 		break;
 	case ACPI_TYPE_INTEGER:
 			fwts_passed(fw,
-				"%s could not return a buffer of %d "
+				"%s could not return a buffer of %" PRIu32 " "
 					"items and instead returned an error "
-					"status.",
-				name, obj->Buffer.Length);
+					"status %" PRIu64 ".",
+				name, requested, obj->Integer.Value);
 		break;
 	default:
 		fwts_failed(fw, LOG_LEVEL_MEDIUM, "Method_DDCBadReturnType",
@@ -4777,7 +4778,7 @@ static void method_test_DDC_return(
 
 static int method_test_DDC(fwts_framework *fw)
 {
-	static int values[] = { 128, 256, 384, 512 };
+	static uint32_t values[] = { 1, 2, 3, 4 };
 	ACPI_OBJECT arg[1];
 	uint32_t i;
 
