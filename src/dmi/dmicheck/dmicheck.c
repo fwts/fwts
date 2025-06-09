@@ -1439,6 +1439,66 @@ static void dmicheck_entry(fwts_framework *fw,
 			dmi_min_max_uint8_check(fw, table, addr, "Processor Type", hdr, 0x5, 0x1, 0x6);
 			dmi_min_max_uint8_check(fw, table, addr, "Processor Family", hdr, 0x6, 0x1, 0xfe);
 			dmi_str_check(fw, table, addr, "Processor Manufacturer", hdr, 0x7);
+			/* Check for Processor ID */
+			#ifdef FWTS_ARCH_AARCH64
+			if (hdr->length >= 0x28)
+			{
+				/* Get "Processor Characteristics" and check 9th bit if Arm64 SoC ID is supported */
+				uint32_t processor_ID_first_DWORD  = GET_UINT32(data + 0x8);  /* Getting 0x8, 0x9 ,0xA, 0xB */
+				uint32_t processor_ID_second_DWORD = GET_UINT32(data + 0xC);  /* Getting 0xC, 0xD ,0xE, 0xF */
+
+				if(((GET_UINT16(data + 0x26) >> 8) & 0x02) == 0x02)
+				{
+					/* Arm64 SoC ID is Supported. The second DWORD should be non-zero */
+					if (processor_ID_second_DWORD == 0)
+					{
+						fwts_failed(fw, LOG_LEVEL_HIGH, DMI_VALUE_OUT_OF_RANGE,
+							"According to the configured \"Processor Characteristics\", Arm64 SoC ID is supported "
+							"however, the SoC revision value is 0x%8.8" PRIx32 " . Non-zero expected.",
+							processor_ID_second_DWORD );
+						
+						fwts_advice(fw,
+							"Arm64 SoC ID support is configured to true in \"Processor Characteristics\" "
+							"however, the SiP SoC revision value is 0. "
+							"It is possible that the system is not correctly configured for "
+							"Arm64 SoC ID and still has the old configuration of "
+							"MIDR_EL1 register. If Arm64 SoC ID is indeed not supported " 
+							"then reset the bit in \"Processor Characteristics\".");
+					}	
+				}
+				else
+				{
+					/* Arm64 SoC ID is NOT Supported
+					 *  First DWORD should have contents of MIDR_EL1
+					 *  Second DWORD is reserved and must be 0
+					 */
+					if (processor_ID_second_DWORD != 0 )
+					{
+						fwts_failed(fw, LOG_LEVEL_HIGH, DMI_VALUE_OUT_OF_RANGE,
+							"According to the configured \"Processor Characteristics\" Arm64 SoC ID is NOT supported "
+							"however, the DWORD in offset is 0Ch-0Fh is non-zero: 0x%8.8" PRIx32 " ",
+							processor_ID_second_DWORD );
+					
+						fwts_advice(fw,
+							"Arm64 SoC ID support is configured to false in \"Processor Characteristics\" "
+							"however, the DWORD in offset is 0Ch-0Fh is non-zero. Configure the " 
+							"\"Processor Characteristics\" "
+							"correctly if Arm64 SoC ID is indeed supported in the system.");
+					}
+					if ( processor_ID_first_DWORD == 0 )
+					{
+						fwts_failed(fw, LOG_LEVEL_HIGH, DMI_VALUE_OUT_OF_RANGE,
+							"According to the configured \"Processor Characteristics\" Arm64 SoC ID is NOT supported "
+							"however, the DWORD in offset is 08h-0bh is zero: 0x%8.8" PRIx16 " This should contain MIDR_EL1 value",
+							processor_ID_first_DWORD );
+					
+						fwts_advice(fw,
+							"Arm64 SoC ID support is configured to false in \"Processor Characteristics\" "
+							"however, the DWORD in offset is 08h-0bh is zero. This must contain MIDR_EL1");
+					}
+				}
+			}
+			#endif
 			dmi_str_check(fw, table, addr, "Processor Version", hdr, 0x10);
 			if (((GET_UINT8(data + 0x18) & 0x07) == 0x5) || ((GET_UINT8(data + 0x18) & 0x07) == 0x6))
 				fwts_failed(fw, LOG_LEVEL_HIGH, DMI_VALUE_OUT_OF_RANGE,
