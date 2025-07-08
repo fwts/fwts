@@ -127,6 +127,14 @@
 #define FWTS_USE_DEVMEM 1
 #endif
 
+#if defined(__loongarch__)
+#define FWTS_ARCH_LOONGARCH	1
+#define FWTS_HAS_ACPI	1
+#define FWTS_HAS_UEFI	1
+#define FWTS_USE_DEVMEM	1
+#endif
+
+
 /* version 3-tuple into integer */
 #define _VER_(major, minor, patchlevel)                 \
 	((major * 10000) + (minor * 100) + patchlevel)
