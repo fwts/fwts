@@ -23,8 +23,6 @@
 
 #include "fwts.h"
 
-#ifdef FWTS_ARCH_INTEL
-
 #define PROCESSOR_PATH	"/sys/devices/system/cpu"
 
 #include <stdio.h>
@@ -32,6 +30,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <dirent.h>
 #include <stdint.h>
 #include <ctype.h>
@@ -43,12 +42,12 @@ typedef struct {
 	int counts[MAX_CSTATE];
 	bool used[MAX_CSTATE];
 	bool present[MAX_CSTATE];
-} fwts_cstates;
+} fwts_cpuidle_states;
 
 static int statecount = -1;
 static int firstcpu = -1;
 
-static void get_cstates(char *path, fwts_cstates *state)
+static void get_cpuidle_states(char *path, fwts_cpuidle_states *state)
 {
 	struct dirent *entry;
 	char filename[PATH_MAX];
@@ -78,7 +77,7 @@ static void get_cstates(char *path, fwts_cstates *state)
 			/*
 			 * Names can be "Cx\n", or "ATM-Cx\n", or "SNB-Cx\n",
 			 * or newer kernels can be "Cx\n" or "Cx-SNB\n" etc
-			 * where x is the C state number.
+			 * where x is the idle state number.
 			 */
 			if ((data[0] == 'C') && isdigit(data[1]))
 				nr = strtol(data + 1, NULL, 10);
@@ -113,14 +112,14 @@ static void get_cstates(char *path, fwts_cstates *state)
 
 static void do_cpu(fwts_framework *fw, int nth, int cpus, int cpu, char *path)
 {
-	fwts_cstates initial, current;
+	fwts_cpuidle_states initial, current;
 	int	count;
 	char	buffer[128];
 	char	tmp[8];
 	bool	keepgoing = true;
 	int	i;
 
-	get_cstates(path, &initial);
+	get_cpuidle_states(path, &initial);
 
 	for (i = 0; (i < TOTAL_WAIT_TIME) && keepgoing; i++) {
 		int j;
@@ -143,7 +142,7 @@ static void do_cpu(fwts_framework *fw, int nth, int cpus, int cpu, char *path)
 			}
 		}
 
-		get_cstates(path, &current);
+		get_cpuidle_states(path, &current);
 
 		keepgoing = false;
 		for (j = MIN_CSTATE; j < MAX_CSTATE; j++) {
@@ -175,7 +174,7 @@ static void do_cpu(fwts_framework *fw, int nth, int cpus, int cpu, char *path)
 				strcat(buffer, tmp);
 			}
 		}
-		fwts_passed(fw, "Processor %d has reached all C-states: %s",
+		fwts_passed(fw, "Processor %d has reached all idle states: %s",
 			cpu, buffer);
 	}
 
@@ -188,27 +187,28 @@ static void do_cpu(fwts_framework *fw, int nth, int cpus, int cpu, char *path)
 		statecount = count;
 
 	if (statecount != count)
-		fwts_failed(fw, LOG_LEVEL_HIGH, "CPUNoCState",
-			"Processor %d is expected to have %d C-states but has %d.",
+		fwts_failed(fw, LOG_LEVEL_HIGH, "CPUNoIdleState",
+			"Processor %d is expected to have %d idle states but has %d.",
 			cpu, statecount, count);
 	else
 		if (firstcpu == -1)
 			firstcpu = cpu;
 		else
-			fwts_passed(fw, "Processor %d has the same number of C-states as processor %d",
+			fwts_passed(fw, "Processor %d has the same number of idle states as processor %d",
 				cpu, firstcpu);
 }
 
-static int cstates_test1(fwts_framework *fw)
+static int cpuidle_test1(fwts_framework *fw)
 {
 	DIR *dir;
 	struct dirent *entry;
 	int cpus;
 	int i;
+	bool has_cpuidle = false;
 
 	fwts_log_info(fw,
 		"This test checks if all processors have the same number of "
-		"C-states, if the C-state counter works and if C-state "
+		"idle states, if the idle state counter works and if idle state "
 		"transitions happen.");
 
 	if ((dir = opendir(PROCESSOR_PATH)) == NULL) {
@@ -227,6 +227,50 @@ static int cstates_test1(fwts_framework *fw)
 
 	rewinddir(dir);
 
+	/* Check if any CPU has cpuidle support */
+	for (i = 0; (cpus > 0) && (entry = readdir(dir)) != NULL; ) {
+		if (entry &&
+		    (strlen(entry->d_name)>3) &&
+		    (strncmp(entry->d_name, "cpu", 3) == 0) &&
+		    (isdigit(entry->d_name[3]))) {
+			char cpupath[PATH_MAX];
+			DIR *cpuidle_dir;
+
+			snprintf(cpupath, sizeof(cpupath), "%s/%s/cpuidle",
+				PROCESSOR_PATH, entry->d_name);
+			
+			if ((cpuidle_dir = opendir(cpupath)) != NULL) {
+				has_cpuidle = true;
+				closedir(cpuidle_dir);
+				break;
+			}
+		}
+	}
+
+	/* If no CPU has cpuidle support, check if this is an ACPI system */
+	if (!has_cpuidle) {
+		struct stat statbuf;
+		if (!stat("/sys/firmware/acpi", &statbuf)) {
+			/* ACPI system without cpuidle - this is a failure */
+			fwts_failed(fw, LOG_LEVEL_HIGH, "ACPIWithoutCPUIDLE",
+				"ACPI system detected but no CPU idle states found. "
+				"This indicates the CPU idle driver is not properly "
+				"configured or loaded.");
+			closedir(dir);
+			return FWTS_ERROR;
+		} else {
+			/* Non-ACPI system without cpuidle - skip the test */
+			fwts_skipped(fw, "No CPU idle states found on this system. "
+				"This is normal for systems that don't support "
+				"CPU idle power management.");
+			closedir(dir);
+			return FWTS_SKIP;
+		}
+	}
+
+	rewinddir(dir);
+
+	/* Now run the actual tests */
 	for (i = 0; (cpus > 0) && (entry = readdir(dir)) != NULL; ) {
 		if (entry &&
 		    (strlen(entry->d_name)>3) &&
@@ -245,16 +289,14 @@ static int cstates_test1(fwts_framework *fw)
 	return FWTS_OK;
 }
 
-static fwts_framework_minor_test cstates_tests[] = {
-	{ cstates_test1, "Test all CPUs C-states." },
+static fwts_framework_minor_test cpuidle_tests[] = {
+	{ cpuidle_test1, "Test all CPUs idle states." },
 	{ NULL, NULL }
 };
 
-static fwts_framework_ops cstates_ops = {
-	.description = "Processor C state support test.",
-	.minor_tests = cstates_tests
+static fwts_framework_ops cpuidle_ops = {
+	.description = "Processor idle state support test.",
+	.minor_tests = cpuidle_tests
 };
 
-FWTS_REGISTER("cstates", &cstates_ops, FWTS_TEST_ANYTIME, FWTS_FLAG_BATCH | FWTS_FLAG_ACPI)
-
-#endif
+FWTS_REGISTER("cpuidle", &cpuidle_ops, FWTS_TEST_ANYTIME, FWTS_FLAG_BATCH)

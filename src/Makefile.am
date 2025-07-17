@@ -78,7 +78,7 @@ fwts_SOURCES = main.c 				\
 	acpi/crsdump/crsdump.c			\
 	acpi/crsdump/prsdump.c			\
 	acpi/csrt/csrt.c			\
-	acpi/cstates/cstates.c 			\
+	cpu/cpuidle/cpuidle.c 			\
 	acpi/dbgp/dbgp.c 			\
 	acpi/dbg2/dbg2.c 			\
 	acpi/devices/ac_adapter/ac.c		\
