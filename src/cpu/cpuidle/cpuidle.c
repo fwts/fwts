@@ -65,7 +65,11 @@ static void get_cpuidle_states(char *path, fwts_cpuidle_states *state)
 		return;
 
 	while ((entry = readdir(dir)) != NULL) {
+#ifdef FWTS_ARCH_INTEL
 		if (strlen(entry->d_name) > 3) {
+#else
+		if (strlen(entry->d_name) > 5 && strncmp(entry->d_name, "state", 5) == 0) {
+#endif
 			long int nr;
 			int count;
 
@@ -74,6 +78,7 @@ static void get_cpuidle_states(char *path, fwts_cpuidle_states *state)
 			if ((data = fwts_get(filename)) == NULL)
 				break;
 
+#ifdef FWTS_ARCH_INTEL
 			/*
 			 * Names can be "Cx\n", or "ATM-Cx\n", or "SNB-Cx\n",
 			 * or newer kernels can be "Cx\n" or "Cx-SNB\n" etc
@@ -90,6 +95,15 @@ static void get_cpuidle_states(char *path, fwts_cpuidle_states *state)
 				else
 					nr = 0;
 			}
+#else
+			/*
+			 * For non-x86 platforms (ARM, etc.), use directory name
+			 * which should be "state0", "state1", "state2", etc.
+			 * No need to parse the state name for ARM platforms.
+			 */
+			nr = strtol(entry->d_name + 5, NULL, 10);
+#endif
+
 			free(data);
 
 			snprintf(filename, sizeof(filename), "%s/%s/usage",
@@ -115,7 +129,7 @@ static void do_cpu(fwts_framework *fw, int nth, int cpus, int cpu, char *path)
 	fwts_cpuidle_states initial, current;
 	int	count;
 	char	buffer[128];
-	char	tmp[8];
+	char	tmp[16];  /* Increased to accommodate "state%d " format */
 	bool	keepgoing = true;
 	int	i;
 
@@ -124,10 +138,13 @@ static void do_cpu(fwts_framework *fw, int nth, int cpus, int cpu, char *path)
 	for (i = 0; (i < TOTAL_WAIT_TIME) && keepgoing; i++) {
 		int j;
 
-		snprintf(buffer, sizeof(buffer),"(CPU %d of %d)", nth + 1, cpus);
-		fwts_progress_message(fw,
-			100 * (i + (TOTAL_WAIT_TIME*nth)) /
-				(cpus * TOTAL_WAIT_TIME), buffer);
+		/* Report progress less frequently to reduce overhead */
+		if ((i % 3) == 0) {
+			snprintf(buffer, sizeof(buffer),"(CPU %d of %d)", nth + 1, cpus);
+			fwts_progress_message(fw,
+				100 * (i + (TOTAL_WAIT_TIME*nth)) /
+					(cpus * TOTAL_WAIT_TIME), buffer);
+		}
 
 		if ((i & 7) < 4)
 			sleep(1);
@@ -153,6 +170,11 @@ static void do_cpu(fwts_framework *fw, int nth, int cpus, int cpu, char *path)
 			if (initial.present[j] && !initial.used[j])
 				keepgoing = true;
 		}
+		
+		/* Early termination: if all states have been reached, we can stop */
+		if (!keepgoing) {
+			break;
+		}
 	}
 
 	*buffer = '\0';
@@ -160,7 +182,11 @@ static void do_cpu(fwts_framework *fw, int nth, int cpus, int cpu, char *path)
 		/* Not a failure, but not a pass either! */
 		for (i = MIN_CSTATE; i < MAX_CSTATE; i++)  {
 			if (initial.present[i] && !initial.used[i]) {
+#ifdef FWTS_ARCH_INTEL
 				snprintf(tmp, sizeof(tmp), "C%d ", i);
+#else
+				snprintf(tmp, sizeof(tmp), "state%d ", i);
+#endif
 				strcat(buffer, tmp);
 			}
 		}
@@ -168,10 +194,15 @@ static void do_cpu(fwts_framework *fw, int nth, int cpus, int cpu, char *path)
 				  "This is not a failure, however it is not a "
 				  "complete and thorough test.", cpu, buffer);
 	} else {
+		/* Build the result string more efficiently */
+		int pos = 0;
 		for (i = MIN_CSTATE; i < MAX_CSTATE; i++)  {
 			if (initial.present[i] && initial.used[i]) {
-				snprintf(tmp, sizeof(tmp), "C%d ", i);
-				strcat(buffer, tmp);
+#ifdef FWTS_ARCH_INTEL
+				pos += snprintf(buffer + pos, sizeof(buffer) - pos, "C%d ", i);
+#else
+				pos += snprintf(buffer + pos, sizeof(buffer) - pos, "state%d ", i);
+#endif
 			}
 		}
 		fwts_passed(fw, "Processor %d has reached all idle states: %s",
