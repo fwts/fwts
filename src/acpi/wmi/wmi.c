@@ -130,25 +130,6 @@ static fwts_wmi_known_guid fwts_wmi_known_guids[] = {
 };
 
 /*
- *  List of WMI GUIDs used inside the Windows driver samples.
- *
- *  Some manufacturers just blindly copy those, which prevents their WMI drivers
- *  from being loaded automatically since those GUIDs are not unique and cannot
- *  be used for reliable WMI device identification.
- */
-static const char * const windows_example_wmi_guids[] = {
-	"ABBC0F6A-8EA1-11D1-00A0-C90629100000",
-	"ABBC0F6B-8EA1-11D1-00A0-C90629100000",
-	"ABBC0F6C-8EA1-11D1-00A0-C90629100000",
-	"ABBC0F6D-8EA1-11D1-00A0-C90629100000",
-	"ABBC0F6E-8EA1-11D1-00A0-C90629100000",
-	"ABBC0F6F-8EA1-11D1-00A0-C90629100000",
-	"ABBC0F70-8EA1-11D1-00A0-C90629100000",
-	"ABBC0F71-8EA1-11D1-00A0-C90629100000",
-	"ABBC0F72-8EA1-11D1-00A0-C90629100000"
-};
-
-/*
  *  WMI flag to text mappings
  */
 static const fwts_wmi_flags_name wmi_flags_name[] = {
@@ -361,31 +342,6 @@ static void wmi_method_exist_count(
 }
 
 /*
- *  wmi_guid_copycat()
- *	Warn if a WMI from the Windows driver samples was found. This usually means that
- *	the manufacturer just blindly copied the example code without generating new
- *	unique WMI GUIDs.
- */
-static void wmi_guid_copycat(
-	fwts_framework *fw,
-	const char *guid_str)
-{
-	int i;
-
-	for (i = 0; i < FWTS_ARRAY_SIZE(windows_example_wmi_guids); i++) {
-		if (strcmp(guid_str, windows_example_wmi_guids[i]) == 0) {
-			fwts_failed(fw, LOG_LEVEL_MEDIUM,
-				"WMIExampleGUIDCopycat",
-				"GUID %s has likely been copied from the Windows driver samples, "
-				"this is a firmware bug that prevents WMI drivers from reliably "
-				"detecting such WMI devices since their GUID is not unique.",
-				guid_str);
-			return;
-		}
-	}
-}
-
-/*
  *  wmi_no_known_driver()
  *	grumble that the kernel does not have a known handler for this GUID
  */
@@ -502,7 +458,6 @@ static void wmi_parse_wdg_data(
 			wmi_block_query_exist_count(fw, info, acpi_object_name, guid_str);
 		}
 
-		wmi_guid_copycat(fw, guid_str);
 
 		if (info->instance == 0)
 			fwts_failed(fw, LOG_LEVEL_LOW, "WMIZeroInstance",
