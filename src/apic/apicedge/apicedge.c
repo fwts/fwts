@@ -54,7 +54,7 @@ static int apicedge_test1(fwts_framework *fw)
 	}
 
 	while (!feof(file)) {
-		char line[4096], *c;
+		char line[8192], *c;
 		int edge = UNDEFINED;
 		int irq = 0;
 
