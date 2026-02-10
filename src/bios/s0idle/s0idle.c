@@ -53,10 +53,13 @@ static int s0idle_test1(fwts_framework *fw)
 {
 	const fwts_acpi_table_fadt *fadt = (const fwts_acpi_table_fadt *)table->data;
 
-	if (fadt->flags & FWTS_FACP_FLAG_LOW_POWER_S0_IDLE_CAPABLE)
+	if (fadt->flags & FWTS_FACP_FLAG_LOW_POWER_S0_IDLE_CAPABLE) {
 		fwts_passed(fw, "LOW_POWER_S0_IDLE_CAPABLE is set in ACPI FADT.");
-	else
-		fwts_failed(fw, LOG_LEVEL_HIGH, "S0idleNoFADT", "LOW_POWER_S0_IDLE_CAPABLE is not set in ACPI FADT.");
+	} else {
+		fwts_warning(fw,
+			"LOW_POWER_S0_IDLE_CAPABLE is not set in ACPI FADT, "
+			"indicating hardware may not support S0 Low Power Idle.");
+	}
 
 	return FWTS_OK;
 }
