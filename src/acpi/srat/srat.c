@@ -122,7 +122,7 @@ static void srat_check_memory_affinity(
 	fwts_log_info_simp_int(fw, "  Reserved:                 ", affinity->reserved3);
 	fwts_log_nl(fw);
 
-	fwts_acpi_reserved_bits("SRAT", "Memory Affinity Flags", affinity->flags, 3, 31, passed);
+	fwts_acpi_reserved_bits("SRAT", "Memory Affinity Flags", affinity->flags, 4, 31, passed);
 
 done:
 	*length -= sizeof(fwts_acpi_table_memory_affinity);
