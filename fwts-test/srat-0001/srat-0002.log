@@ -77,7 +77,7 @@ srat              Flags:                    0x000000ff
 srat              Reserved:                 0x0000000000000000
 srat            
 srat            FAILED [HIGH] SRATReservedBitsNonZero: Test 1, SRAT Memory
-srat            Affinity Flags Bits [31..3] must be zero, got 0x000000ff
+srat            Affinity Flags Bits [31..4] must be zero, got 0x000000ff
 srat            instead
 srat            SRAT Memory Affinity Structure:
 srat              Type:                     0x01
@@ -87,11 +87,11 @@ srat              Reserved:                 0x0000
 srat              Base Address:             0x0000000100000000
 srat              Length:                   0x0000000130000000
 srat              Reserved:                 0x00000001
-srat              Flags:                    0x00000008
+srat              Flags:                    0xffffffff
 srat              Reserved:                 0x0000000000000000
 srat            
 srat            FAILED [HIGH] SRATReservedBitsNonZero: Test 1, SRAT Memory
-srat            Affinity Flags Bits [31..3] must be zero, got 0x00000008
+srat            Affinity Flags Bits [31..4] must be zero, got 0xffffffff
 srat            instead
 srat            SRAT Port Affinity Structure:
 srat              Type:                     0x06
