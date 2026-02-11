@@ -4,7 +4,7 @@ aspt            Test 1 of 1: ASPT Table test.
 aspt            AMD Secure Processor Table:
 aspt              ASP Register Base Address:       0x00000000fdb00000
 aspt              ASP Register Space Pages:        0x00000000
-aspt              ASP Register Structure Count:    0x00000003
+aspt              ASP Register Structure Count:    0x00000005
 aspt              ASP Global Registers:
 aspt                Type:                             0x0000
 aspt                Length:                           0x0014
@@ -28,6 +28,21 @@ aspt                Reserved:                         0x00000000
 aspt                CmdResp Register Offset:          0xfeb00020
 aspt                Reserved:
 aspt                   00 00 00 00 00 00 00 00 
+aspt              ASP TEE Interface Registers:
+aspt                Type:                             0x0003
+aspt                Length:                           0x0014
+aspt                Revision:                         0x0001
+aspt                Reserved:                         0x0000
+aspt                CmdResp Register Offset:          0xfeb00030
+aspt                CmdBufAddr_Lo Register Offset:    0xfeb00034
+aspt                CmdBufAddr_Hi Register Offset:    0xfeb00038
+aspt              ASP SFS Status Registers:
+aspt                Type:                             0x0004
+aspt                Length:                           0x0014
+aspt                Revision:                         0x0001
+aspt                Reserved:
+aspt                  00 00 00 00 00 00 
+aspt                SFS Status Memory Buffer Address: 0x00000000feb00040
 aspt            PASSED: Test 1, No issues found in ASPT table.
 aspt            
 aspt            ==========================================================

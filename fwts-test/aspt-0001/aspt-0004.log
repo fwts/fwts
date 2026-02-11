@@ -4,7 +4,7 @@ aspt            Test 1 of 1: ASPT Table test.
 aspt            AMD Secure Processor Table:
 aspt              ASP Register Base Address:       0x00000000fdb00000
 aspt              ASP Register Space Pages:        0x00000000
-aspt              ASP Register Structure Count:    0x00000003
+aspt              ASP Register Structure Count:    0x00000005
 aspt              ASP Global Registers:
 aspt                Type:                             0x0000
 aspt                Length:                           0x0014
@@ -50,8 +50,31 @@ aspt              Reserved [04] = 0x00
 aspt              Reserved [05] = 0x01
 aspt              Reserved [06] = 0x00
 aspt              Reserved [07] = 0x00
+aspt              ASP TEE Interface Registers:
+aspt                Type:                             0x0003
+aspt                Length:                           0x0014
+aspt                Revision:                         0x0001
+aspt                Reserved:                         0x0000
+aspt                CmdResp Register Offset:          0xfeb00030
+aspt                CmdBufAddr_Lo Register Offset:    0xfeb00034
+aspt                CmdBufAddr_Hi Register Offset:    0xfeb00038
+aspt              ASP SFS Status Registers:
+aspt                Type:                             0x0004
+aspt                Length:                           0x0014
+aspt                Revision:                         0x0001
+aspt                Reserved:
+aspt                  FF FF FF FF FF FF 
+aspt            FAILED [MEDIUM] ASPTReservedNonZero: Test 1, ASPT Reserved
+aspt            field must be all zero, got below instead
+aspt              Reserved [00] = 0xff
+aspt              Reserved [01] = 0xff
+aspt              Reserved [02] = 0xff
+aspt              Reserved [03] = 0xff
+aspt              Reserved [04] = 0xff
+aspt              Reserved [05] = 0xff
+aspt                SFS Status Memory Buffer Address: 0x00000000feb00040
 aspt            
 aspt            ==========================================================
-aspt            0 passed, 5 failed, 0 warning, 0 aborted, 0 skipped, 0
+aspt            0 passed, 6 failed, 0 warning, 0 aborted, 0 skipped, 0
 aspt            info only.
 aspt            ==========================================================
