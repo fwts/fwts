@@ -2429,6 +2429,22 @@ typedef struct {
 } __attribute__ ((packed)) fwts_acpi_table_acpi_mailbox;
 
 typedef struct {
+	fwts_aspt_sub_header header;
+	uint16_t	revision;
+	uint16_t	reserved;
+	uint32_t	cmdresp_reg_offset;
+	uint32_t	cmdbufaddr_lo_reg_offset;
+	uint32_t	cmdbufaddr_hi_reg_offset;
+} __attribute__ ((packed)) fwts_acpi_table_tee_interface;
+
+typedef struct {
+	fwts_aspt_sub_header header;
+	uint16_t	revision;
+	uint8_t		reserved[6];
+	uint64_t	sfs_status_mem_buf_addr;
+} __attribute__ ((packed)) fwts_acpi_table_sfs_status;
+
+typedef struct {
 	fwts_acpi_table_header  header;
 	union {
 		struct{

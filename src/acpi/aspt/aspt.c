@@ -112,6 +112,8 @@ static int aspt_revision2_test(fwts_framework *fw, fwts_acpi_table_aspt *aspt)
 	fwts_acpi_table_asp_global *entry_global;
 	fwts_acpi_table_sev_mailbox *entry_sev;
 	fwts_acpi_table_acpi_mailbox *entry_acpi;
+	fwts_acpi_table_tee_interface *entry_tee;
+	fwts_acpi_table_sfs_status *entry_sfs;
 
 	fwts_log_info_verbatim(fw, "AMD Secure Processor Table:");
 	fwts_log_info_simp_int(fw, "  ASP Register Base Address:       ", aspt->v2.asp_reg_base_addr);
@@ -169,12 +171,37 @@ static int aspt_revision2_test(fwts_framework *fw, fwts_acpi_table_aspt *aspt)
 				fwts_acpi_reserved_zero_array(fw, "ASPT", "Reserved", entry_acpi->v2.reserved1, sizeof(entry_acpi->v2.reserved1), &passed);
 				offset += entry_acpi->header.length;
 				break;
+			case 3:
+				entry_tee = (fwts_acpi_table_tee_interface *)((uint8_t *)table->data + offset);
+				fwts_log_info_verbatim(fw, "  ASP TEE Interface Registers:");
+				fwts_log_info_simp_int(fw, "    Type:                             ", entry_tee->header.type);
+				fwts_log_info_simp_int(fw, "    Length:                           ", entry_tee->header.length);
+				fwts_log_info_simp_int(fw, "    Revision:                         ", entry_tee->revision);
+				fwts_log_info_simp_int(fw, "    Reserved:                         ", entry_tee->reserved);
+				fwts_acpi_reserved_zero("ASPT", "Reserved", entry_tee->reserved, &passed);
+				fwts_log_info_simp_int(fw, "    CmdResp Register Offset:          ", entry_tee->cmdresp_reg_offset);
+				fwts_log_info_simp_int(fw, "    CmdBufAddr_Lo Register Offset:    ", entry_tee->cmdbufaddr_lo_reg_offset);
+				fwts_log_info_simp_int(fw, "    CmdBufAddr_Hi Register Offset:    ", entry_tee->cmdbufaddr_hi_reg_offset);
+				offset += entry_tee->header.length;
+				break;
+			case 4:
+				entry_sfs = (fwts_acpi_table_sfs_status *)((uint8_t *)table->data + offset);
+				fwts_log_info_verbatim(fw, "  ASP SFS Status Registers:");
+				fwts_log_info_simp_int(fw, "    Type:                             ", entry_sfs->header.type);
+				fwts_log_info_simp_int(fw, "    Length:                           ", entry_sfs->header.length);
+				fwts_log_info_simp_int(fw, "    Revision:                         ", entry_sfs->revision);
+				fwts_log_info_verbatim(fw, "    Reserved:");
+				fwts_hexdump_data_prefix_all(fw, entry_sfs->reserved, "      ", sizeof(entry_sfs->reserved));
+				fwts_acpi_reserved_zero_array(fw, "ASPT", "Reserved", entry_sfs->reserved, sizeof(entry_sfs->reserved), &passed);
+				fwts_log_info_simp_int(fw, "    SFS Status Memory Buffer Address: ", entry_sfs->sfs_status_mem_buf_addr);
+				offset += entry_sfs->header.length;
+				break;
 			default:
 				passed = false;
 				fwts_failed(fw, LOG_LEVEL_HIGH,
 					"ASPTBadType",
-					"ASPT register structures must have type with 0, 1 "
-					"and 2, got %" PRIu16 " instead",
+					"ASPT register structures must have type with 0 to 4, "
+					"got %" PRIu16 " instead",
 					((fwts_aspt_sub_header *)((uint8_t *)table->data + offset))->type);
 				return passed;
 			fwts_log_nl(fw);
