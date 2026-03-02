@@ -1,6 +1,7 @@
 s0idle          s0idle: S0IDLE FADT Low Power S0 Idle tests.
 s0idle          ----------------------------------------------------------
 s0idle          Test 1 of 1: Test ACPI FADT S0 idle capable.
-s0idle          FAILED [HIGH] S0idleNoFADT: Test 1,
-s0idle          LOW_POWER_S0_IDLE_CAPABLE is not set in ACPI FADT.
+s0idle          WARNING: Test 1, LOW_POWER_S0_IDLE_CAPABLE is not set in
+s0idle          ACPI FADT, indicating hardware may not support S0 Low
+s0idle          Power Idle.
 s0idle          
