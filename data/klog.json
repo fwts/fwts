@@ -7300,6 +7300,34 @@
    "pattern": "Failed to enable WMI events",
    "advice": "The Dell WMI base driver failed to enable WMI events. Dell-specific WMI-based functionality such as hotkeys and system notifications will not work.",
    "label": "KlogDellWmiBaseEnableEventsFailed"
+  },
+  {
+   "compare_mode": "string",
+   "log_level": "LOG_LEVEL_MEDIUM",
+   "pattern": "Failed to setup camera shutter input device",
+   "advice": "The HP WMI driver failed to set up the camera shutter input device. The physical camera shutter button or LED indicator may not function correctly.",
+   "label": "KlogHpWmiCameraShutterSetupFailed"
+  },
+  {
+   "compare_mode": "regex",
+   "log_level": "LOG_LEVEL_MEDIUM",
+   "pattern": "Failed to set platform profile .*: .*",
+   "advice": "The HP WMI driver failed to apply the requested platform performance profile. The system may remain on a suboptimal power or thermal profile.",
+   "label": "KlogHpWmiPlatformProfileSetFailed"
+  },
+  {
+   "compare_mode": "regex",
+   "log_level": "LOG_LEVEL_MEDIUM",
+   "pattern": "Failed to set GPU profile .*: .*",
+   "advice": "The HP WMI driver failed to apply the requested GPU performance profile. The GPU may not operate at the intended power or performance level.",
+   "label": "KlogHpWmiGpuProfileSetFailed"
+  },
+  {
+   "compare_mode": "string",
+   "log_level": "LOG_LEVEL_HIGH",
+   "pattern": "Could not register hp hwmon device",
+   "advice": "The HP WMI driver failed to register the hardware monitoring device. Temperature, fan speed, and voltage sensors exposed through hwmon will not be available.",
+   "label": "KlogHpWmiHwmonRegisterFailed"
   }
  ],
  "pm_error_warning_patterns":
