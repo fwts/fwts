@@ -7132,6 +7132,48 @@
    "pattern": "Failed to hand over CPU .* to BIOS",
    "advice": "The ACPI MADT wakeup driver failed to hand over a CPU to the BIOS during CPU bring-up. This may cause the CPU to not be properly initialized and could result in a non-functional CPU core.",
    "label": "KlogAcpiMadtWakeupCpuHandoverFailed"
+  },
+  {
+   "compare_mode": "string",
+   "log_level": "LOG_LEVEL_HIGH",
+   "pattern": "Error parsing LAPIC address override entry",
+   "advice": "The ACPI boot code failed to parse a LAPIC address override entry in the MADT table. This may cause incorrect LAPIC address assignment and processor initialization failures.",
+   "label": "KlogAcpiBootLapicAddrOverrideParseError"
+  },
+  {
+   "compare_mode": "string",
+   "log_level": "LOG_LEVEL_HIGH",
+   "pattern": "Error parsing LAPIC/X2APIC entries",
+   "advice": "The ACPI boot code failed to parse LAPIC or X2APIC entries in the MADT table. This may result in incorrect CPU topology detection and processor initialization failures.",
+   "label": "KlogAcpiBootLapicX2apicParseError"
+  },
+  {
+   "compare_mode": "string",
+   "log_level": "LOG_LEVEL_HIGH",
+   "pattern": "No LAPIC entries present",
+   "advice": "The ACPI MADT table contains no LAPIC entries. This indicates a firmware defect and will prevent proper SMP initialization.",
+   "label": "KlogAcpiBootNoLapicEntries"
+  },
+  {
+   "compare_mode": "string",
+   "log_level": "LOG_LEVEL_HIGH",
+   "pattern": "Error parsing LAPIC entry",
+   "advice": "The ACPI boot code encountered an error parsing a LAPIC entry in the MADT table. This may cause incorrect processor enumeration.",
+   "label": "KlogAcpiBootLapicParseError"
+  },
+  {
+   "compare_mode": "string",
+   "log_level": "LOG_LEVEL_HIGH",
+   "pattern": "Error parsing LAPIC NMI entry",
+   "advice": "The ACPI boot code failed to parse a LAPIC NMI entry in the MADT table. NMI routing for processors may be incorrect.",
+   "label": "KlogAcpiBootLapicNmiParseError"
+  },
+  {
+   "compare_mode": "string",
+   "log_level": "LOG_LEVEL_HIGH",
+   "pattern": "Invalid BIOS MADT, disabling ACPI",
+   "advice": "The BIOS provided an invalid MADT (Multiple APIC Description Table). ACPI has been disabled as a result, which will severely impact hardware management and power features.",
+   "label": "KlogAcpiBootMadtInvalidDisabling"
   }
  ],
  "pm_error_warning_patterns":
