@@ -7195,6 +7195,13 @@
    "pattern": "Failed to map mixed mode return trampoline",
    "advice": "The EFI 64-bit driver failed to map the mixed mode return trampoline. Mixed mode EFI calls will not work, which may prevent some firmware services from functioning correctly.",
    "label": "KlogEfi64MapMixedModeTrampolineFailed"
+  },
+  {
+   "compare_mode": "regex",
+   "log_level": "LOG_LEVEL_HIGH",
+   "pattern": "ioremap of .* failed!",
+   "advice": "The EFI 32-bit driver failed to ioremap a physical memory region. EFI memory map entries will not be accessible, which may prevent EFI runtime services from functioning correctly.",
+   "label": "KlogEfi32IoremapFailed"
   }
  ],
  "pm_error_warning_patterns":
