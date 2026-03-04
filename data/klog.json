@@ -7279,6 +7279,20 @@
    "pattern": "Setting old previous keyboard state failed",
    "advice": "The Dell laptop driver failed to restore the previous keyboard backlight state. The keyboard illumination state may be incorrect after resume or driver reinitialisation.",
    "label": "KlogDellLaptopKeyboardStateFailed"
+  },
+  {
+   "compare_mode": "string",
+   "log_level": "LOG_LEVEL_HIGH",
+   "pattern": "Unable to setup input device keymap",
+   "advice": "The Dell WMI AIO driver failed to set up the input device keymap. Hotkeys on the all-in-one device may not function correctly.",
+   "label": "KlogDellWmiAioInputKeymapFailed"
+  },
+  {
+   "compare_mode": "regex",
+   "log_level": "LOG_LEVEL_HIGH",
+   "pattern": "Unable to register notify handler - .*",
+   "advice": "The Dell WMI AIO driver failed to register a WMI notify handler. WMI-based hotkey events will not be received, preventing hotkey functionality on the device.",
+   "label": "KlogDellWmiAioNotifyHandlerFailed"
   }
  ],
  "pm_error_warning_patterns":
