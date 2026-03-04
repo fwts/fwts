@@ -7181,6 +7181,20 @@
    "pattern": "No EFI runtime due to 32/64-bit mismatch with kernel",
    "advice": "The EFI firmware bitness does not match the kernel. EFI runtime services will be unavailable, which may affect secure boot, UEFI variable access, and system firmware updates.",
    "label": "KlogEfiBitnessMismatch"
+  },
+  {
+   "compare_mode": "string",
+   "log_level": "LOG_LEVEL_HIGH",
+   "pattern": "Failed to unmap kernel text 1:1 mapping",
+   "advice": "The EFI 64-bit driver failed to unmap the kernel text 1:1 memory mapping. This may cause memory mapping inconsistencies and potential security issues.",
+   "label": "KlogEfi64UnmapKernelTextFailed"
+  },
+  {
+   "compare_mode": "string",
+   "log_level": "LOG_LEVEL_HIGH",
+   "pattern": "Failed to map mixed mode return trampoline",
+   "advice": "The EFI 64-bit driver failed to map the mixed mode return trampoline. Mixed mode EFI calls will not work, which may prevent some firmware services from functioning correctly.",
+   "label": "KlogEfi64MapMixedModeTrampolineFailed"
   }
  ],
  "pm_error_warning_patterns":
