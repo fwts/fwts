@@ -7118,6 +7118,13 @@
    "pattern": "error in hook, unloading: .*",
    "advice": "An ACPI battery hook encountered an error and was unloaded. Battery status reporting may be incomplete or inaccurate for this platform.",
    "label": "KlogAcpiBatteryHookError"
+  },
+  {
+   "compare_mode": "string",
+   "log_level": "LOG_LEVEL_CRITICAL",
+   "pattern": "Memory allocation error",
+   "advice": "The ACPI processor PDC driver failed to allocate memory. This is a critical kernel memory allocation failure that may indicate severe memory pressure or corruption.",
+   "label": "KlogAcpiProcessorPdcMemAllocFailed"
   }
  ],
  "pm_error_warning_patterns":
