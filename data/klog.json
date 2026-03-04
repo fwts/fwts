@@ -7097,6 +7097,13 @@
    "pattern": "Unsupported event \\[0x.*\\]",
    "advice": "The ACPI DPTF power driver received an unsupported event code. This may indicate a firmware/driver version mismatch and could result in degraded thermal or power management functionality.",
    "label": "KlogAcpiDptfUnsupportedEvent"
+  },
+  {
+   "compare_mode": "regex",
+   "log_level": "LOG_LEVEL_HIGH",
+   "pattern": ".* invalid SMCCC conduit",
+   "advice": "The ACPI ARM64 FFH driver detected an invalid SMCCC (SMC Calling Convention) conduit configuration. This prevents proper communication with firmware and may cause system instability.",
+   "label": "KlogAcpiArm64FfhInvalidSmcccConduit"
   }
  ],
  "pm_error_warning_patterns":
