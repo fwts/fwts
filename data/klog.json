@@ -7076,6 +7076,13 @@
    "pattern": "Could not resolve named package element \\[.*\\] in \\[.*\\]",
    "advice": "ACPI subsystem failed to resolve a name reference inside an ACPI package object during initialization, return a NULL package element.",
    "label": "KlogAcpiPkgResolveFail"
+  },
+  {
+   "compare_mode": "regex",
+   "log_level": "LOG_LEVEL_HIGH",
+   "pattern": "Unexpected i2c-addr: 0x.* \\(reg-addr 0x.* value 0x.* mask 0x.*\\)",
+   "advice": "The ACPI PMIC XPower driver received an unexpected I2C address during a register operation. This indicates a firmware or driver configuration error that may prevent proper power management.",
+   "label": "KlogAcpiPmicXpowerUnexpectedI2cAddr"
   }
  ],
  "pm_error_warning_patterns":
