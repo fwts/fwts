@@ -7104,6 +7104,20 @@
    "pattern": ".* invalid SMCCC conduit",
    "advice": "The ACPI ARM64 FFH driver detected an invalid SMCCC (SMC Calling Convention) conduit configuration. This prevents proper communication with firmware and may cause system instability.",
    "label": "KlogAcpiArm64FfhInvalidSmcccConduit"
+  },
+  {
+   "compare_mode": "regex",
+   "log_level": "LOG_LEVEL_MEDIUM",
+   "pattern": "hook failed to load: .*",
+   "advice": "An ACPI battery hook failed to load. Battery status reporting may be incomplete if additional hooks are required for the platform.",
+   "label": "KlogAcpiBatteryHookLoadFailed"
+  },
+  {
+   "compare_mode": "regex",
+   "log_level": "LOG_LEVEL_MEDIUM",
+   "pattern": "error in hook, unloading: .*",
+   "advice": "An ACPI battery hook encountered an error and was unloaded. Battery status reporting may be incomplete or inaccurate for this platform.",
+   "label": "KlogAcpiBatteryHookError"
   }
  ],
  "pm_error_warning_patterns":
