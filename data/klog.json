@@ -7209,6 +7209,27 @@
    "pattern": "MTRRs disabled due to allocation failure for lookup map.",
    "advice": "The x86 MTRR (Memory Type Range Register) subsystem failed to allocate memory for its lookup map. MTRRs will be disabled, which may result in degraded memory performance or incorrect caching behavior for memory-mapped devices.",
    "label": "KlogX86MtrrDisabledAllocFailed"
+  },
+  {
+   "compare_mode": "string",
+   "log_level": "LOG_LEVEL_HIGH",
+   "pattern": "IBT selftest: Failed!",
+   "advice": "The x86 Indirect Branch Tracking (IBT) self-test failed. IBT is a hardware security feature that enforces valid indirect branch targets. This failure may indicate a kernel or CPU bug affecting control flow integrity.",
+   "label": "KlogX86CpuIbtSelftestFailed"
+  },
+  {
+   "compare_mode": "regex",
+   "log_level": "LOG_LEVEL_HIGH",
+   "pattern": "CPU: vendor_id '.*' unknown, using generic init\\.",
+   "advice": "The kernel does not recognise the CPU vendor ID and is falling back to generic CPU initialisation. Some CPU-specific features and mitigations may not be properly configured, potentially affecting system stability.",
+   "label": "KlogX86CpuUnknownVendorId"
+  },
+  {
+   "compare_mode": "string",
+   "log_level": "LOG_LEVEL_MEDIUM",
+   "pattern": "Option 'no387' required CONFIG_MATH_EMULATION enabled.",
+   "advice": "The kernel was booted with the 'no387' option to disable the hardware FPU, but CONFIG_MATH_EMULATION was not enabled at build time. Software floating point emulation is unavailable; FPU operations may fail on systems without a hardware FPU.",
+   "label": "KlogX86CpuNo387MathEmulationMissing"
   }
  ],
  "pm_error_warning_patterns":
