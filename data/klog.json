@@ -7125,6 +7125,13 @@
    "pattern": "Memory allocation error",
    "advice": "The ACPI processor PDC driver failed to allocate memory. This is a critical kernel memory allocation failure that may indicate severe memory pressure or corruption.",
    "label": "KlogAcpiProcessorPdcMemAllocFailed"
+  },
+  {
+   "compare_mode": "regex",
+   "log_level": "LOG_LEVEL_HIGH",
+   "pattern": "Failed to hand over CPU .* to BIOS",
+   "advice": "The ACPI MADT wakeup driver failed to hand over a CPU to the BIOS during CPU bring-up. This may cause the CPU to not be properly initialized and could result in a non-functional CPU core.",
+   "label": "KlogAcpiMadtWakeupCpuHandoverFailed"
   }
  ],
  "pm_error_warning_patterns":
