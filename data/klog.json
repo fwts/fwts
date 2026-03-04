@@ -7328,6 +7328,27 @@
    "pattern": "Could not register hp hwmon device",
    "advice": "The HP WMI driver failed to register the hardware monitoring device. Temperature, fan speed, and voltage sensors exposed through hwmon will not be available.",
    "label": "KlogHpWmiHwmonRegisterFailed"
+  },
+  {
+   "compare_mode": "regex",
+   "log_level": "LOG_LEVEL_HIGH",
+   "pattern": "Could not set up input device keymap: .*",
+   "advice": "The IdeaPad laptop driver failed to configure the input device keymap. Hotkeys on the IdeaPad device may not function correctly.",
+   "label": "KlogIdeapadInputKeymapSetupFailed"
+  },
+  {
+   "compare_mode": "regex",
+   "log_level": "LOG_LEVEL_HIGH",
+   "pattern": "Could not register input device: .*",
+   "advice": "The IdeaPad laptop driver failed to register its input device. Hotkey input events from the IdeaPad device will not be delivered to userspace.",
+   "label": "KlogIdeapadInputDeviceRegisterFailed"
+  },
+  {
+   "compare_mode": "regex",
+   "log_level": "LOG_LEVEL_HIGH",
+   "pattern": "Could not register backlight device: .*",
+   "advice": "The IdeaPad laptop driver failed to register the backlight device. Screen brightness control through the standard backlight interface will not be available.",
+   "label": "KlogIdeapadBacklightRegisterFailed"
   }
  ],
  "pm_error_warning_patterns":
