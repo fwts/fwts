@@ -7202,6 +7202,13 @@
    "pattern": "ioremap of .* failed!",
    "advice": "The EFI 32-bit driver failed to ioremap a physical memory region. EFI memory map entries will not be accessible, which may prevent EFI runtime services from functioning correctly.",
    "label": "KlogEfi32IoremapFailed"
+  },
+  {
+   "compare_mode": "string",
+   "log_level": "LOG_LEVEL_HIGH",
+   "pattern": "MTRRs disabled due to allocation failure for lookup map.",
+   "advice": "The x86 MTRR (Memory Type Range Register) subsystem failed to allocate memory for its lookup map. MTRRs will be disabled, which may result in degraded memory performance or incorrect caching behavior for memory-mapped devices.",
+   "label": "KlogX86MtrrDisabledAllocFailed"
   }
  ],
  "pm_error_warning_patterns":
