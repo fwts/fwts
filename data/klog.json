@@ -7272,6 +7272,13 @@
    "pattern": "CPU.* is stuck in mwait_play_dead\\(\\)",
    "advice": "A CPU is stuck in the mwait_play_dead loop and is not responding. This may indicate a firmware or hardware issue with CPU idle state handling.",
    "label": "KlogX86SmpbootCpuStuckInMwait"
+  },
+  {
+   "compare_mode": "string",
+   "log_level": "LOG_LEVEL_MEDIUM",
+   "pattern": "Setting old previous keyboard state failed",
+   "advice": "The Dell laptop driver failed to restore the previous keyboard backlight state. The keyboard illumination state may be incorrect after resume or driver reinitialisation.",
+   "label": "KlogDellLaptopKeyboardStateFailed"
   }
  ],
  "pm_error_warning_patterns":
