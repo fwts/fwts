@@ -7349,6 +7349,34 @@
    "pattern": "Could not register backlight device: .*",
    "advice": "The IdeaPad laptop driver failed to register the backlight device. Screen brightness control through the standard backlight interface will not be available.",
    "label": "KlogIdeapadBacklightRegisterFailed"
+  },
+  {
+   "compare_mode": "regex",
+   "log_level": "LOG_LEVEL_HIGH",
+   "pattern": "failed to register .*",
+   "advice": "The WMI core driver failed to register a WMI device identified by its GUID. The WMI device will be unavailable, and any drivers depending on it will not function.",
+   "label": "KlogWmiDeviceRegisterFailed"
+  },
+  {
+   "compare_mode": "string",
+   "log_level": "LOG_LEVEL_HIGH",
+   "pattern": "ACPI companion is missing",
+   "advice": "A WMI device is missing its required ACPI companion device. This indicates a firmware issue where the ACPI namespace does not provide the expected device node for WMI.",
+   "label": "KlogWmiAcpiCompanionMissing"
+  },
+  {
+   "compare_mode": "string",
+   "log_level": "LOG_LEVEL_HIGH",
+   "pattern": "Failed to parse _WDG method",
+   "advice": "The WMI driver failed to parse the ACPI _WDG (WMI Data Block) method. WMI device enumeration will fail and no WMI-based drivers will be able to load.",
+   "label": "KlogWmiParseWdgFailed"
+  },
+  {
+   "compare_mode": "string",
+   "log_level": "LOG_LEVEL_HIGH",
+   "pattern": "Error loading mapper",
+   "advice": "The WMI driver failed to load its mapper component. WMI device to driver matching will not work, preventing WMI-based platform drivers from binding to their devices.",
+   "label": "KlogWmiMapperLoadError"
   }
  ],
  "pm_error_warning_patterns":
