@@ -7230,6 +7230,48 @@
    "pattern": "Option 'no387' required CONFIG_MATH_EMULATION enabled.",
    "advice": "The kernel was booted with the 'no387' option to disable the hardware FPU, but CONFIG_MATH_EMULATION was not enabled at build time. Software floating point emulation is unavailable; FPU operations may fail on systems without a hardware FPU.",
    "label": "KlogX86CpuNo387MathEmulationMissing"
+  },
+  {
+   "compare_mode": "string",
+   "log_level": "LOG_LEVEL_HIGH",
+   "pattern": "APIC never delivered???",
+   "advice": "The local APIC interrupt was never delivered during SMP bringup. This indicates a hardware or firmware issue with the APIC subsystem, and the CPU may fail to come online.",
+   "label": "KlogX86SmpbootApicNeverDelivered"
+  },
+  {
+   "compare_mode": "regex",
+   "log_level": "LOG_LEVEL_HIGH",
+   "pattern": "APIC delivery error \\(.*\\)",
+   "advice": "The local APIC reported a delivery error during SMP CPU bringup. This may indicate a hardware fault in the APIC or an incompatibility with the firmware configuration.",
+   "label": "KlogX86SmpbootApicDeliveryError"
+  },
+  {
+   "compare_mode": "regex",
+   "log_level": "LOG_LEVEL_HIGH",
+   "pattern": "CPU .* has invalid APIC ID .* Aborting bringup",
+   "advice": "A CPU has been assigned an invalid APIC ID by the firmware. The CPU bringup has been aborted; the affected CPU will not be brought online.",
+   "label": "KlogX86SmpbootCpuInvalidApicId"
+  },
+  {
+   "compare_mode": "regex",
+   "log_level": "LOG_LEVEL_HIGH",
+   "pattern": "CPU .* APIC ID .* is not present. Aborting bringup",
+   "advice": "A CPU's APIC ID was not found in the APIC topology. The CPU bringup has been aborted; the affected CPU will not be brought online.",
+   "label": "KlogX86SmpbootCpuApicIdNotPresent"
+  },
+  {
+   "compare_mode": "regex",
+   "log_level": "LOG_LEVEL_HIGH",
+   "pattern": "do_boot_cpu failed\\(.*\\) to wakeup CPU#.*",
+   "advice": "The kernel failed to wake up a secondary CPU during SMP bringup. The affected CPU will not come online, reducing the number of available processors.",
+   "label": "KlogX86SmpbootBootCpuWakeupFailed"
+  },
+  {
+   "compare_mode": "regex",
+   "log_level": "LOG_LEVEL_HIGH",
+   "pattern": "CPU.* is stuck in mwait_play_dead\\(\\)",
+   "advice": "A CPU is stuck in the mwait_play_dead loop and is not responding. This may indicate a firmware or hardware issue with CPU idle state handling.",
+   "label": "KlogX86SmpbootCpuStuckInMwait"
   }
  ],
  "pm_error_warning_patterns":
