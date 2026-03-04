@@ -7293,6 +7293,13 @@
    "pattern": "Unable to register notify handler - .*",
    "advice": "The Dell WMI AIO driver failed to register a WMI notify handler. WMI-based hotkey events will not be received, preventing hotkey functionality on the device.",
    "label": "KlogDellWmiAioNotifyHandlerFailed"
+  },
+  {
+   "compare_mode": "string",
+   "log_level": "LOG_LEVEL_HIGH",
+   "pattern": "Failed to enable WMI events",
+   "advice": "The Dell WMI base driver failed to enable WMI events. Dell-specific WMI-based functionality such as hotkeys and system notifications will not work.",
+   "label": "KlogDellWmiBaseEnableEventsFailed"
   }
  ],
  "pm_error_warning_patterns":
