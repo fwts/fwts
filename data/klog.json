@@ -3460,6 +3460,174 @@
     "label": "KlogAmdIommuPCNotSupported"
   },
   {
+   "compare_mode": "regex",
+   "log_level": "LOG_LEVEL_HIGH",
+   "pattern": "\\[Firmware Bug\\]: Found inconsistent EFR/EFR2 .* on iommu.*",
+   "advice": "The AMD IOMMU hardware reports inconsistent Extended Feature Register (EFR/EFR2) values across IOMMU units. This is a firmware bug that may cause unreliable IOMMU behaviour.",
+   "label": "KlogAmdIommuInconsistentEfr"
+  },
+  {
+   "compare_mode": "regex",
+   "log_level": "LOG_LEVEL_HIGH",
+   "pattern": "Can not reserve memory region .* for mmio",
+   "advice": "The AMD IOMMU driver failed to reserve the MMIO memory region for an IOMMU register set. The IOMMU may not initialise correctly.",
+   "label": "KlogAmdIommuMmioReserveFailed"
+  },
+  {
+   "compare_mode": "string",
+   "log_level": "LOG_LEVEL_HIGH",
+   "pattern": "This is a BIOS bug. Please contact your hardware vendor",
+   "advice": "The AMD IOMMU driver detected a BIOS bug while mapping IOMMU MMIO regions. IOMMU initialisation may fail.",
+   "label": "KlogAmdIommuBiosBug"
+  },
+  {
+   "compare_mode": "regex",
+   "log_level": "LOG_LEVEL_HIGH",
+   "pattern": "Unsupported IVHD type .*",
+   "advice": "The AMD IOMMU driver encountered an unsupported IVHD (I/O Virtualization Hardware Definition) type in the IVRS ACPI table. This entry will be skipped and the associated IOMMU hardware may not be initialised.",
+   "label": "KlogAmdIommuUnsupportedIvhdType"
+  },
+  {
+   "compare_mode": "string",
+   "log_level": "LOG_LEVEL_HIGH",
+   "pattern": "\\[Firmware Bug\\]: IVRS invalid checksum",
+   "advice": "The IVRS (I/O Virtualization Reporting Structure) ACPI table has an invalid checksum, indicating table corruption or a firmware bug. AMD IOMMU initialisation will fail.",
+   "label": "KlogAmdIommuIvrsInvalidChecksum"
+  },
+  {
+   "compare_mode": "regex",
+   "log_level": "LOG_LEVEL_HIGH",
+   "pattern": "\\[Firmware Bug\\]: Invalid IVHD device type .*",
+   "advice": "The AMD IOMMU driver encountered an invalid device type in the IVHD table. This is a firmware bug in the IVRS ACPI table; the device entry will be ignored.",
+   "label": "KlogAmdIommuInvalidIvhdDeviceType"
+  },
+  {
+   "compare_mode": "string",
+   "log_level": "LOG_LEVEL_HIGH",
+   "pattern": "\\[Firmware Bug\\]: Invalid HID.",
+   "advice": "The AMD IOMMU driver found an invalid ACPI Hardware ID (HID) in the IVHD table. This is a firmware bug; the affected device entry will be skipped.",
+   "label": "KlogAmdIommuInvalidHid"
+  },
+  {
+   "compare_mode": "regex",
+   "log_level": "LOG_LEVEL_HIGH",
+   "pattern": "IOMMU.* Failed to initialize IOMMU Hardware .*",
+   "advice": "The AMD IOMMU hardware failed to initialise. IOMMU-based memory protection and virtualisation will not be available.",
+   "label": "KlogAmdIommuHwInitFailed"
+  },
+  {
+   "compare_mode": "regex",
+   "log_level": "LOG_LEVEL_HIGH",
+   "pattern": "IVRS table error: .*",
+   "advice": "The AMD IOMMU driver detected an error in the IVRS ACPI table. IOMMU initialisation will be aborted.",
+   "label": "KlogAmdIommuIvrsTableError"
+  },
+  {
+   "compare_mode": "string",
+   "log_level": "LOG_LEVEL_HIGH",
+   "pattern": "No southbridge IOAPIC found",
+   "advice": "The AMD IOMMU driver could not find the southbridge IOAPIC in the IVRS table. Interrupt remapping may not be configured correctly.",
+   "label": "KlogAmdIommuNoSouthbridgeIoapic"
+  },
+  {
+   "compare_mode": "regex",
+   "log_level": "LOG_LEVEL_HIGH",
+   "pattern": "The device table size of IOMMU:.* is not expected!",
+   "advice": "The AMD IOMMU device table has an unexpected size. This may indicate a firmware or hardware issue with the IOMMU configuration.",
+   "label": "KlogAmdIommuDevTableSizeUnexpected"
+  },
+  {
+   "compare_mode": "string",
+   "log_level": "LOG_LEVEL_HIGH",
+   "pattern": "The address of old device table is above 4G, not trustworthy!",
+   "advice": "The AMD IOMMU old device table address from a previous kernel is above 4GB and cannot be trusted. The table will not be copied.",
+   "label": "KlogAmdIommuOldDevTableAbove4G"
+  },
+  {
+   "compare_mode": "string",
+   "log_level": "LOG_LEVEL_HIGH",
+   "pattern": "Failed to allocate memory for copying old device table!",
+   "advice": "The AMD IOMMU driver failed to allocate memory for copying the device table from a previous kernel. IOMMU state restoration after kexec will fail.",
+   "label": "KlogAmdIommuDevTableAllocFailed"
+  },
+  {
+   "compare_mode": "string",
+   "log_level": "LOG_LEVEL_HIGH",
+   "pattern": "Failed to copy DEV table from previous kernel.",
+   "advice": "The AMD IOMMU driver failed to copy the device table from the previous kernel. IOMMU protection state may not be preserved across kexec.",
+   "label": "KlogAmdIommuDevTableCopyFailed"
+  },
+  {
+   "compare_mode": "string",
+   "log_level": "LOG_LEVEL_HIGH",
+   "pattern": "Failed to initialize. The CMPXCHG16B feature is required.",
+   "advice": "The AMD IOMMU driver requires the CMPXCHG16B CPU feature but it is not available. IOMMU initialisation will fail.",
+   "label": "KlogAmdIommuCmpxchg16bRequired"
+  },
+  {
+   "compare_mode": "regex",
+   "log_level": "LOG_LEVEL_HIGH",
+   "pattern": "Failed to reserve domain ID .*",
+   "advice": "The AMD IOMMU driver failed to reserve a domain ID when restoring state from a previous kernel. IOMMU domain assignments may be incorrect after kexec.",
+   "label": "KlogAmdIommuDomainIdReserveFailed"
+  },
+  {
+   "compare_mode": "regex",
+   "log_level": "LOG_LEVEL_HIGH",
+   "pattern": "Wrong old irq remapping flag: .*",
+   "advice": "The AMD IOMMU driver found an unexpected IRQ remapping flag when restoring state from a previous kernel. IRQ remapping configuration may be incorrect.",
+   "label": "KlogAmdIommuWrongIrqRemappingFlag"
+  },
+  {
+   "compare_mode": "string",
+   "log_level": "LOG_LEVEL_MEDIUM",
+   "pattern": "Disabling interrupt remapping",
+   "advice": "The AMD IOMMU driver is disabling interrupt remapping, typically due to a prior error. Systems without interrupt remapping may be vulnerable to interrupt injection attacks.",
+   "label": "KlogAmdIommuDisablingIntRemapping"
+  },
+  {
+   "compare_mode": "regex",
+   "log_level": "LOG_LEVEL_MEDIUM",
+   "pattern": "Invalid command line: ivrs_ioapic.*",
+   "advice": "The AMD IOMMU kernel command line parameter ivrs_ioapic has an invalid format. The IOAPIC IVRS override will not be applied.",
+   "label": "KlogAmdIommuInvalidCmdlineIoapic"
+  },
+  {
+   "compare_mode": "regex",
+   "log_level": "LOG_LEVEL_MEDIUM",
+   "pattern": "Early IOAPIC map overflow - ignoring ivrs_ioapic.*",
+   "advice": "The AMD IOMMU early IOAPIC map is full and the ivrs_ioapic command line override cannot be applied. Some IOAPIC IVRS remapping entries will be ignored.",
+   "label": "KlogAmdIommuEarlyIoapicMapOverflow"
+  },
+  {
+   "compare_mode": "regex",
+   "log_level": "LOG_LEVEL_MEDIUM",
+   "pattern": "Invalid command line: ivrs_hpet.*",
+   "advice": "The AMD IOMMU kernel command line parameter ivrs_hpet has an invalid format. The HPET IVRS override will not be applied.",
+   "label": "KlogAmdIommuInvalidCmdlineHpet"
+  },
+  {
+   "compare_mode": "regex",
+   "log_level": "LOG_LEVEL_MEDIUM",
+   "pattern": "Early HPET map overflow - ignoring ivrs_hpet.*",
+   "advice": "The AMD IOMMU early HPET map is full and the ivrs_hpet command line override cannot be applied. Some HPET IVRS remapping entries will be ignored.",
+   "label": "KlogAmdIommuEarlyHpetMapOverflow"
+  },
+  {
+   "compare_mode": "regex",
+   "log_level": "LOG_LEVEL_MEDIUM",
+   "pattern": "Invalid command line: ivrs_acpihid.*",
+   "advice": "The AMD IOMMU kernel command line parameter ivrs_acpihid has an invalid format. The ACPI HID IVRS override will not be applied.",
+   "label": "KlogAmdIommuInvalidCmdlineAcpihid"
+  },
+  {
+   "compare_mode": "string",
+   "log_level": "LOG_LEVEL_MEDIUM",
+   "pattern": "Invalid command line: hid or uid",
+   "advice": "The AMD IOMMU ivrs_acpihid command line parameter has an invalid HID or UID value. The ACPI HID IVRS override will not be applied.",
+   "label": "KlogAmdIommuInvalidCmdlineHidOrUid"
+  },
+  {
     "compare_mode": "string",
     "log_level": "LOG_LEVEL_HIGH",
     "pattern": "Needed [Buffer/String/Package/Reference], found",
