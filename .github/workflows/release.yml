@@ -1,0 +1,203 @@
+name: FWTS Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g. 26.01.00)'
+        required: true
+      git_name:
+        description: 'Git author name for release commits'
+        required: true
+      email_user:
+        description: 'Email local-part for canonical.com and ubuntu.com'
+        required: true
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      RELEASES: "bionic focal jammy noble questing resolute"
+
+    steps:
+      - name: Checkout fwts
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure git
+        run: |
+          git config user.name  "${{ github.event.inputs.git_name }}"
+          git config user.email "${{ format('{0}@canonical.com', github.event.inputs.email_user) }}"
+
+      - name: Generate release notes
+        id: notes
+        run: |
+          PREV_TAG=$(git describe --abbrev=0 --tags)
+          echo "Previous tag: $PREV_TAG"
+          git shortlog ${PREV_TAG}..HEAD > /tmp/shortlog.txt
+          git log --reverse --no-merges --format='* %s' ${PREV_TAG}..HEAD > /tmp/release-notes-fixed-bugs.txt
+          echo "FIXED_BUGS<<EOF" >> $GITHUB_OUTPUT
+          cat /tmp/release-notes-fixed-bugs.txt >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Update debian changelog
+        env:
+          VERSION: ${{ github.event.inputs.version }}
+          CHANGELOG_NAME: ${{ github.event.inputs.git_name }}
+          CHANGELOG_EMAIL: ${{ format('{0}@ubuntu.com', github.event.inputs.email_user) }}
+        run: |
+          SERIES=$(printf '%s\n' "${RELEASES}" | awk '{print $NF}')
+          TOP_LINE=$(head -1 debian/changelog || true)
+          if echo "$TOP_LINE" | grep -q "(${VERSION}-"; then
+            echo "Changelog already has version ${VERSION}, skipping update."
+            exit 0
+          fi
+
+          sed -E \
+            -e 's/^([^ ].*) \([0-9]+\):$/  [\1]/; t' \
+            -e 's/^[[:space:]]+/  * /' \
+            /tmp/shortlog.txt > /tmp/shortlog.debian.raw
+
+          python3 - <<'PY'
+          from pathlib import Path
+          import textwrap
+
+          src = Path("/tmp/shortlog.debian.raw")
+          dst = Path("/tmp/shortlog.debian")
+
+          lines = src.read_text(encoding="utf-8").splitlines()
+          while lines and lines[-1] == "":
+              lines.pop()
+
+          wrapped = []
+          for line in lines:
+              if line.startswith("  * "):
+                  wrapped.extend(
+                      textwrap.wrap(
+                          line[4:],
+                          width=80,
+                          initial_indent="  * ",
+                          subsequent_indent="    ",
+                          break_long_words=True,
+                          break_on_hyphens=False,
+                      )
+                  )
+              else:
+                  wrapped.append(line)
+
+          dst.write_text("\n".join(wrapped) + "\n", encoding="utf-8")
+          PY
+
+          DATE=$(date -R)
+          {
+            echo "fwts (${VERSION}-0ubuntu1) ${SERIES}; urgency=medium"
+            echo ""
+            cat /tmp/shortlog.debian
+            echo ""
+            echo " -- ${CHANGELOG_NAME} <${CHANGELOG_EMAIL}>  ${DATE}"
+            echo ""
+            cat debian/changelog
+          } > /tmp/changelog.new
+          mv /tmp/changelog.new debian/changelog
+          git add debian/changelog
+          git commit -s -m "debian: update changelog"
+
+      - name: Update version
+        run: ./update_version.sh V${{ github.event.inputs.version }}
+
+      - name: Push version commit and tag
+        run: |
+          git push origin master
+          git push origin V${{ github.event.inputs.version }}
+
+      - name: Build tarball
+        run: |
+          VERSION=V${{ github.event.inputs.version }}
+          mkdir $VERSION
+          git archive --format tar --prefix=fwts/ $VERSION | gzip > ${VERSION}/fwts-${VERSION}.tar.gz
+
+      - name: Install Debian packaging tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            autoconf \
+            automake \
+            bison \
+            debhelper \
+            devscripts \
+            dh-sequence-dkms \
+            flex \
+            libbsd-dev \
+            libfdt-dev \
+            libglib2.0-dev \
+            libtool \
+            pkg-config
+
+      - name: Build Debian source packages
+        env:
+          VERSION: ${{ github.event.inputs.version }}
+        run: |
+          TAG=V${VERSION}
+          OUTPUT_ROOT="${GITHUB_WORKSPACE}/package-build"
+          OUTPUT_DIR="${OUTPUT_ROOT}/${TAG}"
+          ORIG_TARBALL="${OUTPUT_DIR}/fwts_${VERSION}.orig.tar.gz"
+
+          mkdir -p "${OUTPUT_DIR}"
+          git archive --format=tar --prefix=fwts/ "${TAG}" | gzip > "${ORIG_TARBALL}"
+
+          for rel in ${RELEASES}; do
+            PACKAGE_DIR="${OUTPUT_DIR}/${rel}"
+            mkdir -p "${PACKAGE_DIR}/fwts"
+            git archive "${TAG}" | tar -x -C "${PACKAGE_DIR}/fwts"
+            cp "${ORIG_TARBALL}" "${PACKAGE_DIR}/"
+
+            pushd "${PACKAGE_DIR}/fwts"
+            DEB_TOPLINE=$(head -1 debian/changelog)
+            DEB_RELEASE=$(echo "${DEB_TOPLINE}" | cut -f3 -d' ')
+            if [ "x${rel};" = "x${DEB_RELEASE}" ]; then
+              SUFFIX=''
+            else
+              SUFFIX="~${rel:0:1}"
+            fi
+
+            sed "s/) ${DEB_RELEASE}/${SUFFIX}) ${rel};/" debian/changelog > debian/changelog.new
+            mv debian/changelog.new debian/changelog
+
+            echo 'y' | debuild -S -us -uc -d
+            popd
+
+            rm -rf "${PACKAGE_DIR}/fwts"
+          done
+
+          tar -C "${OUTPUT_ROOT}" -czf "${OUTPUT_ROOT}/fwts-source-packages-${TAG}.tar.gz" "${TAG}"
+
+      - name: Upload Debian source packages artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: fwts-source-packages-V${{ github.event.inputs.version }}
+          path: |
+            package-build/V${{ github.event.inputs.version }}
+            package-build/fwts-source-packages-V${{ github.event.inputs.version }}.tar.gz
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: V${{ github.event.inputs.version }}
+          name: FWTS V${{ github.event.inputs.version }}
+          body: |
+            ## New Features
+
+
+            ## Fixed Bugs
+
+            ${{ steps.notes.outputs.FIXED_BUGS }}
+
+            ## Detail Changelog
+
+            To check `/usr/share/doc/fwts/changelog.Debian.gz` or `fwts_${{ github.event.inputs.version }}-0ubuntu1.debian.tar.gz` from https://launchpad.net/ubuntu/+source/fwts
+          files: |
+            V${{ github.event.inputs.version }}/fwts-V${{ github.event.inputs.version }}.tar.gz
