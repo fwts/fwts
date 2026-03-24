@@ -196,7 +196,7 @@ static char *hotkey_find_keymap(const char *device)
 
 	snprintf(buffer, sizeof(buffer), "keymap %s", device);
 	fwts_list_foreach(item, output) {
-		const char *text = (const char *)fwts_text_list_text(item);
+		char *text = fwts_text_list_text(item);
 
 		if ((text = strstr(text, buffer)) != NULL) {
 			char *ptr;
