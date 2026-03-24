@@ -69,8 +69,8 @@ static void asf_check_info(
 	fwts_log_info_verbatim(fw, "ASF! ASF_INFO Record:");
 	fwts_log_info_verbatim(fw, "  Min Watchdog Reset Value: 0x%2.2" PRIx8, info->watchdog_reset_value);
 	fwts_log_info_verbatim(fw, "  Min Poll Wait Time:       0x%2.2" PRIx8, info->min_sensor_poll_wait_time);
-	fwts_log_info_verbatim(fw, "  System ID:                0x%2.2" PRIx8, info->id);
-	fwts_log_info_verbatim(fw, "  IANA Manufacturer ID:     0x%2.2" PRIx8, info->iana_id);
+	fwts_log_info_verbatim(fw, "  System ID:                0x%4.4" PRIx16, info->id);
+	fwts_log_info_verbatim(fw, "  IANA Manufacturer ID:     0x%8.8" PRIx32, info->iana_id);
 	fwts_log_info_verbatim(fw, "  Feature Flags:            0x%2.2" PRIx8, info->flags);
 	fwts_log_info_verbatim(fw, "  Reserved:                 0x%2.2" PRIx8, info->reserved1);
 	fwts_log_info_verbatim(fw, "  Reserved:                 0x%2.2" PRIx8, info->reserved2);
