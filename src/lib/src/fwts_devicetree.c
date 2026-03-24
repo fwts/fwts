@@ -73,7 +73,7 @@ bool check_status_property_okay(fwts_framework *fw,
 	const char *my_prop_string,
 	const char *property)
 {
-	char *prop_string = strstr(my_path, my_prop_string);
+	const char *prop_string = strstr(my_path, my_prop_string);
 
 	if (prop_string) {
 		int prop_len = 0;
