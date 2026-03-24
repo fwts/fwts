@@ -240,7 +240,7 @@ static char *wmi_acpi_get_parent_name(const char *object_name)
 {
 	size_t parent_name_length;
 	char *parent_name;
-	char *separator;
+	const char *separator;
 
 	separator = strrchr(object_name, '.');
 	if (!separator)
