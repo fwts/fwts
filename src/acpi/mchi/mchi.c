@@ -118,7 +118,7 @@ static int mchi_test1(fwts_framework *fw)
 		passed = false;
 		fwts_failed(fw, LOG_LEVEL_HIGH,
 			"MCHIGsiNonZero",
-			"MCHI Global System Interrupt is 0x%2.2" PRIx8 " and should be zero "
+			"MCHI Global System Interrupt is 0x%8.8" PRIx32 " and should be zero "
 			"when bit 1 of the Interrupt Type field is 0",
 			mchi->global_system_interrupt);
 	}

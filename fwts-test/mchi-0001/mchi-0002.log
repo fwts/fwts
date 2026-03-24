@@ -38,8 +38,8 @@ mchi            (SCI triggered through GPE non-supported)
 mchi            FAILED [HIGH] MCHIReservedBitsNonZero: Test 1, MCHI PCI
 mchi            Device Flag Bits [7..1] must be zero, got 0xf1 instead
 mchi            FAILED [HIGH] MCHIGsiNonZero: Test 1, MCHI Global System
-mchi            Interrupt is 0x234 and should be zero when bit 1 of the
-mchi            Interrupt Type field is 0
+mchi            Interrupt is 0x00000234 and should be zero when bit 1 of
+mchi            the Interrupt Type field is 0
 mchi            FAILED [HIGH] MCHIPciDeviceFlagInvalid: Test 1, MCHI PCI
 mchi            Device Flag is 0xf1 and bit [0] should be 0 for a SMBus
 mchi            Address Space ID
