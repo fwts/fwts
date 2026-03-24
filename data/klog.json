@@ -864,13 +864,6 @@
   },
   {
    "compare_mode": "string",
-   "log_level": "LOG_LEVEL_CRITICAL",
-   "pattern": "Interpreter disabled",
-   "advice": "The ACPI interpreter initialization failed and so ACPI has been disabled",
-   "label": "KlogAcpiDisabled",
-  },
-  {
-   "compare_mode": "string",
    "log_level": "LOG_LEVEL_HIGH",
    "pattern": "cannot allocate memory for new IOAPIC",
    "advice": "The ACPI APIC driver was unable to allocate memory while trying to add a new IOAPIC to the system; IOAPIC was ignored.",
