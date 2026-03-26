@@ -1,3 +1,53 @@
+fwts (26.03.00-0ubuntu1) resolute; urgency=medium
+
+  [Ivan Hu]
+  * bios: s0idle: do not treat unsupported S0idle as an error
+  * acpi: srat: Fix Memory Affinity Structure flags validation
+  * fwts-test: sync up with srat fix memory affinity flags validation
+  * acpi: aspt: Add support for ASPT revision 2 types 3 and 4
+  * fwts-test: Update ASPT to include types 3 and 4
+  * fwts-test: sync up with s0idle warning change
+  * klog.json: Add ACPI PMIC XPower I2C address error to klog database
+  * klog.json: Add ACPI watchdog device creation error to klog database
+  * klog.json: Add ACPI DPTF power unsupported event error to klog database
+  * klog.json: Add ACPI ARM64 FFH invalid SMCCC conduit error to klog database
+  * klog.json: Add ACPI battery hook errors to klog database
+  * klog.json: Add ACPI processor PDC memory allocation error to klog database
+  * klog.json: Add ACPI MADT wakeup CPU handover error to klog database
+  * klog.json: Add ACPI boot LAPIC/MADT parse errors to klog database
+  * klog.json: Add EFI 32/64-bit mismatch error to klog database
+  * klog.json: Add EFI 64-bit kernel mapping errors to klog database
+  * klog.json: Add EFI 32-bit ioremap failure to klog database
+  * klog.json: Add x86 MTRR allocation failure message to klog database
+  * klog.json: Add x86 CPU common error messages to klog database
+  * klog.json: Add x86 SMP boot APIC and CPU bringup error messages to klog
+    database
+  * klog.json: Add Dell laptop keyboard state error message to klog database
+  * klog.json: Add Dell WMI AIO input and notify handler error messages to klog
+    database
+  * klog.json: Add Dell WMI base event enable failure message to klog database
+  * klog.json: Add HP WMI platform profile and hwmon error messages to klog
+    database
+  * klog.json: Add IdeaPad laptop input and backlight error messages to klog
+    database
+  * klog.json: Add WMI core driver error messages to klog database
+  * klog.json: Add AMD IOMMU driver error messages to klog database
+  * autopackager: mkpackage.sh: remove plucky
+  * github: add fwts release workflow
+  * lib: fwts_devicetree: fix build error for const-correctness
+  * acpi: wmi: fix const-correctness in wmi_acpi_get_parent_name
+  * hotkey: fix const-correctness in hotkey_find_keymap
+  * lib: fwts_acpi_tables: fix signed format specifier for subtable type
+  * acpi: mchi: fix PRIx8 format specifier for uint32_t GSI field
+  * acpi: asf: fix wrong format specifiers for id and iana_id fields
+  * klog.json: remove Interpreter disabled ACPI pattern
+  * github: replace softprops/action-gh-release with gh release create
+
+  [edhay]
+  * New tests for Arm PSCI functions
+
+ -- Ivan Hu <ivan.hu@ubuntu.com>  Thu, 26 Mar 2026 02:07:51 +0000
+
 fwts (26.01.00-0ubuntu1) resolute; urgency=medium
 
   [Ignacio Hernandez]
