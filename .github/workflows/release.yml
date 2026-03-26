@@ -184,20 +184,17 @@ jobs:
             package-build/fwts-source-packages-V${{ github.event.inputs.version }}.tar.gz
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: V${{ github.event.inputs.version }}
-          name: FWTS V${{ github.event.inputs.version }}
-          body: |
-            ## New Features
-
-
-            ## Fixed Bugs
-
-            ${{ steps.notes.outputs.FIXED_BUGS }}
-
-            ## Detail Changelog
-
-            To check `/usr/share/doc/fwts/changelog.Debian.gz` or `fwts_${{ github.event.inputs.version }}-0ubuntu1.debian.tar.gz` from https://launchpad.net/ubuntu/+source/fwts
-          files: |
-            V${{ github.event.inputs.version }}/fwts-V${{ github.event.inputs.version }}.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FIXED_BUGS: ${{ steps.notes.outputs.FIXED_BUGS }}
+          VERSION: ${{ github.event.inputs.version }}
+        run: |
+          {
+            printf '## New Features\n\n\n## Fixed Bugs\n\n%s\n\n' "${FIXED_BUGS}"
+            printf '## Detail Changelog\n\n'
+            printf 'To check `/usr/share/doc/fwts/changelog.Debian.gz` or `fwts_%s-0ubuntu1.debian.tar.gz` from https://launchpad.net/ubuntu/+source/fwts\n' "${VERSION}"
+          } > /tmp/release-notes.md
+          gh release create "V${VERSION}" \
+            --title "FWTS V${VERSION}" \
+            --notes-file /tmp/release-notes.md \
+            "V${VERSION}/fwts-V${VERSION}.tar.gz"
