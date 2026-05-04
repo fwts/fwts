@@ -20,7 +20,6 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
-#include <bsd/string.h>
 #include <errno.h>
 #include <inttypes.h>
 #include <dirent.h>
@@ -36,6 +35,10 @@
 #include <arpa/inet.h>
 
 #include "fwts.h"
+
+#ifdef HAVE_BSD_STRING_H
+#include <bsd/string.h>
+#endif
 
 #define FWTS_HWINFO_LISTS_SAME		(0)
 #define FWTS_HWINFO_LISTS_DIFFER	(1)
