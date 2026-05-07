@@ -106,7 +106,6 @@ int fwts_args_parse(fwts_framework *fw, const int argc, char * const argv[])
 	int i;
 	int c;
 	int option_index;
-	int master_option_index;
 	int translated_long_option_index;
 	int ret = FWTS_OK;
 	char *short_options = NULL;
@@ -185,7 +184,6 @@ int fwts_args_parse(fwts_framework *fw, const int argc, char * const argv[])
 	}
 
 	for (;;) {
-		master_option_index = total_options;
 		translated_long_option_index = 0;
 		c = getopt_long(argc, argv, short_options, long_options, &option_index);
 		if (c == -1)
@@ -222,8 +220,6 @@ int fwts_args_parse(fwts_framework *fw, const int argc, char * const argv[])
 				if (ret != FWTS_OK)
 					goto exit;
 				break;
-			} else {
-				master_option_index -= options_table->num_options;
 			}
 
 		}
