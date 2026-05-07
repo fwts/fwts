@@ -325,7 +325,7 @@ static const char *crs_irq_map(const uint64_t val)
 				char tmp[5];
 
 				snprintf(tmp, sizeof(tmp), " %u", i);
-				strlcat(buf, tmp, sizeof(tmp));
+				strlcat(buf, tmp, sizeof(buf));
 			}
 		}
 	}
