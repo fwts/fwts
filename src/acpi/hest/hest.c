@@ -786,8 +786,7 @@ static int hest_test1(fwts_framework *fw)
         ssize_t length = (ssize_t)hest->header.length;
 	uint32_t hest_type_00_count = 0,
 		 hest_type_01_count = 0,
-		 hest_type_02_count = 0,
-		 hest_type_11_count = 0;
+		 hest_type_02_count = 0;
 
 	if (!fwts_acpi_table_length(fw, "HEST", table->length, sizeof(fwts_acpi_table_hest))) {
 		passed = false;
@@ -835,7 +834,6 @@ static int hest_test1(fwts_framework *fw)
 		case 11:
 			/* the structure of type 11 is the same as type 1 */
 			hest_check_ia32_arch_corrected_machine_check(fw, &length, &data, &passed);
-			hest_type_11_count++;
 			break;
 		default:
 			fwts_failed(fw, LOG_LEVEL_HIGH,
