@@ -230,8 +230,12 @@ fwts_SOURCES = main.c 				\
 
 fwts_LDFLAGS = -no-undefined
 
+if HAVE_LIBBSD
+fwts_LDADD_BSD = -lbsd
+endif
+
 fwts_LDADD = \
-	-lbsd \
+	$(fwts_LDADD_BSD) \
 	$(top_builddir)/src/lib/src/libfwts.la \
 	$(top_builddir)/src/libfwtsiasl/libfwtsiasl.la \
 	$(top_builddir)/src/libfwtsacpica/libfwtsacpica.la

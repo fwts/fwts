@@ -30,8 +30,13 @@ pkglib_LTLIBRARIES = libfwts.la
 
 libfwts_la_LDFLAGS = -version-info 1:0:0
 
+if HAVE_LIBBSD
+libfwts_LDADD_BSD = -lbsd
+endif
+
 libfwts_la_LIBADD = 				\
-	-lm -lpthread -lbsd				\
+	-lm -lpthread					\
+	$(libfwts_LDADD_BSD)				\
 	@GIO_LIBS@					\
 	@GLIB_LIBS@
 

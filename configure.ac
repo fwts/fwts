@@ -85,6 +85,9 @@
 	    AC_DEFINE([HAVE_LIBPCI], [1], [Define if we have libpci])])
 	  AM_CONDITIONAL([HAVE_LIBPCI],
 	    [test "x$ac_cv_search_pci_alloc" != "xno"])
+	  AC_SEARCH_LIBS([strlcpy], [bsd],, AC_MSG_ERROR([strlcpy is not available]))
+	  AM_CONDITIONAL([HAVE_LIBBSD],
+	    [test "x$ac_cv_search_strlcpy" = "x-lbsd"])
 	  AC_FUNC_MALLOC
 	  AC_FUNC_FORK
 	  AC_FUNC_LSTAT_FOLLOWS_SLASHED_SYMLINK
