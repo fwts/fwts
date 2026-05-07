@@ -319,7 +319,6 @@ static void fwts_framework_show_tests(fwts_framework *fw, const bool full)
 	fwts_list sorted;
 	int i;
 	bool need_nl = false;
-	int total = 0;
 
 	/* Dump out tests registered under all categories */
 	for (i = 0; categories[i].title != NULL; i++) {
@@ -355,7 +354,6 @@ static void fwts_framework_show_tests(fwts_framework *fw, const bool full)
 							test->ops->total_tests > 1 ? "s" : "");
 						for (j = 0; j < test->ops->total_tests; j++)
 							printf("  %s\n", test->ops->minor_tests[j].name);
-						total += test->ops->total_tests;
 					}
 					else {
 						printf(" %-15.15s %s\n", test->name,
