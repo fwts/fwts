@@ -26,7 +26,10 @@
 #include <string.h>
 #include <limits.h>
 #include <dirent.h>
+
+#ifdef HAVE_BSD_STRING_H
 #include <bsd/string.h>
+#endif
 
 #define FWTS_PROC_ACPI_BUTTON	"/proc/acpi/button"
 

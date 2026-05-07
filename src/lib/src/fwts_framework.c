@@ -26,12 +26,15 @@
 #include <ctype.h>
 #include <time.h>
 #include <getopt.h>
-#include <bsd/string.h>
 #include <sys/utsname.h>
 #include <sys/time.h>
 
 #include "fwts.h"
 #include "fwts_pm_method.h"
+
+#ifdef HAVE_BSD_STRING_H
+#include <bsd/string.h>
+#endif
 
 typedef struct {
 	const char *title;		/* Test category */

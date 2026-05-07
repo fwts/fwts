@@ -24,7 +24,10 @@
 #include <dirent.h>
 #include <ctype.h>
 #include <math.h>
+
+#ifdef HAVE_BSD_STRING_H
 #include <bsd/string.h>
+#endif
 
 #define CPU_FREQ_PATH	"/sys/devices/system/cpu"
 #define CPU_INFO_PATH	"/proc/cpuinfo"
