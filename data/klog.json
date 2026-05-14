@@ -7538,8 +7538,15 @@
    "pattern": "Error loading mapper",
    "advice": "The WMI driver failed to load its mapper component. WMI device to driver matching will not work, preventing WMI-based platform drivers from binding to their devices.",
    "label": "KlogWmiMapperLoadError"
-  }
- ],
+   },
+   {
+    "compare_mode": "regex",
+    "log_level": "LOG_LEVEL_HIGH",
+    "pattern": "Failed to update freq constraint for CPU.* (.*)",
+    "advice": "The ACPI processor performance library failed to update a CPU frequency constraint. This indicates a problem with ACPI P-state management, which may prevent proper CPU frequency scaling and power management.",
+    "label": "KlogAcpiProcessorFreqConstraintUpdateFailed"
+   }
+  ],
  "pm_error_warning_patterns":
  [
   {
