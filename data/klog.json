@@ -7579,9 +7579,23 @@
          "log_level": "LOG_LEVEL_HIGH",
          "pattern": "\\[Firmware Bug\\]: Ignoring ECDT due to empty ID string",
          "advice": "The ACPI Embedded Controller driver detected a firmware bug where the ECDT (Embedded Controller Description Table) has an empty ID string. The ECDT is being ignored, which may delay EC initialization until the DSDT is parsed. This could affect early boot EC operations.",
-         "label": "KlogAcpiEcEcdtEmptyIdString"
-        }
-       ],
+          "label": "KlogAcpiEcEcdtEmptyIdString"
+         },
+         {
+          "compare_mode": "string",
+          "log_level": "LOG_LEVEL_MEDIUM",
+          "pattern": "Invalid command line: hid is too long",
+          "advice": "The AMD IOMMU driver rejected an ivrs_acpihid command line parameter because the specified Hardware ID (HID) exceeds the maximum allowed length. The IOMMU device override will not be applied.",
+          "label": "KlogAmdIommuCmdlineHidTooLong"
+         },
+         {
+          "compare_mode": "string",
+          "log_level": "LOG_LEVEL_MEDIUM",
+          "pattern": "Invalid command line: uid is too long",
+          "advice": "The AMD IOMMU driver rejected an ivrs_acpihid command line parameter because the specified Unique ID (UID) exceeds the maximum allowed length. The IOMMU device override will not be applied.",
+          "label": "KlogAmdIommuCmdlineUidTooLong"
+         }
+        ],
  "pm_error_warning_patterns":
  [
   {
