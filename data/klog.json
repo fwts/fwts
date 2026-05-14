@@ -7545,8 +7545,15 @@
     "pattern": "Failed to update freq constraint for CPU.* (.*)",
     "advice": "The ACPI processor performance library failed to update a CPU frequency constraint. This indicates a problem with ACPI P-state management, which may prevent proper CPU frequency scaling and power management.",
     "label": "KlogAcpiProcessorFreqConstraintUpdateFailed"
-   }
-  ],
+    },
+    {
+     "compare_mode": "regex",
+     "log_level": "LOG_LEVEL_HIGH",
+     "pattern": "\\[Firmware Bug\\]: applying workaround.",
+     "advice": "The ACPI IORT (I/O Remapping Table) driver detected a firmware bug in the ARM platform's I/O topology description and is applying a workaround. This indicates incorrect or incomplete firmware data that may affect device I/O mapping.",
+     "label": "KlogAcpiIortFirmwareBugWorkaround"
+    }
+   ],
  "pm_error_warning_patterns":
  [
   {
