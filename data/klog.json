@@ -7565,9 +7565,16 @@
        "log_level": "LOG_LEVEL_HIGH",
        "pattern": "CFMWS: [BIOS BUG] base/size alignment violates spec",
        "advice": "The ACPI SRAT NUMA driver detected that a CXL Fixed Memory Window Structure (CFMWS) has a base address or size that is not properly aligned according to the CXL specification. This is a BIOS bug that may cause incorrect NUMA memory mapping for CXL devices.",
-       "label": "KlogAcpiSratCfmwsAlignmentViolation"
-      }
-     ],
+        "label": "KlogAcpiSratCfmwsAlignmentViolation"
+       },
+       {
+        "compare_mode": "string",
+        "log_level": "LOG_LEVEL_CRITICAL",
+        "pattern": "Failed to register kobject",
+        "advice": "The ACPI bus driver failed to register a kernel object (kobject) during ACPI subsystem initialization. This is a critical error that may prevent ACPI devices from being properly exposed to the system, potentially affecting power management and device enumeration.",
+        "label": "KlogAcpiBusKobjectRegisterFailed"
+       }
+      ],
  "pm_error_warning_patterns":
  [
   {
