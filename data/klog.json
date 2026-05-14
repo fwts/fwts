@@ -7559,8 +7559,15 @@
       "pattern": "\\[Firmware Bug\\]: limiting Platform Timer count to .*",
       "advice": "The ACPI GTDT (Generic Timer Description Table) driver detected that the firmware reports an excessive number of platform timers. The driver is limiting the count to prevent resource exhaustion. This indicates a firmware bug in the ARM platform timer description.",
       "label": "KlogAcpiGtdtPlatformTimerCountLimited"
-     }
-    ],
+      },
+      {
+       "compare_mode": "string",
+       "log_level": "LOG_LEVEL_HIGH",
+       "pattern": "CFMWS: [BIOS BUG] base/size alignment violates spec",
+       "advice": "The ACPI SRAT NUMA driver detected that a CXL Fixed Memory Window Structure (CFMWS) has a base address or size that is not properly aligned according to the CXL specification. This is a BIOS bug that may cause incorrect NUMA memory mapping for CXL devices.",
+       "label": "KlogAcpiSratCfmwsAlignmentViolation"
+      }
+     ],
  "pm_error_warning_patterns":
  [
   {
