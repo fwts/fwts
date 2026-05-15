@@ -6075,26 +6075,12 @@
    "log_level": "LOG_LEVEL_CRITICAL",
    "pattern": "Error attaching device data",
    "advice": "The kernel could not register a thermal zone because acpi_attach_data() failed for some reason. The machine may not be able to optimally cool itself and may have overheating issues because of this error.",
-   "label": "KlogAcpiThermZoneAttachFailed"
-  },
-  {
-   "compare_mode": "string",
-   "log_level": "LOG_LEVEL_HIGH",
-   "pattern": "Invalid _TSS data: freq is zero",
-   "advice": "The _TSS has returned a zero frequency setting in one or more of the package elements.",
-   "label": "KlogAcpiTssZeroFrequency"
-  },
-  {
-   "compare_mode": "string",
-   "log_level": "LOG_LEVEL_HIGH",
-   "pattern": "Invalid _TSS data",
-   "advice": "The _TSS has returned a NULL data pointer or data which isn't an ACPI package.",
-   "label": "KlogAcpiTssBadData"
-  },
-  {
-   "compare_mode": "string",
-   "log_level": "LOG_LEVEL_HIGH",
-   "pattern": "Unknown _TSD:num_entries",
+    "label": "KlogAcpiThermZoneAttachFailed"
+   },
+   {
+    "compare_mode": "string",
+    "log_level": "LOG_LEVEL_HIGH",
+    "pattern": "Unknown _TSD:num_entries",
    "advice": "The number of entries in the throlling domain information was not 5.",
    "label": "KlogAcpiTsdIllegalNumEntries"
   },
