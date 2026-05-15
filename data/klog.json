@@ -956,14 +956,7 @@
    {
     "compare_mode": "string",
     "log_level": "LOG_LEVEL_HIGH",
-    "pattern": "ID map has NULL parent reference",
-   "advice": "ACPI ARM64 IORT driver failed to get an IORT node ID, the map parent reference was NULL which is indicative of a firmware bug in the ACPI I/O Remapping Table",
-   "label": "KlogAcpiIortIdMapNull"
-  },
-  {
-   "compare_mode": "string",
-   "log_level": "LOG_LEVEL_HIGH",
-   "pattern": "Failed to create AML debugger thread",
+    "pattern": "Failed to create AML debugger thread",
    "advice": "The ACPI driver debugger failed to create a kernel thread to allow ACPI debugging, debugger failed to start",
    "label": "KlogAcpiAmlDebugThreadFailed"
   },
