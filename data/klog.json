@@ -1812,19 +1812,12 @@
    "log_level": "LOG_LEVEL_HIGH",
    "pattern": "No memory for fan",
    "advice": "ACPI failed to create an ACPI fan device, there was not enough memory to allocate the device.",
-   "label": "KlogAcpiFanNoMem"
-  },
-  {
-   "compare_mode": "string",
-   "log_level": "LOG_LEVEL_HIGH",
-   "pattern": "Invalid _FIF element",
-   "advice": "ACPI could not evaluate the fan state via the _FST object, one of the elements in the package may be an incorrect ACPI type.",
-   "label": "KlogAcpiGetFanStateBadData"
-  },
-  {
-   "compare_mode": "string",
-   "log_level": "LOG_LEVEL_HIGH",
-   "pattern": "Could not acquire table length at",
+    "label": "KlogAcpiFanNoMem"
+   },
+   {
+    "compare_mode": "string",
+    "log_level": "LOG_LEVEL_HIGH",
+    "pattern": "Could not acquire table length at",
    "advice": "ACPI could not determine the length of an ACPI table. This can occur, for example, if the table cannot be mapped into memory or the header is corrupted or non-standard.",
    "label": "KlogAcpiTableLength"
   },
