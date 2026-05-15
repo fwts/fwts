@@ -1889,19 +1889,12 @@
    "log_level": "LOG_LEVEL_LOW",
    "pattern": "apm: Could not register misc device",
    "advice": "APM misc device could not be registered. However, the driver can work without this, but userspace cannot control it.",
-   "label": "KlogBiosApmMiscDevice"
-  },
-  {
-   "compare_mode": "string",
-   "log_level": "LOG_LEVEL_HIGH",
-   "pattern": "Could not allocate size",
-   "advice": "The ACPI driver was unable to allocate the actual buffer for creating the objects.",
-   "label": "KlogAcpiAllocBufferFail"
-  },
-  {
-   "compare_mode": "string",
-   "log_level": "LOG_LEVEL_LOW",
-   "pattern": "Could not allocate an object descriptor",
+    "label": "KlogBiosApmMiscDevice"
+   },
+   {
+    "compare_mode": "string",
+    "log_level": "LOG_LEVEL_LOW",
+    "pattern": "Could not allocate an object descriptor",
    "advice": "The ACPI driver was unable to allocate an object descriptor from the ACPI global operand cache, see acpi_ut_allocate_object_desc_dbg().",
    "label": "KlogAcpiAllocObjDescriptor"
   },
