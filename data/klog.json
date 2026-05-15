@@ -6117,19 +6117,12 @@
    "log_level": "LOG_LEVEL_HIGH",
    "pattern": "Unknown addr space",
    "advice": "Could not read the hardware specific throttling status, the status register space ID was not a system I/O space or a fixed hardware space.",
-   "label": "KlogAcpiThrottleStatusBadRead"
-  },
-  {
-   "compare_mode": "string",
-   "log_level": "LOG_LEVEL_HIGH",
-   "pattern": "Invalid _TSD data",
-   "advice": "The _TSD has returned data which isn't valid, either a NULL data pointer or data which isn't an ACPI package has been returned.",
-   "label": "KlogAcpiTsdBadData"
-  },
-  {
-   "compare_mode": "string",
-   "log_level": "LOG_LEVEL_HIGH",
-   "pattern": "Invalid _PTC control register",
+    "label": "KlogAcpiThrottleStatusBadRead"
+   },
+   {
+    "compare_mode": "string",
+    "log_level": "LOG_LEVEL_HIGH",
+    "pattern": "Invalid _PTC control register",
    "advice": "The _PTC control register bit widths or bit offsets are incorrect.",
    "label": "KlogAcpiPtcControlRegisterInvalid"
   },
