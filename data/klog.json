@@ -951,19 +951,12 @@
    "log_level": "LOG_LEVEL_LOW",
    "pattern": "STAO table present, but SPCR is missing",
    "advice": "ACPI _STA Override Table (STAO) exists and indicates that the STOA UART settings should be ignored and should use the SPCR, however there is no Serial Port Console Redirection Table containing serial port UART address information.",
-   "label": "KlogAcpiSpcrMissing"
-  },
-  {
-   "compare_mode": "string",
-   "log_level": "LOG_LEVEL_HIGH",
-   "pattern": "iort node pointer overflows, bad table",
-   "advice": "ACPI ARM64 IORT driver detected an IORT node that is outside the ACPI IORT table. The table as been deemed to be broken and has been ignored",
-   "label": "KlogAcpiIortNodeOutsideTable"
-  },
-  {
-   "compare_mode": "string",
-   "log_level": "LOG_LEVEL_HIGH",
-   "pattern": "could not register gsi hwirq",
+    "label": "KlogAcpiSpcrMissing"
+   },
+   {
+    "compare_mode": "string",
+    "log_level": "LOG_LEVEL_HIGH",
+    "pattern": "could not register gsi hwirq",
    "advice": "ACPI ARM64 IORT driver failed to register the GSI IRQ",
    "label": "KlogAcpiIortIrqRegisterFailed"
   },
