@@ -886,14 +886,7 @@
    {
     "compare_mode": "string",
     "log_level": "LOG_LEVEL_HIGH",
-    "pattern": "SRAT: Failed to add memblk to node",
-   "advice": "The ACPI NUMA driver failed to add a NUMA memory block to a node. NUMA will not be enabled.",
-   "label": "KlogAcpiNumaMemblkAddFailure",
-  },
-  {
-   "compare_mode": "string",
-   "log_level": "LOG_LEVEL_HIGH",
-   "pattern": "SRAT: Failed to mark hotplug range",
+    "pattern": "SRAT: Failed to mark hotplug range",
    "advice": "The ACPI NUMA driver failed to mark a NUMA memory plug as hotpluggable.",
    "label": "KlogAcpiNumaMemblkHotplugFailure",
   },
