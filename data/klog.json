@@ -1014,19 +1014,12 @@
    "log_level": "LOG_LEVEL_HIGH",
    "pattern": "add_memory failed",
    "advice": "ACPI memory hot-plug failed to enable a memory device",
-   "label": "KlogAcpiMemHotPlugAddMemFailed"
-  },
-  {
-   "compare_mode": "string",
-   "log_level": "LOG_LEVEL_LOW",
-   "pattern": "Limiting number of LPI states to max",
-   "advice": "The ACPI C States (_CST) object contains more LPI states than the kernel has configired, so this has been limited to the maximum states allowed by the driver",
-   "label": "KlogAcpiLpiLimited"
-  },
-  {
-   "compare_mode": "string",
-   "log_level": "LOG_LEVEL_MEDIUM",
-   "pattern": "failed to register spa range",
+    "label": "KlogAcpiMemHotPlugAddMemFailed"
+   },
+   {
+    "compare_mode": "string",
+    "log_level": "LOG_LEVEL_MEDIUM",
+    "pattern": "failed to register spa range",
    "advice": "The ACPI NFIT driver was unable to register a memory region because of an invalid System Physical Address (SPA)",
    "label": "KlogAcpiNfitInvalidSPA"
   },
