@@ -954,16 +954,9 @@
     "label": "KlogAcpiSpcrMissing"
    },
    {
-    "compare_mode": "string",
+    "compare_mode": "regex",
     "log_level": "LOG_LEVEL_HIGH",
-    "pattern": "could not register gsi hwirq",
-   "advice": "ACPI ARM64 IORT driver failed to register the GSI IRQ",
-   "label": "KlogAcpiIortIrqRegisterFailed"
-  },
-  {
-   "compare_mode": "regex",
-   "log_level": "LOG_LEVEL_HIGH",
-   "pattern": "requested ITS ID index .* is greater than available",
+    "pattern": "requested ITS ID index .* is greater than available",
    "advice": "ACPI ARM64 IORT driver failed to find a device by an ITS ID but the provided ID index is greater than the available ITS count, driver returned -ENXIO",
    "label": "KlogAcpiIortBadItsIdIndex"
   },
