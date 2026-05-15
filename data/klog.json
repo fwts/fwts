@@ -954,16 +954,9 @@
     "label": "KlogAcpiSpcrMissing"
    },
    {
-    "compare_mode": "regex",
+    "compare_mode": "string",
     "log_level": "LOG_LEVEL_HIGH",
-    "pattern": "requested ITS ID index .* is greater than available",
-   "advice": "ACPI ARM64 IORT driver failed to find a device by an ITS ID but the provided ID index is greater than the available ITS count, driver returned -ENXIO",
-   "label": "KlogAcpiIortBadItsIdIndex"
-  },
-  {
-   "compare_mode": "string",
-   "log_level": "LOG_LEVEL_HIGH",
-   "pattern": "ID map has NULL parent reference",
+    "pattern": "ID map has NULL parent reference",
    "advice": "ACPI ARM64 IORT driver failed to get an IORT node ID, the map parent reference was NULL which is indicative of a firmware bug in the ACPI I/O Remapping Table",
    "label": "KlogAcpiIortIdMapNull"
   },
