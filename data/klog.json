@@ -6362,19 +6362,12 @@
    "log_level": "LOG_LEVEL_HIGH",
    "pattern": "_OSC request failed",
    "advice": "The _OSC method evaluation failed for some unknown reason. This could be that the data passed to it was incorrect or that the method itself is broken. See section 6.2.10 _OSC (Operating System Capabilities) of the ACPI specification for more details.",
-   "label": "KlogOscRequestFailed"
-  },
-  {
-   "compare_mode": "string",
-   "log_level": "LOG_LEVEL_HIGH",
-   "pattern": "_OSC request failed",
-   "advice": "The _OSC method evaluation failed for some unknown reason. This could be that the data passed to it was incorrect or that the method itself is broken. See section 6.2.10 _OSC (Operating System Capabilities) of the ACPI specification for more details.",
-   "label": "KlogOscRequestFailed"
-  },
-  {
-   "compare_mode": "regex",
-   "log_level": "LOG_LEVEL_CRITICAL",
-   "pattern": "ACPI Error.*Field.*exceeds Buffer",
+    "label": "KlogOscRequestFailed"
+   },
+   {
+    "compare_mode": "regex",
+    "log_level": "LOG_LEVEL_CRITICAL",
+    "pattern": "ACPI Error.*Field.*exceeds Buffer",
    "advice": "The field exceeds the allocated buffer size. This can lead to unexpected results when fetching data outside this region.",
    "label": "KlogAcpiFieldexceedsBuffer"
   },
