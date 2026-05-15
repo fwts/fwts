@@ -1406,19 +1406,12 @@
    "log_level": "LOG_LEVEL_MEDIUM",
    "pattern": "SRAT: Failed to mark hotplug range",
    "advice": "A hotpluggable memory range failed to be marked as hotpluggable. This generally occurs because the memory range is invalid and may overlap other memory regions.",
-   "label": "KlogAcpiSratNotUsed"
-  },
-  {
-   "compare_mode": "string",
-   "log_level": "LOG_LEVEL_HIGH",
-   "pattern": "SRAT: Unexpected header length",
-   "advice": "The NUMA affinity configuration could not be determined because the ACPI SRAT table header was the incorrect size.",
-   "label": "KlogAcpiSratBadHeader"
-  },
-  {
-   "compare_mode": "string",
-   "log_level": "LOG_LEVEL_HIGH",
-   "pattern": "SRAT: Too many proximity domains",
+    "label": "KlogAcpiSratNotUsed"
+   },
+   {
+    "compare_mode": "string",
+    "log_level": "LOG_LEVEL_HIGH",
+    "pattern": "SRAT: Too many proximity domains",
    "advice": "The NUMA affinity configuration failed because the number of NUMA nodes is greater than the system defined hard limit of 1 << CONFIG_NODES_SHIFT.  The kernel config value for CONFIG_NODES_SHIFT needs to be increased.",
    "label": "KlogAcpiSratTooManyNodes"
   },
