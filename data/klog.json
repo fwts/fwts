@@ -886,14 +886,7 @@
    {
     "compare_mode": "string",
     "log_level": "LOG_LEVEL_HIGH",
-    "pattern": "SRAT: Failed to mark hotplug range",
-   "advice": "The ACPI NUMA driver failed to mark a NUMA memory plug as hotpluggable.",
-   "label": "KlogAcpiNumaMemblkHotplugFailure",
-  },
-  {
-   "compare_mode": "string",
-   "log_level": "LOG_LEVEL_HIGH",
-   "pattern": "ACPI NUMA: Too many proximity domains while processing CFMWS",
+    "pattern": "ACPI NUMA: Too many proximity domains while processing CFMWS",
    "advice": "The ACPI NUMA driver failed to map the pxm to the node while processing CFMWS.",
    "label": "KlogAcpiMapNodeFail",
   },
