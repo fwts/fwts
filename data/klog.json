@@ -881,19 +881,12 @@
    "log_level": "LOG_LEVEL_HIGH",
    "pattern": "SRAT: Unexpected header length",
    "advice": "An unexpected ACPI System Resource Affinity Table header length has been detected, NUMA will not be enabled.",
-   "label": "KlogAcpiSratBadHeaderLength"
-  },
-  {
-   "compare_mode": "string",
-   "log_level": "LOG_LEVEL_HIGH",
-   "pattern": "SRAT: Too many proximity domains",
-   "advice": "The ACPI System Resource Affinity Table has more proximity domains listed than the maximum kernel defined number of NUMA nodes. The Linux kernel CONFIG_NODES_SHIFT needs to be increaded.",
-   "label": "KlogAcpiSratNumaNodeLimit",
-  },
-  {
-   "compare_mode": "string",
-   "log_level": "LOG_LEVEL_HIGH",
-   "pattern": "SRAT: Failed to add memblk to node",
+    "label": "KlogAcpiSratBadHeaderLength"
+   },
+   {
+    "compare_mode": "string",
+    "log_level": "LOG_LEVEL_HIGH",
+    "pattern": "SRAT: Failed to add memblk to node",
    "advice": "The ACPI NUMA driver failed to add a NUMA memory block to a node. NUMA will not be enabled.",
    "label": "KlogAcpiNumaMemblkAddFailure",
   },
