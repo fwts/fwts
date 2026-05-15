@@ -956,14 +956,7 @@
    {
     "compare_mode": "string",
     "log_level": "LOG_LEVEL_HIGH",
-    "pattern": "amba_device_add() failed",
-   "advice": "ACPI AMBA device ARMH0061 (an ARM PL061 GPIO device) device add failed",
-   "label": "KlogAcpiAmbaDevAddFailed"
-  },
-  {
-   "compare_mode": "string",
-   "log_level": "LOG_LEVEL_HIGH",
-   "pattern": "amba_device_alloc() failed",
+    "pattern": "amba_device_alloc() failed",
    "advice": "ACPI AMBA device ARMH0061 (an ARM PL061 GPIO device) device allocate failed",
    "label": "KlogAcpiAmbaDevAllocFailed"
   },
