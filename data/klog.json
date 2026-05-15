@@ -956,14 +956,7 @@
    {
     "compare_mode": "string",
     "log_level": "LOG_LEVEL_HIGH",
-    "pattern": "Failed to create AML debugger thread",
-   "advice": "The ACPI driver debugger failed to create a kernel thread to allow ACPI debugging, debugger failed to start",
-   "label": "KlogAcpiAmlDebugThreadFailed"
-  },
-  {
-   "compare_mode": "string",
-   "log_level": "LOG_LEVEL_HIGH",
-   "pattern": "amba_device_add() failed",
+    "pattern": "amba_device_add() failed",
    "advice": "ACPI AMBA device ARMH0061 (an ARM PL061 GPIO device) device add failed",
    "label": "KlogAcpiAmbaDevAddFailed"
   },
