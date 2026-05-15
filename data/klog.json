@@ -7624,17 +7624,10 @@
    "log_level": "LOG_LEVEL_HIGH",
    "pattern": "PM: Error",
    "advice": "",
-   "label": "PmError"
-  },
-  {
-   "compare_mode": "string",
-   "log_level": "LOG_LEVEL_HIGH",
-   "pattern": "PM: Some devices failed to power down",
-   "advice": "",
-   "label": "PmDevicesFailedToPowerDown"
-  },
-  {
-   "compare_mode": "string",
+    "label": "PmError"
+   },
+   {
+    "compare_mode": "string",
    "log_level": "LOG_LEVEL_CRITICAL",
    "pattern": "PM: Restore failed, recovering",
    "advice": "A resume from hibernate failed when calling hibernation_restore()",
@@ -7666,19 +7659,12 @@
    "log_level": "LOG_LEVEL_CRITICAL",
    "pattern": "PM: Image mismatch",
    "advice": "Mismatch in kernel version, system type, kernel release version or machine id between suspended kernel and resumed kernel.",
-   "label": "PmKernelMismatch"
-  },
-  {
-   "compare_mode": "string",
-   "log_level": "LOG_LEVEL_CRITICAL",
-   "pattern": "PM: Some devices failed to power down",
-   "advice": "",
-   "label": "PmDevicesFailedToPowerDown"
-  },
-  {
-   "compare_mode": "string",
-   "log_level": "LOG_LEVEL_CRITICAL",
-   "pattern": "PM: Some devices failed to suspend",
+    "label": "PmKernelMismatch"
+   },
+   {
+    "compare_mode": "string",
+    "log_level": "LOG_LEVEL_CRITICAL",
+    "pattern": "PM: Some devices failed to suspend",
    "advice": "",
    "label": "PmDevicesFailedToSuspend"
   },
