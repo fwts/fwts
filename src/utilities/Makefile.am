@@ -16,7 +16,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 
-AM_CPPFLAGS = -Wall -Werror -Wextra -DDATAROOTDIR=\"$(datarootdir)\" 	\
+AM_CPPFLAGS = -Wall $(WERROR) -Wextra -DDATAROOTDIR=\"$(datarootdir)\"	\
 	-I$(srcdir)/../lib/include
 
 bin_PROGRAMS = kernelscan

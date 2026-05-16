@@ -12,7 +12,7 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/src/acpica/source/compiler	\
 	-I$(top_srcdir)/smccc_test			\
 	-pthread					\
-	-Wall -Werror -Wextra				\
+	-Wall $(WERROR) -Wextra				\
 	-Wno-address-of-packed-member			\
 	-Wfloat-equal -Wmissing-declarations		\
 	-Wno-long-long -Wredundant-decls -Wshadow	\

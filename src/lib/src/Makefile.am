@@ -23,7 +23,7 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/src/acpica/source/compiler	\
 	-I$(top_srcdir)/smccc_test                      \
 	-DDATAROOTDIR=\"$(datarootdir)\"		\
-	-Wall -Werror -Wextra				\
+	-Wall $(WERROR) -Wextra				\
 	-Wno-address-of-packed-member
 
 pkglib_LTLIBRARIES = libfwts.la

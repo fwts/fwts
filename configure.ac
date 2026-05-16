@@ -9,6 +9,11 @@
 	  LT_INIT
 	  AC_C_INLINE
 	  AM_PROG_CC_C_O
+	  AC_ARG_ENABLE([werror],
+	  AS_HELP_STRING([--disable-werror], [disable use of -Werror]),
+		[enable_werror=$enableval], [enable_werror=yes])
+	  AS_IF([test x$enable_werror = xyes], [WERROR="-Werror"])
+	  AC_SUBST([WERROR])
   	  AC_CHECK_FUNCS([localtime_r])
 	  AC_CHECK_FUNCS([dup2])
 	  AC_CHECK_FUNCS([getcwd])
