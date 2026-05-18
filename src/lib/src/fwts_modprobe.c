@@ -112,31 +112,6 @@ static bool fwts_module_find(
 }
 
 /*
- *  sys_finit_module()
- *	system call wrapper for finit_module
- */
-static inline int sys_finit_module(
-	int fd,
-	const char *param_values,
-	int flags)
-{
-	errno = 0;
-	return syscall(__NR_finit_module, fd, param_values, flags);
-}
-
-/*
- *  sys_delete_module()
- *	system call wrapper for delete_module
- */
-static inline int sys_delete_module(
-	const char *name,
-	int flags)
-{
-	errno = 0;
-	return syscall(__NR_delete_module, name, flags);
-}
-
-/*
  *  fwts_module_loaded()
  *	check if module is loaded, the name (without .ko suffix) is
  *	provided in string module. Boolean loaded is set to true if
