@@ -36,6 +36,29 @@
 #define PARSER_OK		0
 #define PARSER_COMMENT_FOUND	1
 
+/*
+ *  Known kernel logging prefix macros and their string expansions.
+ *  These are used to expand identifiers like FW_BUG into their
+ *  actual string value so that klog pattern matching works correctly.
+ */
+typedef struct {
+	const char *macro;
+	const char *expansion;
+} macro_expansion;
+
+static const macro_expansion known_macros[] = {
+	{ "FW_BUG",		"[Firmware Bug]: " },
+	{ "FW_WARN",		"[Firmware Warn]: " },
+	{ "FW_INFO",		"[Firmware Info]: " },
+	{ "HW_ERR",		"[Hardware Error]: " },
+	{ "APEI_PFX",		"APEI: " },
+	{ "ERST_DBG_PFX",	"ERST DBG: " },
+	{ "GHES_PFX",		"GHES: " },
+	{ "EINJ_PFX",		"EINJ: " },
+	{ "BERT_PFX",		"BERT: " },
+	{ NULL,			NULL }
+};
+
 #define __JSON_ERR_PTR__ ((json_object*) -1)
 /*
  *  Older versions of json-c may return an error in an
@@ -860,7 +883,7 @@ static void literal_strip_quotes(token *t)
  *  on the heap.  This returns the newly
  *  concatenated string.
  */
-static char *strdupcat(char *old, char *new)
+static char *strdupcat(char *old, const char *new)
 {
 	size_t len = strlen(new);
 	char *tmp;
@@ -883,6 +906,21 @@ static char *strdupcat(char *old, char *new)
 	}
 
 	return tmp;
+}
+
+/*
+ *  Look up an identifier in the known macro table and return
+ *  its string expansion, or NULL if not found.
+ */
+static const char *macro_find(const char *identifier)
+{
+	int i;
+
+	for (i = 0; known_macros[i].macro; i++) {
+		if (!strcmp(identifier, known_macros[i].macro))
+			return known_macros[i].expansion;
+	}
+	return NULL;
 }
 
 /*
@@ -929,6 +967,28 @@ static int parse_kernel_message(parser *p, token *t)
 				line = strdupcat(line, "\"");
 
 			got_string = true;
+		} else if (t->type == TOKEN_IDENTIFIER) {
+			const char *expansion = macro_find(t->token);
+			if (expansion) {
+				/* Expand known macro as a string prefix */
+				str = strdupcat(str, expansion);
+
+				if (!got_string)
+					line = strdupcat(line, "\"");
+
+				got_string = true;
+			} else {
+				if (got_string)
+					line = strdupcat(line, "\"");
+
+				got_string = false;
+
+				if (str) {
+					found |= klog_find(str, klog_patterns);
+					free(str);
+					str = NULL;
+				}
+			}
 		} else {
 			if (got_string)
 				line = strdupcat(line, "\"");
