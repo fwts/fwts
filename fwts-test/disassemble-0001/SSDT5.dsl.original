@@ -1,11 +1,11 @@
 /*
  * Intel ACPI Component Architecture
- * AML/ASL+ Disassembler version 20200925 (64-bit version)
- * Copyright (c) 2000 - 2021 Intel Corporation
+ * AML/ASL+ Disassembler version 20260408 (64-bit version)
+ * Copyright (c) 2000 - 2026 Intel Corporation
  * 
  * Disassembling to non-symbolic legacy ASL operators
  *
- * Disassembly of /tmp/fwts_tmp_table_134815_SSDT_16.dsl, Thu Oct  8 17:07:40 2020
+ * Disassembly of /tmp/fwts_tmp_table_180856_SSDT_16.dsl
  *
  * Original Table Header:
  *     Signature        "SSDT"

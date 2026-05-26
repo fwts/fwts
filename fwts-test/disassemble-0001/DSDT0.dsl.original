@@ -1,11 +1,11 @@
 /*
  * Intel ACPI Component Architecture
- * AML/ASL+ Disassembler version 20181213 (64-bit version)
- * Copyright (c) 2000 - 2018 Intel Corporation
+ * AML/ASL+ Disassembler version 20260408 (64-bit version)
+ * Copyright (c) 2000 - 2026 Intel Corporation
  * 
  * Disassembling to non-symbolic legacy ASL operators
  *
- * Disassembly of /tmp/fwts_tmp_table_26691_DSDT_2.dsl, Thu Dec 13 17:05:02 2018
+ * Disassembly of /tmp/fwts_tmp_table_180856_DSDT_2.dsl
  *
  * Original Table Header:
  *     Signature        "DSDT"
@@ -930,319 +930,238 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                 }
             }
 
-            Name (BUF0, ResourceTemplate ()
+            Name (BUF0, Buffer (0x0208)
             {
-                WordBusNumber (ResourceProducer, MinFixed, MaxFixed, PosDecode,
-                    0x0000,             // Granularity
-                    0x0000,             // Range Minimum
-                    0x00FF,             // Range Maximum
-                    0x0000,             // Translation Offset
-                    0x0100,             // Length
-                    ,, )
-                DWordIO (ResourceProducer, MinFixed, MaxFixed, PosDecode, EntireRange,
-                    0x00000000,         // Granularity
-                    0x00000000,         // Range Minimum
-                    0x00000CF7,         // Range Maximum
-                    0x00000000,         // Translation Offset
-                    0x00000CF8,         // Length
-                    ,, , TypeStatic, DenseTranslation)
-                IO (Decode16,
-                    0x0CF8,             // Range Minimum
-                    0x0CF8,             // Range Maximum
-                    0x01,               // Alignment
-                    0x08,               // Length
-                    )
-                DWordIO (ResourceProducer, MinFixed, MaxFixed, PosDecode, EntireRange,
-                    0x00000000,         // Granularity
-                    0x00000D00,         // Range Minimum
-                    0x0000FFFF,         // Range Maximum
-                    0x00000000,         // Translation Offset
-                    0x0000F300,         // Length
-                    ,, , TypeStatic, DenseTranslation)
-                DWordMemory (ResourceProducer, PosDecode, MinFixed, MaxFixed, Cacheable, ReadWrite,
-                    0x00000000,         // Granularity
-                    0x000A0000,         // Range Minimum
-                    0x000BFFFF,         // Range Maximum
-                    0x00000000,         // Translation Offset
-                    0x00020000,         // Length
-                    ,, , AddressRangeMemory, TypeStatic)
-                DWordMemory (ResourceProducer, PosDecode, MinFixed, MaxFixed, Cacheable, ReadWrite,
-                    0x00000000,         // Granularity
-                    0x000C0000,         // Range Minimum
-                    0x000C3FFF,         // Range Maximum
-                    0x00000000,         // Translation Offset
-                    0x00004000,         // Length
-                    ,, _Y00, AddressRangeMemory, TypeStatic)
-                DWordMemory (ResourceProducer, PosDecode, MinFixed, MaxFixed, Cacheable, ReadWrite,
-                    0x00000000,         // Granularity
-                    0x000C4000,         // Range Minimum
-                    0x000C7FFF,         // Range Maximum
-                    0x00000000,         // Translation Offset
-                    0x00004000,         // Length
-                    ,, _Y01, AddressRangeMemory, TypeStatic)
-                DWordMemory (ResourceProducer, PosDecode, MinFixed, MaxFixed, Cacheable, ReadWrite,
-                    0x00000000,         // Granularity
-                    0x000C8000,         // Range Minimum
-                    0x000CBFFF,         // Range Maximum
-                    0x00000000,         // Translation Offset
-                    0x00004000,         // Length
-                    ,, _Y02, AddressRangeMemory, TypeStatic)
-                DWordMemory (ResourceProducer, PosDecode, MinFixed, MaxFixed, Cacheable, ReadWrite,
-                    0x00000000,         // Granularity
-                    0x000CC000,         // Range Minimum
-                    0x000CFFFF,         // Range Maximum
-                    0x00000000,         // Translation Offset
-                    0x00004000,         // Length
-                    ,, _Y03, AddressRangeMemory, TypeStatic)
-                DWordMemory (ResourceProducer, PosDecode, MinFixed, MaxFixed, Cacheable, ReadWrite,
-                    0x00000000,         // Granularity
-                    0x000D0000,         // Range Minimum
-                    0x000D3FFF,         // Range Maximum
-                    0x00000000,         // Translation Offset
-                    0x00004000,         // Length
-                    ,, _Y04, AddressRangeMemory, TypeStatic)
-                DWordMemory (ResourceProducer, PosDecode, MinFixed, MaxFixed, Cacheable, ReadWrite,
-                    0x00000000,         // Granularity
-                    0x000D4000,         // Range Minimum
-                    0x000D7FFF,         // Range Maximum
-                    0x00000000,         // Translation Offset
-                    0x00004000,         // Length
-                    ,, _Y05, AddressRangeMemory, TypeStatic)
-                DWordMemory (ResourceProducer, PosDecode, MinFixed, MaxFixed, Cacheable, ReadWrite,
-                    0x00000000,         // Granularity
-                    0x000D8000,         // Range Minimum
-                    0x000DBFFF,         // Range Maximum
-                    0x00000000,         // Translation Offset
-                    0x00004000,         // Length
-                    ,, _Y06, AddressRangeMemory, TypeStatic)
-                DWordMemory (ResourceProducer, PosDecode, MinFixed, MaxFixed, Cacheable, ReadWrite,
-                    0x00000000,         // Granularity
-                    0x000DC000,         // Range Minimum
-                    0x000DFFFF,         // Range Maximum
-                    0x00000000,         // Translation Offset
-                    0x00004000,         // Length
-                    ,, _Y07, AddressRangeMemory, TypeStatic)
-                DWordMemory (ResourceProducer, PosDecode, MinFixed, MaxFixed, Cacheable, ReadWrite,
-                    0x00000000,         // Granularity
-                    0x000E0000,         // Range Minimum
-                    0x000E3FFF,         // Range Maximum
-                    0x00000000,         // Translation Offset
-                    0x00004000,         // Length
-                    ,, _Y08, AddressRangeMemory, TypeStatic)
-                DWordMemory (ResourceProducer, PosDecode, MinFixed, MaxFixed, Cacheable, ReadWrite,
-                    0x00000000,         // Granularity
-                    0x000E4000,         // Range Minimum
-                    0x000E7FFF,         // Range Maximum
-                    0x00000000,         // Translation Offset
-                    0x00004000,         // Length
-                    ,, _Y09, AddressRangeMemory, TypeStatic)
-                DWordMemory (ResourceProducer, PosDecode, MinFixed, MaxFixed, Cacheable, ReadWrite,
-                    0x00000000,         // Granularity
-                    0x000E8000,         // Range Minimum
-                    0x000EBFFF,         // Range Maximum
-                    0x00000000,         // Translation Offset
-                    0x00004000,         // Length
-                    ,, _Y0A, AddressRangeMemory, TypeStatic)
-                DWordMemory (ResourceProducer, PosDecode, MinFixed, MaxFixed, Cacheable, ReadWrite,
-                    0x00000000,         // Granularity
-                    0x000EC000,         // Range Minimum
-                    0x000EFFFF,         // Range Maximum
-                    0x00000000,         // Translation Offset
-                    0x00004000,         // Length
-                    ,, _Y0B, AddressRangeMemory, TypeStatic)
-                DWordMemory (ResourceProducer, PosDecode, MinFixed, MaxFixed, Cacheable, ReadWrite,
-                    0x00000000,         // Granularity
-                    0x000F0000,         // Range Minimum
-                    0x000FFFFF,         // Range Maximum
-                    0x00000000,         // Translation Offset
-                    0x00010000,         // Length
-                    ,, _Y0C, AddressRangeMemory, TypeStatic)
-                DWordMemory (ResourceProducer, PosDecode, MinFixed, MaxFixed, Cacheable, ReadWrite,
-                    0x00000000,         // Granularity
-                    0x00000000,         // Range Minimum
-                    0xDFFFFFFF,         // Range Maximum
-                    0x00000000,         // Translation Offset
-                    0x00000000,         // Length
-                    ,, _Y0D, AddressRangeMemory, TypeStatic)
-                DWordMemory (ResourceProducer, PosDecode, MinFixed, MaxFixed, Cacheable, ReadWrite,
-                    0x00000000,         // Granularity
-                    0xF0000000,         // Range Minimum
-                    0xFEBFFFFF,         // Range Maximum
-                    0x00000000,         // Translation Offset
-                    0x0EC00000,         // Length
-                    ,, _Y0E, AddressRangeMemory, TypeStatic)
-                DWordMemory (ResourceProducer, PosDecode, MinFixed, MaxFixed, Cacheable, ReadWrite,
-                    0x00000000,         // Granularity
-                    0xFED40000,         // Range Minimum
-                    0xFED44FFF,         // Range Maximum
-                    0x00000000,         // Translation Offset
-                    0x00000000,         // Length
-                    ,, , AddressRangeMemory, TypeStatic)
+                /* 0000 */  0x88, 0x0D, 0x00, 0x02, 0x0C, 0x00, 0x00, 0x00,  // ........
+                /* 0008 */  0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x01,  // ........
+                /* 0010 */  0x87, 0x17, 0x00, 0x01, 0x0C, 0x03, 0x00, 0x00,  // ........
+                /* 0018 */  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xF7, 0x0C,  // ........
+                /* 0020 */  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xF8, 0x0C,  // ........
+                /* 0028 */  0x00, 0x00, 0x47, 0x01, 0xF8, 0x0C, 0xF8, 0x0C,  // ..G.....
+                /* 0030 */  0x01, 0x08, 0x87, 0x17, 0x00, 0x01, 0x0C, 0x03,  // ........
+                /* 0038 */  0x00, 0x00, 0x00, 0x00, 0x00, 0x0D, 0x00, 0x00,  // ........
+                /* 0040 */  0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  // ........
+                /* 0048 */  0x00, 0xF3, 0x00, 0x00, 0x87, 0x17, 0x00, 0x00,  // ........
+                /* 0050 */  0x0C, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  // ........
+                /* 0058 */  0x0A, 0x00, 0xFF, 0xFF, 0x0B, 0x00, 0x00, 0x00,  // ........
+                /* 0060 */  0x00, 0x00, 0x00, 0x00, 0x02, 0x00, 0x87, 0x17,  // ........
+                /* 0068 */  0x00, 0x00, 0x0C, 0x03, 0x00, 0x00, 0x00, 0x00,  // ........
+                /* 0070 */  0x00, 0x00, 0x0C, 0x00, 0xFF, 0x3F, 0x0C, 0x00,  // .....?..
+                /* 0078 */  0x00, 0x00, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00,  // .....@..
+                /* 0080 */  0x87, 0x17, 0x00, 0x00, 0x0C, 0x03, 0x00, 0x00,  // ........
+                /* 0088 */  0x00, 0x00, 0x00, 0x40, 0x0C, 0x00, 0xFF, 0x7F,  // ...@....
+                /* 0090 */  0x0C, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x40,  // .......@
+                /* 0098 */  0x00, 0x00, 0x87, 0x17, 0x00, 0x00, 0x0C, 0x03,  // ........
+                /* 00A0 */  0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0x0C, 0x00,  // ........
+                /* 00A8 */  0xFF, 0xBF, 0x0C, 0x00, 0x00, 0x00, 0x00, 0x00,  // ........
+                /* 00B0 */  0x00, 0x40, 0x00, 0x00, 0x87, 0x17, 0x00, 0x00,  // .@......
+                /* 00B8 */  0x0C, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0xC0,  // ........
+                /* 00C0 */  0x0C, 0x00, 0xFF, 0xFF, 0x0C, 0x00, 0x00, 0x00,  // ........
+                /* 00C8 */  0x00, 0x00, 0x00, 0x40, 0x00, 0x00, 0x87, 0x17,  // ...@....
+                /* 00D0 */  0x00, 0x00, 0x0C, 0x03, 0x00, 0x00, 0x00, 0x00,  // ........
+                /* 00D8 */  0x00, 0x00, 0x0D, 0x00, 0xFF, 0x3F, 0x0D, 0x00,  // .....?..
+                /* 00E0 */  0x00, 0x00, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00,  // .....@..
+                /* 00E8 */  0x87, 0x17, 0x00, 0x00, 0x0C, 0x03, 0x00, 0x00,  // ........
+                /* 00F0 */  0x00, 0x00, 0x00, 0x40, 0x0D, 0x00, 0xFF, 0x7F,  // ...@....
+                /* 00F8 */  0x0D, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x40,  // .......@
+                /* 0100 */  0x00, 0x00, 0x87, 0x17, 0x00, 0x00, 0x0C, 0x03,  // ........
+                /* 0108 */  0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0x0D, 0x00,  // ........
+                /* 0110 */  0xFF, 0xBF, 0x0D, 0x00, 0x00, 0x00, 0x00, 0x00,  // ........
+                /* 0118 */  0x00, 0x40, 0x00, 0x00, 0x87, 0x17, 0x00, 0x00,  // .@......
+                /* 0120 */  0x0C, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0xC0,  // ........
+                /* 0128 */  0x0D, 0x00, 0xFF, 0xFF, 0x0D, 0x00, 0x00, 0x00,  // ........
+                /* 0130 */  0x00, 0x00, 0x00, 0x40, 0x00, 0x00, 0x87, 0x17,  // ...@....
+                /* 0138 */  0x00, 0x00, 0x0C, 0x03, 0x00, 0x00, 0x00, 0x00,  // ........
+                /* 0140 */  0x00, 0x00, 0x0E, 0x00, 0xFF, 0x3F, 0x0E, 0x00,  // .....?..
+                /* 0148 */  0x00, 0x00, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00,  // .....@..
+                /* 0150 */  0x87, 0x17, 0x00, 0x00, 0x0C, 0x03, 0x00, 0x00,  // ........
+                /* 0158 */  0x00, 0x00, 0x00, 0x40, 0x0E, 0x00, 0xFF, 0x7F,  // ...@....
+                /* 0160 */  0x0E, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x40,  // .......@
+                /* 0168 */  0x00, 0x00, 0x87, 0x17, 0x00, 0x00, 0x0C, 0x03,  // ........
+                /* 0170 */  0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0x0E, 0x00,  // ........
+                /* 0178 */  0xFF, 0xBF, 0x0E, 0x00, 0x00, 0x00, 0x00, 0x00,  // ........
+                /* 0180 */  0x00, 0x40, 0x00, 0x00, 0x87, 0x17, 0x00, 0x00,  // .@......
+                /* 0188 */  0x0C, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0xC0,  // ........
+                /* 0190 */  0x0E, 0x00, 0xFF, 0xFF, 0x0E, 0x00, 0x00, 0x00,  // ........
+                /* 0198 */  0x00, 0x00, 0x00, 0x40, 0x00, 0x00, 0x87, 0x17,  // ...@....
+                /* 01A0 */  0x00, 0x00, 0x0C, 0x03, 0x00, 0x00, 0x00, 0x00,  // ........
+                /* 01A8 */  0x00, 0x00, 0x0F, 0x00, 0xFF, 0xFF, 0x0F, 0x00,  // ........
+                /* 01B0 */  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00,  // ........
+                /* 01B8 */  0x87, 0x17, 0x00, 0x00, 0x0C, 0x03, 0x00, 0x00,  // ........
+                /* 01C0 */  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF,  // ........
+                /* 01C8 */  0xFF, 0xDF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  // ........
+                /* 01D0 */  0x00, 0x00, 0x87, 0x17, 0x00, 0x00, 0x0C, 0x03,  // ........
+                /* 01D8 */  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xF0,  // ........
+                /* 01E0 */  0xFF, 0xFF, 0xBF, 0xFE, 0x00, 0x00, 0x00, 0x00,  // ........
+                /* 01E8 */  0x00, 0x00, 0xC0, 0x0E, 0x87, 0x17, 0x00, 0x00,  // ........
+                /* 01F0 */  0x0C, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,  // ........
+                /* 01F8 */  0xD4, 0xFE, 0xFF, 0x4F, 0xD4, 0xFE, 0x00, 0x00,  // ...O....
+                /* 0200 */  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x79, 0x00   // ......y.
             })
             Method (_CRS, 0, Serialized)  // _CRS: Current Resource Settings
             {
                 If (^MCHC.PM1L)
                 {
-                    CreateDWordField (BUF0, \_SB.PCI0._Y00._LEN, C0LN)  // _LEN: Length
+                    CreateDWordField (BUF0, 0x7C, C0LN)
                     Store (Zero, C0LN) /* \_SB_.PCI0._CRS.C0LN */
                 }
 
                 If (LEqual (^MCHC.PM1L, One))
                 {
-                    CreateBitField (BUF0, \_SB.PCI0._Y00._RW, C0RW)  // _RW_: Read-Write Status
+                    CreateBitField (BUF0, 0x0358, C0RW)
                     Store (Zero, C0RW) /* \_SB_.PCI0._CRS.C0RW */
                 }
 
                 If (^MCHC.PM1H)
                 {
-                    CreateDWordField (BUF0, \_SB.PCI0._Y01._LEN, C4LN)  // _LEN: Length
+                    CreateDWordField (BUF0, 0x96, C4LN)
                     Store (Zero, C4LN) /* \_SB_.PCI0._CRS.C4LN */
                 }
 
                 If (LEqual (^MCHC.PM1H, One))
                 {
-                    CreateBitField (BUF0, \_SB.PCI0._Y01._RW, C4RW)  // _RW_: Read-Write Status
+                    CreateBitField (BUF0, 0x0428, C4RW)
                     Store (Zero, C4RW) /* \_SB_.PCI0._CRS.C4RW */
                 }
 
                 If (^MCHC.PM2L)
                 {
-                    CreateDWordField (BUF0, \_SB.PCI0._Y02._LEN, C8LN)  // _LEN: Length
+                    CreateDWordField (BUF0, 0xB0, C8LN)
                     Store (Zero, C8LN) /* \_SB_.PCI0._CRS.C8LN */
                 }
 
                 If (LEqual (^MCHC.PM2L, One))
                 {
-                    CreateBitField (BUF0, \_SB.PCI0._Y02._RW, C8RW)  // _RW_: Read-Write Status
+                    CreateBitField (BUF0, 0x04F8, C8RW)
                     Store (Zero, C8RW) /* \_SB_.PCI0._CRS.C8RW */
                 }
 
                 If (^MCHC.PM2H)
                 {
-                    CreateDWordField (BUF0, \_SB.PCI0._Y03._LEN, CCLN)  // _LEN: Length
+                    CreateDWordField (BUF0, 0xCA, CCLN)
                     Store (Zero, CCLN) /* \_SB_.PCI0._CRS.CCLN */
                 }
 
                 If (LEqual (^MCHC.PM2H, One))
                 {
-                    CreateBitField (BUF0, \_SB.PCI0._Y03._RW, CCRW)  // _RW_: Read-Write Status
+                    CreateBitField (BUF0, 0x05C8, CCRW)
                     Store (Zero, CCRW) /* \_SB_.PCI0._CRS.CCRW */
                 }
 
                 If (^MCHC.PM3L)
                 {
-                    CreateDWordField (BUF0, \_SB.PCI0._Y04._LEN, D0LN)  // _LEN: Length
+                    CreateDWordField (BUF0, 0xE4, D0LN)
                     Store (Zero, D0LN) /* \_SB_.PCI0._CRS.D0LN */
                 }
 
                 If (LEqual (^MCHC.PM3L, One))
                 {
-                    CreateBitField (BUF0, \_SB.PCI0._Y04._RW, D0RW)  // _RW_: Read-Write Status
+                    CreateBitField (BUF0, 0x0698, D0RW)
                     Store (Zero, D0RW) /* \_SB_.PCI0._CRS.D0RW */
                 }
 
                 If (^MCHC.PM3H)
                 {
-                    CreateDWordField (BUF0, \_SB.PCI0._Y05._LEN, D4LN)  // _LEN: Length
+                    CreateDWordField (BUF0, 0xFE, D4LN)
                     Store (Zero, D4LN) /* \_SB_.PCI0._CRS.D4LN */
                 }
 
                 If (LEqual (^MCHC.PM3H, One))
                 {
-                    CreateBitField (BUF0, \_SB.PCI0._Y05._RW, D4RW)  // _RW_: Read-Write Status
+                    CreateBitField (BUF0, 0x0768, D4RW)
                     Store (Zero, D4RW) /* \_SB_.PCI0._CRS.D4RW */
                 }
 
                 If (^MCHC.PM4L)
                 {
-                    CreateDWordField (BUF0, \_SB.PCI0._Y06._LEN, D8LN)  // _LEN: Length
+                    CreateDWordField (BUF0, 0x0118, D8LN)
                     Store (Zero, D8LN) /* \_SB_.PCI0._CRS.D8LN */
                 }
 
                 If (LEqual (^MCHC.PM4L, One))
                 {
-                    CreateBitField (BUF0, \_SB.PCI0._Y06._RW, D8RW)  // _RW_: Read-Write Status
+                    CreateBitField (BUF0, 0x0838, D8RW)
                     Store (Zero, D8RW) /* \_SB_.PCI0._CRS.D8RW */
                 }
 
                 If (^MCHC.PM4H)
                 {
-                    CreateDWordField (BUF0, \_SB.PCI0._Y07._LEN, DCLN)  // _LEN: Length
+                    CreateDWordField (BUF0, 0x0132, DCLN)
                     Store (Zero, DCLN) /* \_SB_.PCI0._CRS.DCLN */
                 }
 
                 If (LEqual (^MCHC.PM4H, One))
                 {
-                    CreateBitField (BUF0, \_SB.PCI0._Y07._RW, DCRW)  // _RW_: Read-Write Status
+                    CreateBitField (BUF0, 0x0908, DCRW)
                     Store (Zero, DCRW) /* \_SB_.PCI0._CRS.DCRW */
                 }
 
                 If (^MCHC.PM5L)
                 {
-                    CreateDWordField (BUF0, \_SB.PCI0._Y08._LEN, E0LN)  // _LEN: Length
+                    CreateDWordField (BUF0, 0x014C, E0LN)
                     Store (Zero, E0LN) /* \_SB_.PCI0._CRS.E0LN */
                 }
 
                 If (LEqual (^MCHC.PM5L, One))
                 {
-                    CreateBitField (BUF0, \_SB.PCI0._Y08._RW, E0RW)  // _RW_: Read-Write Status
+                    CreateBitField (BUF0, 0x09D8, E0RW)
                     Store (Zero, E0RW) /* \_SB_.PCI0._CRS.E0RW */
                 }
 
                 If (^MCHC.PM5H)
                 {
-                    CreateDWordField (BUF0, \_SB.PCI0._Y09._LEN, E4LN)  // _LEN: Length
+                    CreateDWordField (BUF0, 0x0166, E4LN)
                     Store (Zero, E4LN) /* \_SB_.PCI0._CRS.E4LN */
                 }
 
                 If (LEqual (^MCHC.PM5H, One))
                 {
-                    CreateBitField (BUF0, \_SB.PCI0._Y09._RW, E4RW)  // _RW_: Read-Write Status
+                    CreateBitField (BUF0, 0x0AA8, E4RW)
                     Store (Zero, E4RW) /* \_SB_.PCI0._CRS.E4RW */
                 }
 
                 If (^MCHC.PM6L)
                 {
-                    CreateDWordField (BUF0, \_SB.PCI0._Y0A._LEN, E8LN)  // _LEN: Length
+                    CreateDWordField (BUF0, 0x0180, E8LN)
                     Store (Zero, E8LN) /* \_SB_.PCI0._CRS.E8LN */
                 }
 
                 If (LEqual (^MCHC.PM6L, One))
                 {
-                    CreateBitField (BUF0, \_SB.PCI0._Y0A._RW, E8RW)  // _RW_: Read-Write Status
+                    CreateBitField (BUF0, 0x0B78, E8RW)
                     Store (Zero, E8RW) /* \_SB_.PCI0._CRS.E8RW */
                 }
 
                 If (^MCHC.PM6H)
                 {
-                    CreateDWordField (BUF0, \_SB.PCI0._Y0B._LEN, ECLN)  // _LEN: Length
+                    CreateDWordField (BUF0, 0x019A, ECLN)
                     Store (Zero, ECLN) /* \_SB_.PCI0._CRS.ECLN */
                 }
 
                 If (LEqual (^MCHC.PM6H, One))
                 {
-                    CreateBitField (BUF0, \_SB.PCI0._Y0B._RW, ECRW)  // _RW_: Read-Write Status
+                    CreateBitField (BUF0, 0x0C48, ECRW)
                     Store (Zero, ECRW) /* \_SB_.PCI0._CRS.ECRW */
                 }
 
                 If (^MCHC.PM0H)
                 {
-                    CreateDWordField (BUF0, \_SB.PCI0._Y0C._LEN, F0LN)  // _LEN: Length
+                    CreateDWordField (BUF0, 0x01B4, F0LN)
                     Store (Zero, F0LN) /* \_SB_.PCI0._CRS.F0LN */
                 }
 
                 If (LEqual (^MCHC.PM0H, One))
                 {
-                    CreateBitField (BUF0, \_SB.PCI0._Y0C._RW, F0RW)  // _RW_: Read-Write Status
+                    CreateBitField (BUF0, 0x0D18, F0RW)
                     Store (Zero, F0RW) /* \_SB_.PCI0._CRS.F0RW */
                 }
 
-                CreateDWordField (BUF0, \_SB.PCI0._Y0D._MIN, M1MN)  // _MIN: Minimum Base Address
-                CreateDWordField (BUF0, \_SB.PCI0._Y0D._MAX, M1MX)  // _MAX: Maximum Base Address
-                CreateDWordField (BUF0, \_SB.PCI0._Y0D._LEN, M1LN)  // _LEN: Length
-                CreateDWordField (BUF0, \_SB.PCI0._Y0E._MIN, M2MN)  // _MIN: Minimum Base Address
-                CreateDWordField (BUF0, \_SB.PCI0._Y0E._MAX, M2MX)  // _MAX: Maximum Base Address
-                CreateDWordField (BUF0, \_SB.PCI0._Y0E._LEN, M2LN)  // _LEN: Length
+                CreateDWordField (BUF0, 0x01C2, M1MN)
+                CreateDWordField (BUF0, 0x01C6, M1MX)
+                CreateDWordField (BUF0, 0x01CE, M1LN)
+                CreateDWordField (BUF0, 0x01DC, M2MN)
+                CreateDWordField (BUF0, 0x01E0, M2MX)
+                CreateDWordField (BUF0, 0x01E8, M2LN)
                 ShiftLeft (^MCHC.PXBR, 0x1A, M1MX) /* \_SB_.PCI0._CRS.M1MX */
                 ShiftRight (0x10000000, ^MCHC.PXSZ, Local0)
                 Add (M1MX, Local0, M2MN) /* \_SB_.PCI0._CRS.M2MN */
@@ -1420,7 +1339,7 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                         {
                             0x0001FFFF, 
                             Zero, 
-                            ^LPCB.LNKA, 
+                            ^LPCB.LNKA, , 
                             Zero
                         }, 
 
@@ -1428,7 +1347,7 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                         {
                             0x0002FFFF, 
                             Zero, 
-                            ^LPCB.LNKA, 
+                            ^LPCB.LNKA, , 
                             Zero
                         }, 
 
@@ -1436,7 +1355,7 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                         {
                             0x0007FFFF, 
                             Zero, 
-                            ^LPCB.LNKA, 
+                            ^LPCB.LNKA, , 
                             Zero
                         }, 
 
@@ -1444,7 +1363,7 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                         {
                             0x0019FFFF, 
                             Zero, 
-                            ^LPCB.LNKE, 
+                            ^LPCB.LNKE, , 
                             Zero
                         }, 
 
@@ -1452,7 +1371,7 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                         {
                             0x001AFFFF, 
                             Zero, 
-                            ^LPCB.LNKA, 
+                            ^LPCB.LNKA, , 
                             Zero
                         }, 
 
@@ -1460,7 +1379,7 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                         {
                             0x001AFFFF, 
                             One, 
-                            ^LPCB.LNKF, 
+                            ^LPCB.LNKF, , 
                             Zero
                         }, 
 
@@ -1468,7 +1387,7 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                         {
                             0x001AFFFF, 
                             0x02, 
-                            ^LPCB.LNKC, 
+                            ^LPCB.LNKC, , 
                             Zero
                         }, 
 
@@ -1476,7 +1395,7 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                         {
                             0x001BFFFF, 
                             Zero, 
-                            ^LPCB.LNKG, 
+                            ^LPCB.LNKG, , 
                             Zero
                         }, 
 
@@ -1484,7 +1403,7 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                         {
                             0x001CFFFF, 
                             Zero, 
-                            ^LPCB.LNKB, 
+                            ^LPCB.LNKB, , 
                             Zero
                         }, 
 
@@ -1492,7 +1411,7 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                         {
                             0x001CFFFF, 
                             One, 
-                            ^LPCB.LNKA, 
+                            ^LPCB.LNKA, , 
                             Zero
                         }, 
 
@@ -1500,7 +1419,7 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                         {
                             0x001CFFFF, 
                             0x02, 
-                            ^LPCB.LNKC, 
+                            ^LPCB.LNKC, , 
                             Zero
                         }, 
 
@@ -1508,7 +1427,7 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                         {
                             0x001CFFFF, 
                             0x03, 
-                            ^LPCB.LNKD, 
+                            ^LPCB.LNKD, , 
                             Zero
                         }, 
 
@@ -1516,7 +1435,7 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                         {
                             0x001DFFFF, 
                             Zero, 
-                            ^LPCB.LNKH, 
+                            ^LPCB.LNKH, , 
                             Zero
                         }, 
 
@@ -1524,7 +1443,7 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                         {
                             0x001DFFFF, 
                             One, 
-                            ^LPCB.LNKD, 
+                            ^LPCB.LNKD, , 
                             Zero
                         }, 
 
@@ -1532,7 +1451,7 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                         {
                             0x001DFFFF, 
                             0x02, 
-                            ^LPCB.LNKC, 
+                            ^LPCB.LNKC, , 
                             Zero
                         }, 
 
@@ -1540,7 +1459,7 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                         {
                             0x001FFFFF, 
                             Zero, 
-                            ^LPCB.LNKD, 
+                            ^LPCB.LNKD, , 
                             Zero
                         }, 
 
@@ -1548,7 +1467,7 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                         {
                             0x001FFFFF, 
                             One, 
-                            ^LPCB.LNKD, 
+                            ^LPCB.LNKD, , 
                             Zero
                         }, 
 
@@ -1556,7 +1475,7 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                         {
                             0x001FFFFF, 
                             0x02, 
-                            ^LPCB.LNKD, 
+                            ^LPCB.LNKD, , 
                             Zero
                         }, 
 
@@ -1564,7 +1483,7 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                         {
                             0x001FFFFF, 
                             0x03, 
-                            ^LPCB.LNKA, 
+                            ^LPCB.LNKA, , 
                             Zero
                         }
                     })
@@ -1575,54 +1494,35 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
             {
                 Name (_HID, EisaId ("PNP0C02") /* PNP Motherboard Resources */)  // _HID: Hardware ID
                 Name (_UID, One)  // _UID: Unique ID
-                Name (BUF0, ResourceTemplate ()
+                Name (BUF0, Buffer (0x62)
                 {
-                    Memory32Fixed (ReadWrite,
-                        0x00000000,         // Address Base
-                        0x00004000,         // Address Length
-                        _Y0F)
-                    Memory32Fixed (ReadWrite,
-                        0x00000000,         // Address Base
-                        0x00004000,         // Address Length
-                        _Y10)
-                    Memory32Fixed (ReadWrite,
-                        0x00000000,         // Address Base
-                        0x00001000,         // Address Length
-                        _Y11)
-                    Memory32Fixed (ReadWrite,
-                        0x00000000,         // Address Base
-                        0x00001000,         // Address Length
-                        _Y12)
-                    Memory32Fixed (ReadWrite,
-                        0x00000000,         // Address Base
-                        0x00000000,         // Address Length
-                        _Y13)
-                    Memory32Fixed (ReadWrite,
-                        0xFED20000,         // Address Base
-                        0x00020000,         // Address Length
-                        )
-                    Memory32Fixed (ReadWrite,
-                        0xFED40000,         // Address Base
-                        0x00005000,         // Address Length
-                        )
-                    Memory32Fixed (ReadWrite,
-                        0xFED45000,         // Address Base
-                        0x0004B000,         // Address Length
-                        )
+                    /* 0000 */  0x86, 0x09, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00,  // ........
+                    /* 0008 */  0x00, 0x40, 0x00, 0x00, 0x86, 0x09, 0x00, 0x01,  // .@......
+                    /* 0010 */  0x00, 0x00, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00,  // .....@..
+                    /* 0018 */  0x86, 0x09, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00,  // ........
+                    /* 0020 */  0x00, 0x10, 0x00, 0x00, 0x86, 0x09, 0x00, 0x01,  // ........
+                    /* 0028 */  0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x00, 0x00,  // ........
+                    /* 0030 */  0x86, 0x09, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00,  // ........
+                    /* 0038 */  0x00, 0x00, 0x00, 0x00, 0x86, 0x09, 0x00, 0x01,  // ........
+                    /* 0040 */  0x00, 0x00, 0xD2, 0xFE, 0x00, 0x00, 0x02, 0x00,  // ........
+                    /* 0048 */  0x86, 0x09, 0x00, 0x01, 0x00, 0x00, 0xD4, 0xFE,  // ........
+                    /* 0050 */  0x00, 0x50, 0x00, 0x00, 0x86, 0x09, 0x00, 0x01,  // .P......
+                    /* 0058 */  0x00, 0x50, 0xD4, 0xFE, 0x00, 0xB0, 0x04, 0x00,  // .P......
+                    /* 0060 */  0x79, 0x00                                       // y.
                 })
                 Method (_CRS, 0, Serialized)  // _CRS: Current Resource Settings
                 {
-                    CreateDWordField (BUF0, \_SB.PCI0.PDRC._Y0F._BAS, RBR0)  // _BAS: Base Address
+                    CreateDWordField (BUF0, 0x04, RBR0)
                     ShiftLeft (^^LPCB.RCBA, 0x0E, RBR0) /* \_SB_.PCI0.PDRC._CRS.RBR0 */
-                    CreateDWordField (BUF0, \_SB.PCI0.PDRC._Y10._BAS, MBR0)  // _BAS: Base Address
+                    CreateDWordField (BUF0, 0x10, MBR0)
                     ShiftLeft (^^MCHC.MHBR, 0x0E, MBR0) /* \_SB_.PCI0.PDRC._CRS.MBR0 */
-                    CreateDWordField (BUF0, \_SB.PCI0.PDRC._Y11._BAS, DBR0)  // _BAS: Base Address
+                    CreateDWordField (BUF0, 0x1C, DBR0)
                     ShiftLeft (^^MCHC.DIBR, 0x0C, DBR0) /* \_SB_.PCI0.PDRC._CRS.DBR0 */
-                    CreateDWordField (BUF0, \_SB.PCI0.PDRC._Y12._BAS, EBR0)  // _BAS: Base Address
+                    CreateDWordField (BUF0, 0x28, EBR0)
                     ShiftLeft (^^MCHC.EPBR, 0x0C, EBR0) /* \_SB_.PCI0.PDRC._CRS.EBR0 */
-                    CreateDWordField (BUF0, \_SB.PCI0.PDRC._Y13._BAS, XBR0)  // _BAS: Base Address
+                    CreateDWordField (BUF0, 0x34, XBR0)
                     ShiftLeft (^^MCHC.PXBR, 0x1A, XBR0) /* \_SB_.PCI0.PDRC._CRS.XBR0 */
-                    CreateDWordField (BUF0, \_SB.PCI0.PDRC._Y13._LEN, XSZ0)  // _LEN: Length
+                    CreateDWordField (BUF0, 0x38, XSZ0)
                     ShiftRight (0x10000000, ^^MCHC.PXSZ, XSZ0) /* \_SB_.PCI0.PDRC._CRS.XSZ0 */
                     Return (BUF0) /* \_SB_.PCI0.PDRC.BUF0 */
                 }
@@ -1678,7 +1578,7 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                             {
                                 0xFFFF, 
                                 Zero, 
-                                ^^LPCB.LNKA, 
+                                ^^LPCB.LNKA, , 
                                 Zero
                             }, 
 
@@ -1686,7 +1586,7 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                             {
                                 0xFFFF, 
                                 One, 
-                                ^^LPCB.LNKB, 
+                                ^^LPCB.LNKB, , 
                                 Zero
                             }, 
 
@@ -1694,7 +1594,7 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                             {
                                 0xFFFF, 
                                 0x02, 
-                                ^^LPCB.LNKC, 
+                                ^^LPCB.LNKC, , 
                                 Zero
                             }, 
 
@@ -1702,7 +1602,7 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                             {
                                 0xFFFF, 
                                 0x03, 
-                                ^^LPCB.LNKD, 
+                                ^^LPCB.LNKD, , 
                                 Zero
                             }
                         })
@@ -3520,7 +3420,7 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                             {
                                 0xFFFF, 
                                 Zero, 
-                                ^^LPCB.LNKA, 
+                                ^^LPCB.LNKA, , 
                                 Zero
                             }, 
 
@@ -3528,7 +3428,7 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                             {
                                 0xFFFF, 
                                 One, 
-                                ^^LPCB.LNKB, 
+                                ^^LPCB.LNKB, , 
                                 Zero
                             }, 
 
@@ -3536,7 +3436,7 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                             {
                                 0xFFFF, 
                                 0x02, 
-                                ^^LPCB.LNKC, 
+                                ^^LPCB.LNKC, , 
                                 Zero
                             }, 
 
@@ -3544,7 +3444,7 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                             {
                                 0xFFFF, 
                                 0x03, 
-                                ^^LPCB.LNKD, 
+                                ^^LPCB.LNKD, , 
                                 Zero
                             }
                         })
@@ -3630,7 +3530,7 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                             {
                                 0xFFFF, 
                                 Zero, 
-                                ^^LPCB.LNKB, 
+                                ^^LPCB.LNKB, , 
                                 Zero
                             }, 
 
@@ -3638,7 +3538,7 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                             {
                                 0xFFFF, 
                                 One, 
-                                ^^LPCB.LNKC, 
+                                ^^LPCB.LNKC, , 
                                 Zero
                             }, 
 
@@ -3646,7 +3546,7 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                             {
                                 0xFFFF, 
                                 0x02, 
-                                ^^LPCB.LNKD, 
+                                ^^LPCB.LNKD, , 
                                 Zero
                             }, 
 
@@ -3654,7 +3554,7 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                             {
                                 0xFFFF, 
                                 0x03, 
-                                ^^LPCB.LNKA, 
+                                ^^LPCB.LNKA, , 
                                 Zero
                             }
                         })
@@ -3746,7 +3646,7 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                             {
                                 0xFFFF, 
                                 Zero, 
-                                ^^LPCB.LNKC, 
+                                ^^LPCB.LNKC, , 
                                 Zero
                             }, 
 
@@ -3754,7 +3654,7 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                             {
                                 0xFFFF, 
                                 One, 
-                                ^^LPCB.LNKD, 
+                                ^^LPCB.LNKD, , 
                                 Zero
                             }, 
 
@@ -3762,7 +3662,7 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                             {
                                 0xFFFF, 
                                 0x02, 
-                                ^^LPCB.LNKA, 
+                                ^^LPCB.LNKA, , 
                                 Zero
                             }, 
 
@@ -3770,7 +3670,7 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                             {
                                 0xFFFF, 
                                 0x03, 
-                                ^^LPCB.LNKB, 
+                                ^^LPCB.LNKB, , 
                                 Zero
                             }
                         })
@@ -3875,7 +3775,7 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                             {
                                 0xFFFF, 
                                 Zero, 
-                                ^^LPCB.LNKD, 
+                                ^^LPCB.LNKD, , 
                                 Zero
                             }, 
 
@@ -3883,7 +3783,7 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                             {
                                 0xFFFF, 
                                 One, 
-                                ^^LPCB.LNKA, 
+                                ^^LPCB.LNKA, , 
                                 Zero
                             }, 
 
@@ -3891,7 +3791,7 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                             {
                                 0xFFFF, 
                                 0x02, 
-                                ^^LPCB.LNKB, 
+                                ^^LPCB.LNKB, , 
                                 Zero
                             }, 
 
@@ -3899,7 +3799,7 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                             {
                                 0xFFFF, 
                                 0x03, 
-                                ^^LPCB.LNKC, 
+                                ^^LPCB.LNKC, , 
                                 Zero
                             }
                         })
@@ -3985,7 +3885,7 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                             {
                                 0xFFFF, 
                                 Zero, 
-                                ^^LPCB.LNKA, 
+                                ^^LPCB.LNKA, , 
                                 Zero
                             }, 
 
@@ -3993,7 +3893,7 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                             {
                                 0xFFFF, 
                                 One, 
-                                ^^LPCB.LNKB, 
+                                ^^LPCB.LNKB, , 
                                 Zero
                             }, 
 
@@ -4001,7 +3901,7 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                             {
                                 0xFFFF, 
                                 0x02, 
-                                ^^LPCB.LNKC, 
+                                ^^LPCB.LNKC, , 
                                 Zero
                             }, 
 
@@ -4009,7 +3909,7 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                             {
                                 0xFFFF, 
                                 0x03, 
-                                ^^LPCB.LNKD, 
+                                ^^LPCB.LNKD, , 
                                 Zero
                             }
                         })
@@ -4095,7 +3995,7 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                             {
                                 0xFFFF, 
                                 Zero, 
-                                ^^LPCB.LNKB, 
+                                ^^LPCB.LNKB, , 
                                 Zero
                             }, 
 
@@ -4103,7 +4003,7 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                             {
                                 0xFFFF, 
                                 One, 
-                                ^^LPCB.LNKC, 
+                                ^^LPCB.LNKC, , 
                                 Zero
                             }, 
 
@@ -4111,7 +4011,7 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                             {
                                 0xFFFF, 
                                 0x02, 
-                                ^^LPCB.LNKD, 
+                                ^^LPCB.LNKD, , 
                                 Zero
                             }, 
 
@@ -4119,7 +4019,7 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                             {
                                 0xFFFF, 
                                 0x03, 
-                                ^^LPCB.LNKA, 
+                                ^^LPCB.LNKA, , 
                                 Zero
                             }
                         })
@@ -4471,7 +4371,7 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                             {
                                 0x0006FFFF, 
                                 Zero, 
-                                ^^LPCB.LNKG, 
+                                ^^LPCB.LNKG, , 
                                 Zero
                             }, 
 
@@ -4479,7 +4379,7 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                             {
                                 0x0006FFFF, 
                                 One, 
-                                ^^LPCB.LNKH, 
+                                ^^LPCB.LNKH, , 
                                 Zero
                             }
                         })
@@ -4565,17 +4465,15 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                         Store (0x80, PARC) /* \_SB_.PCI0.LPCB.PARC */
                     }
 
-                    Name (_PRS, ResourceTemplate ()  // _PRS: Possible Resource Settings
+                    Name (_PRS, Buffer (0x06)  // _PRS: Possible Resource Settings
                     {
-                        IRQ (Level, ActiveLow, Shared, )
-                            {1,3,4,5,6,7,10,12,14,15}
+                         0x23, 0xFA, 0xD4, 0x18, 0x79, 0x00               // #...y.
                     })
                     Method (_CRS, 0, Serialized)  // _CRS: Current Resource Settings
                     {
-                        Name (RTLA, ResourceTemplate ()
+                        Name (RTLA, Buffer (0x06)
                         {
-                            IRQ (Level, ActiveLow, Shared, )
-                                {}
+                             0x23, 0x00, 0x00, 0x18, 0x79, 0x00               // #...y.
                         })
                         CreateWordField (RTLA, One, IRQ0)
                         Store (Zero, IRQ0) /* \_SB_.PCI0.LPCB.LNKA._CRS.IRQ0 */
@@ -4613,17 +4511,15 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                         Store (0x80, PBRC) /* \_SB_.PCI0.LPCB.PBRC */
                     }
 
-                    Name (_PRS, ResourceTemplate ()  // _PRS: Possible Resource Settings
+                    Name (_PRS, Buffer (0x06)  // _PRS: Possible Resource Settings
                     {
-                        IRQ (Level, ActiveLow, Shared, )
-                            {1,3,4,5,6,7,11,12,14,15}
+                         0x23, 0xFA, 0xD8, 0x18, 0x79, 0x00               // #...y.
                     })
                     Method (_CRS, 0, Serialized)  // _CRS: Current Resource Settings
                     {
-                        Name (RTLB, ResourceTemplate ()
+                        Name (RTLB, Buffer (0x06)
                         {
-                            IRQ (Level, ActiveLow, Shared, )
-                                {}
+                             0x23, 0x00, 0x00, 0x18, 0x79, 0x00               // #...y.
                         })
                         CreateWordField (RTLB, One, IRQ0)
                         Store (Zero, IRQ0) /* \_SB_.PCI0.LPCB.LNKB._CRS.IRQ0 */
@@ -4661,17 +4557,15 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                         Store (0x80, PCRC) /* \_SB_.PCI0.LPCB.PCRC */
                     }
 
-                    Name (_PRS, ResourceTemplate ()  // _PRS: Possible Resource Settings
+                    Name (_PRS, Buffer (0x06)  // _PRS: Possible Resource Settings
                     {
-                        IRQ (Level, ActiveLow, Shared, )
-                            {1,3,4,5,6,7,10,12,14,15}
+                         0x23, 0xFA, 0xD4, 0x18, 0x79, 0x00               // #...y.
                     })
                     Method (_CRS, 0, Serialized)  // _CRS: Current Resource Settings
                     {
-                        Name (RTLC, ResourceTemplate ()
+                        Name (RTLC, Buffer (0x06)
                         {
-                            IRQ (Level, ActiveLow, Shared, )
-                                {}
+                             0x23, 0x00, 0x00, 0x18, 0x79, 0x00               // #...y.
                         })
                         CreateWordField (RTLC, One, IRQ0)
                         Store (Zero, IRQ0) /* \_SB_.PCI0.LPCB.LNKC._CRS.IRQ0 */
@@ -4709,17 +4603,15 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                         Store (0x80, PDRC) /* \_SB_.PCI0.LPCB.PDRC */
                     }
 
-                    Name (_PRS, ResourceTemplate ()  // _PRS: Possible Resource Settings
+                    Name (_PRS, Buffer (0x06)  // _PRS: Possible Resource Settings
                     {
-                        IRQ (Level, ActiveLow, Shared, )
-                            {1,3,4,5,6,7,11,12,14,15}
+                         0x23, 0xFA, 0xD8, 0x18, 0x79, 0x00               // #...y.
                     })
                     Method (_CRS, 0, Serialized)  // _CRS: Current Resource Settings
                     {
-                        Name (RTLD, ResourceTemplate ()
+                        Name (RTLD, Buffer (0x06)
                         {
-                            IRQ (Level, ActiveLow, Shared, )
-                                {}
+                             0x23, 0x00, 0x00, 0x18, 0x79, 0x00               // #...y.
                         })
                         CreateWordField (RTLD, One, IRQ0)
                         Store (Zero, IRQ0) /* \_SB_.PCI0.LPCB.LNKD._CRS.IRQ0 */
@@ -4757,17 +4649,15 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                         Store (0x80, PERC) /* \_SB_.PCI0.LPCB.PERC */
                     }
 
-                    Name (_PRS, ResourceTemplate ()  // _PRS: Possible Resource Settings
+                    Name (_PRS, Buffer (0x06)  // _PRS: Possible Resource Settings
                     {
-                        IRQ (Level, ActiveLow, Shared, )
-                            {1,3,4,5,6,7,10,12,14,15}
+                         0x23, 0xFA, 0xD4, 0x18, 0x79, 0x00               // #...y.
                     })
                     Method (_CRS, 0, Serialized)  // _CRS: Current Resource Settings
                     {
-                        Name (RTLE, ResourceTemplate ()
+                        Name (RTLE, Buffer (0x06)
                         {
-                            IRQ (Level, ActiveLow, Shared, )
-                                {}
+                             0x23, 0x00, 0x00, 0x18, 0x79, 0x00               // #...y.
                         })
                         CreateWordField (RTLE, One, IRQ0)
                         Store (Zero, IRQ0) /* \_SB_.PCI0.LPCB.LNKE._CRS.IRQ0 */
@@ -4805,17 +4695,15 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                         Store (0x80, PFRC) /* \_SB_.PCI0.LPCB.PFRC */
                     }
 
-                    Name (_PRS, ResourceTemplate ()  // _PRS: Possible Resource Settings
+                    Name (_PRS, Buffer (0x06)  // _PRS: Possible Resource Settings
                     {
-                        IRQ (Level, ActiveLow, Shared, )
-                            {1,3,4,5,6,7,11,12,14,15}
+                         0x23, 0xFA, 0xD8, 0x18, 0x79, 0x00               // #...y.
                     })
                     Method (_CRS, 0, Serialized)  // _CRS: Current Resource Settings
                     {
-                        Name (RTLF, ResourceTemplate ()
+                        Name (RTLF, Buffer (0x06)
                         {
-                            IRQ (Level, ActiveLow, Shared, )
-                                {}
+                             0x23, 0x00, 0x00, 0x18, 0x79, 0x00               // #...y.
                         })
                         CreateWordField (RTLF, One, IRQ0)
                         Store (Zero, IRQ0) /* \_SB_.PCI0.LPCB.LNKF._CRS.IRQ0 */
@@ -4853,17 +4741,15 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                         Store (0x80, PGRC) /* \_SB_.PCI0.LPCB.PGRC */
                     }
 
-                    Name (_PRS, ResourceTemplate ()  // _PRS: Possible Resource Settings
+                    Name (_PRS, Buffer (0x06)  // _PRS: Possible Resource Settings
                     {
-                        IRQ (Level, ActiveLow, Shared, )
-                            {1,3,4,5,6,7,10,12,14,15}
+                         0x23, 0xFA, 0xD4, 0x18, 0x79, 0x00               // #...y.
                     })
                     Method (_CRS, 0, Serialized)  // _CRS: Current Resource Settings
                     {
-                        Name (RTLG, ResourceTemplate ()
+                        Name (RTLG, Buffer (0x06)
                         {
-                            IRQ (Level, ActiveLow, Shared, )
-                                {}
+                             0x23, 0x00, 0x00, 0x18, 0x79, 0x00               // #...y.
                         })
                         CreateWordField (RTLG, One, IRQ0)
                         Store (Zero, IRQ0) /* \_SB_.PCI0.LPCB.LNKG._CRS.IRQ0 */
@@ -4901,17 +4787,15 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                         Store (0x80, PHRC) /* \_SB_.PCI0.LPCB.PHRC */
                     }
 
-                    Name (_PRS, ResourceTemplate ()  // _PRS: Possible Resource Settings
+                    Name (_PRS, Buffer (0x06)  // _PRS: Possible Resource Settings
                     {
-                        IRQ (Level, ActiveLow, Shared, )
-                            {1,3,4,5,6,7,11,12,14,15}
+                         0x23, 0xFA, 0xD8, 0x18, 0x79, 0x00               // #...y.
                     })
                     Method (_CRS, 0, Serialized)  // _CRS: Current Resource Settings
                     {
-                        Name (RTLH, ResourceTemplate ()
+                        Name (RTLH, Buffer (0x06)
                         {
-                            IRQ (Level, ActiveLow, Shared, )
-                                {}
+                             0x23, 0x00, 0x00, 0x18, 0x79, 0x00               // #...y.
                         })
                         CreateWordField (RTLH, One, IRQ0)
                         Store (Zero, IRQ0) /* \_SB_.PCI0.LPCB.LNKH._CRS.IRQ0 */
@@ -4943,46 +4827,23 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                 Device (DMAC)
                 {
                     Name (_HID, EisaId ("PNP0200") /* PC-class DMA Controller */)  // _HID: Hardware ID
-                    Name (_CRS, ResourceTemplate ()  // _CRS: Current Resource Settings
+                    Name (_CRS, Buffer (0x25)  // _CRS: Current Resource Settings
                     {
-                        IO (Decode16,
-                            0x0000,             // Range Minimum
-                            0x0000,             // Range Maximum
-                            0x01,               // Alignment
-                            0x20,               // Length
-                            )
-                        IO (Decode16,
-                            0x0081,             // Range Minimum
-                            0x0081,             // Range Maximum
-                            0x01,               // Alignment
-                            0x11,               // Length
-                            )
-                        IO (Decode16,
-                            0x0093,             // Range Minimum
-                            0x0093,             // Range Maximum
-                            0x01,               // Alignment
-                            0x0D,               // Length
-                            )
-                        IO (Decode16,
-                            0x00C0,             // Range Minimum
-                            0x00C0,             // Range Maximum
-                            0x01,               // Alignment
-                            0x20,               // Length
-                            )
-                        DMA (Compatibility, NotBusMaster, Transfer8_16, )
-                            {4}
+                        /* 0000 */  0x47, 0x01, 0x00, 0x00, 0x00, 0x00, 0x01, 0x20,  // G...... 
+                        /* 0008 */  0x47, 0x01, 0x81, 0x00, 0x81, 0x00, 0x01, 0x11,  // G.......
+                        /* 0010 */  0x47, 0x01, 0x93, 0x00, 0x93, 0x00, 0x01, 0x0D,  // G.......
+                        /* 0018 */  0x47, 0x01, 0xC0, 0x00, 0xC0, 0x00, 0x01, 0x20,  // G...... 
+                        /* 0020 */  0x2A, 0x10, 0x01, 0x79, 0x00                     // *..y.
                     })
                 }
 
                 Device (FWHD)
                 {
                     Name (_HID, EisaId ("INT0800") /* Intel 82802 Firmware Hub Device */)  // _HID: Hardware ID
-                    Name (_CRS, ResourceTemplate ()  // _CRS: Current Resource Settings
+                    Name (_CRS, Buffer (0x0E)  // _CRS: Current Resource Settings
                     {
-                        Memory32Fixed (ReadOnly,
-                            0xFF000000,         // Address Base
-                            0x01000000,         // Address Length
-                            )
+                        /* 0000 */  0x86, 0x09, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF,  // ........
+                        /* 0008 */  0x00, 0x00, 0x00, 0x01, 0x79, 0x00               // ....y.
                     })
                 }
 
@@ -4990,12 +4851,10 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                 {
                     Name (_HID, EisaId ("PNP0103") /* HPET System Timer */)  // _HID: Hardware ID
                     Name (_CID, EisaId ("PNP0C01") /* System Board */)  // _CID: Compatible ID
-                    Name (BUF0, ResourceTemplate ()
+                    Name (BUF0, Buffer (0x0E)
                     {
-                        Memory32Fixed (ReadOnly,
-                            0xFED00000,         // Address Base
-                            0x00000400,         // Address Length
-                            _Y14)
+                        /* 0000 */  0x86, 0x09, 0x00, 0x00, 0x00, 0x00, 0xD0, 0xFE,  // ........
+                        /* 0008 */  0x00, 0x04, 0x00, 0x00, 0x79, 0x00               // ....y.
                     })
                     Method (_STA, 0, NotSerialized)  // _STA: Status
                     {
@@ -5018,7 +4877,7 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                     {
                         If (HPAE)
                         {
-                            CreateDWordField (BUF0, \_SB.PCI0.LPCB.HPET._Y14._BAS, HPT0)  // _BAS: Base Address
+                            CreateDWordField (BUF0, 0x04, HPT0)
                             If (LEqual (HPAS, One))
                             {
                                 Store (0xFED01000, HPT0) /* \_SB_.PCI0.LPCB.HPET._CRS.HPT0 */
@@ -5042,128 +4901,36 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                 Device (IPIC)
                 {
                     Name (_HID, EisaId ("PNP0000") /* 8259-compatible Programmable Interrupt Controller */)  // _HID: Hardware ID
-                    Name (_CRS, ResourceTemplate ()  // _CRS: Current Resource Settings
+                    Name (_CRS, Buffer (0x8D)  // _CRS: Current Resource Settings
                     {
-                        IO (Decode16,
-                            0x0020,             // Range Minimum
-                            0x0020,             // Range Maximum
-                            0x01,               // Alignment
-                            0x02,               // Length
-                            )
-                        IO (Decode16,
-                            0x0024,             // Range Minimum
-                            0x0024,             // Range Maximum
-                            0x01,               // Alignment
-                            0x02,               // Length
-                            )
-                        IO (Decode16,
-                            0x0028,             // Range Minimum
-                            0x0028,             // Range Maximum
-                            0x01,               // Alignment
-                            0x02,               // Length
-                            )
-                        IO (Decode16,
-                            0x002C,             // Range Minimum
-                            0x002C,             // Range Maximum
-                            0x01,               // Alignment
-                            0x02,               // Length
-                            )
-                        IO (Decode16,
-                            0x0030,             // Range Minimum
-                            0x0030,             // Range Maximum
-                            0x01,               // Alignment
-                            0x02,               // Length
-                            )
-                        IO (Decode16,
-                            0x0034,             // Range Minimum
-                            0x0034,             // Range Maximum
-                            0x01,               // Alignment
-                            0x02,               // Length
-                            )
-                        IO (Decode16,
-                            0x0038,             // Range Minimum
-                            0x0038,             // Range Maximum
-                            0x01,               // Alignment
-                            0x02,               // Length
-                            )
-                        IO (Decode16,
-                            0x003C,             // Range Minimum
-                            0x003C,             // Range Maximum
-                            0x01,               // Alignment
-                            0x02,               // Length
-                            )
-                        IO (Decode16,
-                            0x00A0,             // Range Minimum
-                            0x00A0,             // Range Maximum
-                            0x01,               // Alignment
-                            0x02,               // Length
-                            )
-                        IO (Decode16,
-                            0x00A4,             // Range Minimum
-                            0x00A4,             // Range Maximum
-                            0x01,               // Alignment
-                            0x02,               // Length
-                            )
-                        IO (Decode16,
-                            0x00A8,             // Range Minimum
-                            0x00A8,             // Range Maximum
-                            0x01,               // Alignment
-                            0x02,               // Length
-                            )
-                        IO (Decode16,
-                            0x00AC,             // Range Minimum
-                            0x00AC,             // Range Maximum
-                            0x01,               // Alignment
-                            0x02,               // Length
-                            )
-                        IO (Decode16,
-                            0x00B0,             // Range Minimum
-                            0x00B0,             // Range Maximum
-                            0x01,               // Alignment
-                            0x02,               // Length
-                            )
-                        IO (Decode16,
-                            0x00B4,             // Range Minimum
-                            0x00B4,             // Range Maximum
-                            0x01,               // Alignment
-                            0x02,               // Length
-                            )
-                        IO (Decode16,
-                            0x00B8,             // Range Minimum
-                            0x00B8,             // Range Maximum
-                            0x01,               // Alignment
-                            0x02,               // Length
-                            )
-                        IO (Decode16,
-                            0x00BC,             // Range Minimum
-                            0x00BC,             // Range Maximum
-                            0x01,               // Alignment
-                            0x02,               // Length
-                            )
-                        IO (Decode16,
-                            0x04D0,             // Range Minimum
-                            0x04D0,             // Range Maximum
-                            0x01,               // Alignment
-                            0x02,               // Length
-                            )
-                        IRQNoFlags ()
-                            {2}
+                        /* 0000 */  0x47, 0x01, 0x20, 0x00, 0x20, 0x00, 0x01, 0x02,  // G. . ...
+                        /* 0008 */  0x47, 0x01, 0x24, 0x00, 0x24, 0x00, 0x01, 0x02,  // G.$.$...
+                        /* 0010 */  0x47, 0x01, 0x28, 0x00, 0x28, 0x00, 0x01, 0x02,  // G.(.(...
+                        /* 0018 */  0x47, 0x01, 0x2C, 0x00, 0x2C, 0x00, 0x01, 0x02,  // G.,.,...
+                        /* 0020 */  0x47, 0x01, 0x30, 0x00, 0x30, 0x00, 0x01, 0x02,  // G.0.0...
+                        /* 0028 */  0x47, 0x01, 0x34, 0x00, 0x34, 0x00, 0x01, 0x02,  // G.4.4...
+                        /* 0030 */  0x47, 0x01, 0x38, 0x00, 0x38, 0x00, 0x01, 0x02,  // G.8.8...
+                        /* 0038 */  0x47, 0x01, 0x3C, 0x00, 0x3C, 0x00, 0x01, 0x02,  // G.<.<...
+                        /* 0040 */  0x47, 0x01, 0xA0, 0x00, 0xA0, 0x00, 0x01, 0x02,  // G.......
+                        /* 0048 */  0x47, 0x01, 0xA4, 0x00, 0xA4, 0x00, 0x01, 0x02,  // G.......
+                        /* 0050 */  0x47, 0x01, 0xA8, 0x00, 0xA8, 0x00, 0x01, 0x02,  // G.......
+                        /* 0058 */  0x47, 0x01, 0xAC, 0x00, 0xAC, 0x00, 0x01, 0x02,  // G.......
+                        /* 0060 */  0x47, 0x01, 0xB0, 0x00, 0xB0, 0x00, 0x01, 0x02,  // G.......
+                        /* 0068 */  0x47, 0x01, 0xB4, 0x00, 0xB4, 0x00, 0x01, 0x02,  // G.......
+                        /* 0070 */  0x47, 0x01, 0xB8, 0x00, 0xB8, 0x00, 0x01, 0x02,  // G.......
+                        /* 0078 */  0x47, 0x01, 0xBC, 0x00, 0xBC, 0x00, 0x01, 0x02,  // G.......
+                        /* 0080 */  0x47, 0x01, 0xD0, 0x04, 0xD0, 0x04, 0x01, 0x02,  // G.......
+                        /* 0088 */  0x22, 0x04, 0x00, 0x79, 0x00                     // "..y.
                     })
                 }
 
                 Device (MATH)
                 {
                     Name (_HID, EisaId ("PNP0C04") /* x87-compatible Floating Point Processing Unit */)  // _HID: Hardware ID
-                    Name (_CRS, ResourceTemplate ()  // _CRS: Current Resource Settings
+                    Name (_CRS, Buffer (0x0D)  // _CRS: Current Resource Settings
                     {
-                        IO (Decode16,
-                            0x00F0,             // Range Minimum
-                            0x00F0,             // Range Maximum
-                            0x01,               // Alignment
-                            0x01,               // Length
-                            )
-                        IRQNoFlags ()
-                            {13}
+                        /* 0000 */  0x47, 0x01, 0xF0, 0x00, 0xF0, 0x00, 0x01, 0x01,  // G.......
+                        /* 0008 */  0x22, 0x00, 0x20, 0x79, 0x00                     // ". y.
                     })
                 }
 
@@ -5171,136 +4938,45 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                 {
                     Name (_HID, EisaId ("PNP0C02") /* PNP Motherboard Resources */)  // _HID: Hardware ID
                     Name (_UID, 0x02)  // _UID: Unique ID
-                    Name (_CRS, ResourceTemplate ()  // _CRS: Current Resource Settings
+                    Name (_CRS, Buffer (0x7A)  // _CRS: Current Resource Settings
                     {
-                        IO (Decode16,
-                            0x002E,             // Range Minimum
-                            0x002E,             // Range Maximum
-                            0x01,               // Alignment
-                            0x02,               // Length
-                            )
-                        IO (Decode16,
-                            0x004E,             // Range Minimum
-                            0x004E,             // Range Maximum
-                            0x01,               // Alignment
-                            0x02,               // Length
-                            )
-                        IO (Decode16,
-                            0x0061,             // Range Minimum
-                            0x0061,             // Range Maximum
-                            0x01,               // Alignment
-                            0x01,               // Length
-                            )
-                        IO (Decode16,
-                            0x0063,             // Range Minimum
-                            0x0063,             // Range Maximum
-                            0x01,               // Alignment
-                            0x01,               // Length
-                            )
-                        IO (Decode16,
-                            0x0065,             // Range Minimum
-                            0x0065,             // Range Maximum
-                            0x01,               // Alignment
-                            0x01,               // Length
-                            )
-                        IO (Decode16,
-                            0x0067,             // Range Minimum
-                            0x0067,             // Range Maximum
-                            0x01,               // Alignment
-                            0x01,               // Length
-                            )
-                        IO (Decode16,
-                            0x0080,             // Range Minimum
-                            0x0080,             // Range Maximum
-                            0x01,               // Alignment
-                            0x01,               // Length
-                            )
-                        IO (Decode16,
-                            0x0092,             // Range Minimum
-                            0x0092,             // Range Maximum
-                            0x01,               // Alignment
-                            0x01,               // Length
-                            )
-                        IO (Decode16,
-                            0x00B2,             // Range Minimum
-                            0x00B2,             // Range Maximum
-                            0x01,               // Alignment
-                            0x02,               // Length
-                            )
-                        IO (Decode16,
-                            0x0680,             // Range Minimum
-                            0x0680,             // Range Maximum
-                            0x01,               // Alignment
-                            0x20,               // Length
-                            )
-                        IO (Decode16,
-                            0x0800,             // Range Minimum
-                            0x0800,             // Range Maximum
-                            0x01,               // Alignment
-                            0x10,               // Length
-                            )
-                        IO (Decode16,
-                            0x1000,             // Range Minimum
-                            0x1000,             // Range Maximum
-                            0x01,               // Alignment
-                            0x80,               // Length
-                            )
-                        IO (Decode16,
-                            0x1180,             // Range Minimum
-                            0x1180,             // Range Maximum
-                            0x01,               // Alignment
-                            0x40,               // Length
-                            )
-                        IO (Decode16,
-                            0xFE00,             // Range Minimum
-                            0xFE00,             // Range Maximum
-                            0x01,               // Alignment
-                            0x01,               // Length
-                            )
-                        IO (Decode16,
-                            0xFF00,             // Range Minimum
-                            0xFF00,             // Range Maximum
-                            0x01,               // Alignment
-                            0x80,               // Length
-                            )
+                        /* 0000 */  0x47, 0x01, 0x2E, 0x00, 0x2E, 0x00, 0x01, 0x02,  // G.......
+                        /* 0008 */  0x47, 0x01, 0x4E, 0x00, 0x4E, 0x00, 0x01, 0x02,  // G.N.N...
+                        /* 0010 */  0x47, 0x01, 0x61, 0x00, 0x61, 0x00, 0x01, 0x01,  // G.a.a...
+                        /* 0018 */  0x47, 0x01, 0x63, 0x00, 0x63, 0x00, 0x01, 0x01,  // G.c.c...
+                        /* 0020 */  0x47, 0x01, 0x65, 0x00, 0x65, 0x00, 0x01, 0x01,  // G.e.e...
+                        /* 0028 */  0x47, 0x01, 0x67, 0x00, 0x67, 0x00, 0x01, 0x01,  // G.g.g...
+                        /* 0030 */  0x47, 0x01, 0x80, 0x00, 0x80, 0x00, 0x01, 0x01,  // G.......
+                        /* 0038 */  0x47, 0x01, 0x92, 0x00, 0x92, 0x00, 0x01, 0x01,  // G.......
+                        /* 0040 */  0x47, 0x01, 0xB2, 0x00, 0xB2, 0x00, 0x01, 0x02,  // G.......
+                        /* 0048 */  0x47, 0x01, 0x80, 0x06, 0x80, 0x06, 0x01, 0x20,  // G...... 
+                        /* 0050 */  0x47, 0x01, 0x00, 0x08, 0x00, 0x08, 0x01, 0x10,  // G.......
+                        /* 0058 */  0x47, 0x01, 0x00, 0x10, 0x00, 0x10, 0x01, 0x80,  // G.......
+                        /* 0060 */  0x47, 0x01, 0x80, 0x11, 0x80, 0x11, 0x01, 0x40,  // G......@
+                        /* 0068 */  0x47, 0x01, 0x00, 0xFE, 0x00, 0xFE, 0x01, 0x01,  // G.......
+                        /* 0070 */  0x47, 0x01, 0x00, 0xFF, 0x00, 0xFF, 0x01, 0x80,  // G.......
+                        /* 0078 */  0x79, 0x00                                       // y.
                     })
                 }
 
                 Device (RTC)
                 {
                     Name (_HID, EisaId ("PNP0B00") /* AT Real-Time Clock */)  // _HID: Hardware ID
-                    Name (_CRS, ResourceTemplate ()  // _CRS: Current Resource Settings
+                    Name (_CRS, Buffer (0x0D)  // _CRS: Current Resource Settings
                     {
-                        IO (Decode16,
-                            0x0070,             // Range Minimum
-                            0x0070,             // Range Maximum
-                            0x01,               // Alignment
-                            0x08,               // Length
-                            )
-                        IRQNoFlags ()
-                            {8}
+                        /* 0000 */  0x47, 0x01, 0x70, 0x00, 0x70, 0x00, 0x01, 0x08,  // G.p.p...
+                        /* 0008 */  0x22, 0x00, 0x01, 0x79, 0x00                     // "..y.
                     })
                 }
 
                 Device (TIMR)
                 {
                     Name (_HID, EisaId ("PNP0100") /* PC-class System Timer */)  // _HID: Hardware ID
-                    Name (_CRS, ResourceTemplate ()  // _CRS: Current Resource Settings
+                    Name (_CRS, Buffer (0x15)  // _CRS: Current Resource Settings
                     {
-                        IO (Decode16,
-                            0x0040,             // Range Minimum
-                            0x0040,             // Range Maximum
-                            0x01,               // Alignment
-                            0x04,               // Length
-                            )
-                        IO (Decode16,
-                            0x0050,             // Range Minimum
-                            0x0050,             // Range Maximum
-                            0x10,               // Alignment
-                            0x04,               // Length
-                            )
-                        IRQNoFlags ()
-                            {0}
+                        /* 0000 */  0x47, 0x01, 0x40, 0x00, 0x40, 0x00, 0x01, 0x04,  // G.@.@...
+                        /* 0008 */  0x47, 0x01, 0x50, 0x00, 0x50, 0x00, 0x10, 0x04,  // G.P.P...
+                        /* 0010 */  0x22, 0x01, 0x00, 0x79, 0x00                     // "..y.
                     })
                 }
 
@@ -5309,7 +4985,7 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                     Name (_HID, "ACPI0003" /* Power Source Device */)  // _HID: Hardware ID
                     Name (_PCL, Package (0x01)  // _PCL: Power Consumer List
                     {
-                        _SB
+                        _SB, 
                     })
                     Method (_PSR, 0, NotSerialized)  // _PSR: Power Source
                     {
@@ -5335,20 +5011,11 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                     Name (_HID, EisaId ("PNP0C09") /* Embedded Controller Device */)  // _HID: Hardware ID
                     Name (_GPE, 0x1C)  // _GPE: General Purpose Events
                     Name (Z009, Zero)
-                    Name (_CRS, ResourceTemplate ()  // _CRS: Current Resource Settings
+                    Name (_CRS, Buffer (0x12)  // _CRS: Current Resource Settings
                     {
-                        IO (Decode16,
-                            0x0062,             // Range Minimum
-                            0x0062,             // Range Maximum
-                            0x01,               // Alignment
-                            0x01,               // Length
-                            )
-                        IO (Decode16,
-                            0x0066,             // Range Minimum
-                            0x0066,             // Range Maximum
-                            0x01,               // Alignment
-                            0x01,               // Length
-                            )
+                        /* 0000 */  0x47, 0x01, 0x62, 0x00, 0x62, 0x00, 0x01, 0x01,  // G.b.b...
+                        /* 0008 */  0x47, 0x01, 0x66, 0x00, 0x66, 0x00, 0x01, 0x01,  // G.f.f...
+                        /* 0010 */  0x79, 0x00                                       // y.
                     })
                     Method (_REG, 2, NotSerialized)  // _REG: Region Availability
                     {
@@ -5751,7 +5418,7 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                     Name (_UID, One)  // _UID: Unique ID
                     Name (_PCL, Package (0x01)  // _PCL: Power Consumer List
                     {
-                        _SB
+                        _SB, 
                     })
                     Method (_STA, 0, NotSerialized)  // _STA: Status
                     {
@@ -5878,32 +5545,20 @@ DefinitionBlock ("", "DSDT", 2, "TOSCPL", "CRESTLNE", 0x06040000)
                 Device (PS2K)
                 {
                     Name (_HID, EisaId ("PNP0303") /* IBM Enhanced Keyboard (101/102-key, PS/2 Mouse) */)  // _HID: Hardware ID
-                    Name (_CRS, ResourceTemplate ()  // _CRS: Current Resource Settings
+                    Name (_CRS, Buffer (0x16)  // _CRS: Current Resource Settings
                     {
-                        IO (Decode16,
-                            0x0060,             // Range Minimum
-                            0x0060,             // Range Maximum
-                            0x01,               // Alignment
-                            0x01,               // Length
-                            )
-                        IO (Decode16,
-                            0x0064,             // Range Minimum
-                            0x0064,             // Range Maximum
-                            0x01,               // Alignment
-                            0x01,               // Length
-                            )
-                        IRQ (Edge, ActiveHigh, Exclusive, )
-                            {1}
+                        /* 0000 */  0x47, 0x01, 0x60, 0x00, 0x60, 0x00, 0x01, 0x01,  // G.`.`...
+                        /* 0008 */  0x47, 0x01, 0x64, 0x00, 0x64, 0x00, 0x01, 0x01,  // G.d.d...
+                        /* 0010 */  0x23, 0x02, 0x00, 0x01, 0x79, 0x00               // #...y.
                     })
                 }
 
                 Device (PS2M)
                 {
                     Name (_HID, EisaId ("PNP0F13") /* PS/2 Mouse */)  // _HID: Hardware ID
-                    Name (_CRS, ResourceTemplate ()  // _CRS: Current Resource Settings
+                    Name (_CRS, Buffer (0x06)  // _CRS: Current Resource Settings
                     {
-                        IRQ (Edge, ActiveHigh, Exclusive, )
-                            {12}
+                         0x23, 0x00, 0x10, 0x01, 0x79, 0x00               // #...y.
                     })
                 }
             }
