@@ -1,3 +1,60 @@
+fwts (26.05.00-0ubuntu1) stonking; urgency=medium
+
+  [Ivan Hu]
+  * kernelscan: Add macro expansion for known kernel logging prefixes
+  * klog.json: Add ACPI processor performance frequency constraint error
+    messages to klog database
+  * klog.json: Add ACPI IORT firmware bug workaround error messages to klog
+    database
+  * klog.json: Add ACPI GTDT platform timer firmware bug error messages to klog
+    database
+  * klog.json: Add ACPI SRAT CFMWS BIOS alignment violation error messages to
+    klog database
+  * klog.json: Add ACPI bus kobject registration error messages to klog database
+  * klog.json: Add ACPI Embedded Controller ECDT firmware bug error messages to
+    klog database
+  * klog.json: Add AMD IOMMU command line validation error messages to klog
+    database
+  * klog.json: Remove duplicate 'PM: Some devices failed to power down' patterns
+  * klog.json: Remove duplicate '_OSC request failed' pattern
+  * klog.json: Remove duplicate 'Invalid _TSD data' pattern
+  * klog.json: Remove duplicate 'Invalid _TSS data' patterns
+  * klog.json: Remove duplicate 'Could not allocate size' pattern
+  * klog.json: Remove duplicate 'Invalid _FIF element' pattern
+  * klog.json: Remove duplicate 'SRAT: Unexpected header length' pattern
+  * klog.json: Remove duplicate 'Limiting number of LPI states to max' pattern
+  * klog.json: Remove duplicate 'iort node pointer overflows, bad table' pattern
+  * klog.json: Remove duplicate 'could not register gsi hwirq' pattern
+  * klog.json: Remove duplicate 'requested ITS ID index' pattern
+  * klog.json: Remove duplicate 'ID map has NULL parent reference' pattern
+  * klog.json: Remove duplicate 'Failed to create AML debugger thread' pattern
+  * klog.json: Remove duplicate 'amba_device_add() failed' pattern
+  * klog.json: Remove duplicate 'amba_device_alloc() failed' pattern
+  * klog.json: Remove duplicate 'SRAT: Too many proximity domains' pattern
+  * klog.json: Remove duplicate 'SRAT: Failed to add memblk to node' pattern
+  * klog.json: Remove duplicate 'SRAT: Failed to mark hotplug range' pattern
+  * klog.json: Remove duplicate 'Failed to remap late EFI memory map' pattern
+  * klog.json: Remove duplicate 'too many record IDs' pattern
+  * ACPICA: Update to version 20260408
+  * auto-packager: mkpackage.sh: add stonking
+  * fwts-test: update disassemble-0001 reference files for ACPICA 20260408
+  * github: add stonking to github actions
+
+  [Julien Olivain]
+  * build: allow disabling -Werror
+
+  [Thomas Huth]
+  * fwts_args: Silence compiler warning about unused "master_option_index"
+  * lib: framework: Remove unused variable to avoid compiler warning
+  * acpi: hest: Remove unused variable to avoid compiler warning
+  * Make inclusion of <bsd/string.h> optional
+  * configure: Allow compilation without libbsd if strlcpy() is available in
+    libc
+  * acpi: crsdump: Fix printing of IRQ numbers
+  * fwts_modprobe: Remove unused sys_finit_module() and sys_delete_module()
+
+ -- Ivan Hu <ivan.hu@ubuntu.com>  Wed, 27 May 2026 03:26:13 +0000
+
 fwts (26.03.00-0ubuntu1) resolute; urgency=medium
 
   [Ivan Hu]
