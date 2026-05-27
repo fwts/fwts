@@ -35,7 +35,7 @@ libfwts_LDADD_BSD = -lbsd
 endif
 
 libfwts_la_LIBADD = 				\
-	-lm -lpthread					\
+	-lm -lpthread -lz				\
 	$(libfwts_LDADD_BSD)				\
 	@GIO_LIBS@					\
 	@GLIB_LIBS@
