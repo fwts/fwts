@@ -379,9 +379,9 @@ static int uefibootpath_check_dev_path(fwts_framework *fw, fwts_uefi_dev_path *d
 			}
 			if (u->stop_bits > 3) {
 				fwts_failed(fw, LOG_LEVEL_MEDIUM, "UEFIUARTDevPathConfInvalid",
-					"The Parity value of UART Device Path is %" PRIu8
+					"The Stop Bits value of UART Device Path is %" PRIu8
 					" which is out of configuration range.",
-					u->parity);
+					u->stop_bits);
 				errors++;
 			}
 			break;
