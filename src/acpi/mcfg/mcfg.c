@@ -199,7 +199,7 @@ static int mcfg_test1(fwts_framework *fw)
 	for (i = 0; i < nr; i++, config++) {
 		fwts_log_info_verbatim(fw, "Configuration Entry #%d:", i);
 		fwts_log_info_verbatim(fw, "  Base Address  : 0x%" PRIx64, config->base_address);
-		fwts_log_info_verbatim(fw, "  Segment       : %" PRIu8, config->pci_segment_group_number);
+		fwts_log_info_verbatim(fw, "  Segment       : %" PRIu16, config->pci_segment_group_number);
 		fwts_log_info_verbatim(fw, "  Start bus     : %" PRIu8, config->start_bus_number);
 		fwts_log_info_verbatim(fw, "  End bus       : %" PRIu8, config->end_bus_number);
 
