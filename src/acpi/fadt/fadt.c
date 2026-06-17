@@ -1662,7 +1662,7 @@ static int fadt_test1(fwts_framework *fw)
 	 * used to verify that the value is correct.
 	 */
 	if (!fwts_acpi_is_reduced_hardware(fw)) {
-		fwts_log_info(fw, "FADT SCI_INT is %" PRIu8, fadt->sci_int);
+		fwts_log_info(fw, "FADT SCI_INT is %" PRIu16, fadt->sci_int);
 		acpi_table_check_fadt_smi_cmd(fw);
 		acpi_table_check_fadt_acpi_enable(fw);
 		acpi_table_check_fadt_acpi_disable(fw);
