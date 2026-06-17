@@ -128,8 +128,8 @@
 #define SBBR_ACPI_MAJOR_VERSION 6
 
 struct acpi_madt_subtable_lengths {
-	unsigned short major_version;	/* from revision in FADT header */
-	unsigned short minor_version;	/* FADT field starting with 5.1 */
+	uint8_t major_version;		/* from revision in FADT header */
+	uint8_t minor_version;		/* FADT field starting with 5.1 */
 	unsigned short madt_version;	/* MADT revision */
 	unsigned short num_types;	/* types possible for this version */
 	unsigned short lengths[NUM_SUBTABLE_TYPES];
