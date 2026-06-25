@@ -442,8 +442,12 @@ static void* dmi_table_smbios(fwts_framework *fw, fwts_smbios_entry *entry)
 			return NULL;
 		}
 		table = malloc(length);
-		if (table)
-			memcpy(table, mem, length);
+		if (table && fwts_safe_memcpy(table, mem, length) != FWTS_OK) {
+			fwts_log_info(fw, "SMBIOS table at %p cannot be read", (void *)addr);
+			free(table);
+			(void)fwts_munmap(mem, length);
+			return NULL;
+		}
 		(void)fwts_munmap(mem, length);
 		return table;
 	}
@@ -498,8 +502,12 @@ static void* dmi_table_smbios30(fwts_framework *fw, fwts_smbios30_entry *entry)
 			return NULL;
 		}
 		table = malloc(length);
-		if (table)
-			memcpy(table, mem, length);
+		if (table && fwts_safe_memcpy(table, mem, length) != FWTS_OK) {
+			fwts_log_info(fw, "SMBIOS table at %p cannot be read", (void *)addr);
+			free(table);
+			(void)fwts_munmap(mem, length);
+			return NULL;
+		}
 		(void)fwts_munmap(mem, length);
 		return table;
 	}
