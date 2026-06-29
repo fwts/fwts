@@ -89,7 +89,7 @@ static void gpu_dump_gpes(
 			strncpy(buf, "unknown", sizeof(buf));
 			break;
 		}
-		fwts_log_info_verbatim(fw, "      GPE 0x%2.2" PRIx8 ":",
+		fwts_log_info_verbatim(fw, "      GPE 0x%4.4" PRIx16 ":",
 			gpe_block_info->BlockBaseNumber + gpe);
 		fwts_log_info_verbatim(fw, "        Flags:    0x%2.2" PRIx8 " (trigger: %s, wake: %s)",
 			GpeEventInfo->Flags,
