@@ -274,7 +274,7 @@ static size_t tpmevlogdump_specid_event_dump(
 	fwts_log_info_verbatim(fw, "  Signature:                 %s", (char *)specid_evcent->signature);
 	fwts_log_info_verbatim(fw, "  platformClass:             0x%8.8" PRIx32, specid_evcent->platform_class);
 	fwts_log_info_verbatim(fw, "  specVersionMinor:          0x%" PRIx8, specid_evcent->spec_version_minor);
-	fwts_log_info_verbatim(fw, "  specVersionMajor:          0x%" PRIx8, specid_evcent->platform_class);
+	fwts_log_info_verbatim(fw, "  specVersionMajor:          0x%" PRIx8, specid_evcent->spec_version_major);
 	fwts_log_info_verbatim(fw, "  specErrata:                0x%" PRIx8, specid_evcent->spec_errata);
 	fwts_log_info_verbatim(fw, "  uintnSize:                 0x%" PRIx8, specid_evcent->uintn_size);
 	fwts_log_info_verbatim(fw, "  NumberOfAlgorithms:        0x%8.8" PRIx32, specid_evcent->number_of_alg);
