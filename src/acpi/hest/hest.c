@@ -326,7 +326,7 @@ static void hest_check_acpi_table_hest_nmi_error(
 		fwts_failed(fw, LOG_LEVEL_HIGH,
 			"HESTInvalidRecordsToPreallocate",
 			"HEST IA-32 Architecture NMI Number of Records "
-			"to Preallocate is 0x%" PRIx16 " and must be "
+			"to Preallocate is 0x%" PRIx32 " and must be "
 			"more than zero.",
 			err->number_of_records_to_preallocate);
 	}
@@ -335,7 +335,7 @@ static void hest_check_acpi_table_hest_nmi_error(
 		fwts_failed(fw, LOG_LEVEL_HIGH,
 			"HESTInvalidMaxSectionsPerRecord",
 			"HEST A-32 Architecture NMI Max Sections Per "
-			"Record is 0x%" PRIx16 " and must be "
+			"Record is 0x%" PRIx32 " and must be "
 			"more than zero.",
 			err->max_sections_per_record);
 	}
@@ -397,7 +397,7 @@ static void hest_check_pci_express_root_port_aer(
 		fwts_failed(fw, LOG_LEVEL_HIGH,
 			"HESTInvalidRecordsToPreallocate",
 			"HEST PCI Express Root Port Number of Records "
-			"to Preallocate is 0x%" PRIx16 " and must be "
+			"to Preallocate is 0x%" PRIx32 " and must be "
 			"more than zero.",
 			aer->number_of_records_to_preallocate);
 	}
@@ -406,7 +406,7 @@ static void hest_check_pci_express_root_port_aer(
 		fwts_failed(fw, LOG_LEVEL_HIGH,
 			"HESTInvalidMaxSectionsPerRecord",
 			"HEST PCI Express Root Port Max Sections Per "
-			"Record is 0x%" PRIx16 " and must be "
+			"Record is 0x%" PRIx32 " and must be "
 			"more than zero.",
 			aer->max_sections_per_record);
 	}
@@ -465,7 +465,7 @@ static void hest_check_pci_express_device_aer(
 		fwts_failed(fw, LOG_LEVEL_HIGH,
 			"HESTInvalidRecordsToPreallocate",
 			"HEST PCI Express Device Number of Records "
-			"to Preallocate is 0x%" PRIx16 " and must be "
+			"to Preallocate is 0x%" PRIx32 " and must be "
 			"more than zero.",
 			aer->number_of_records_to_preallocate);
 	}
@@ -474,7 +474,7 @@ static void hest_check_pci_express_device_aer(
 		fwts_failed(fw, LOG_LEVEL_HIGH,
 			"HESTInvalidMaxSectionsPerRecord",
 			"HEST PCI Express Device Max Sections Per "
-			"Record is 0x%" PRIx16 " and must be "
+			"Record is 0x%" PRIx32 " and must be "
 			"more than zero.",
 			aer->max_sections_per_record);
 	}
@@ -537,7 +537,7 @@ static void hest_heck_pci_express_bridge_aer(
 		fwts_failed(fw, LOG_LEVEL_HIGH,
 			"HESTInvalidRecordsToPreallocate",
 			"HEST PCI Express Bridge Number of Records "
-			"to Preallocate is 0x%" PRIx16 " and must be "
+			"to Preallocate is 0x%" PRIx32 " and must be "
 			"more than zero.",
 			aer->number_of_records_to_preallocate);
 	}
@@ -546,7 +546,7 @@ static void hest_heck_pci_express_bridge_aer(
 		fwts_failed(fw, LOG_LEVEL_HIGH,
 			"HESTInvalidMaxSectionsPerRecord",
 			"HEST PCI Express Brdige Max Sections Per "
-			"Record is 0x%" PRIx16 " and must be "
+			"Record is 0x%" PRIx32 " and must be "
 			"more than zero.",
 			aer->max_sections_per_record);
 	}
@@ -626,7 +626,7 @@ static void hest_check_generic_error_source(
 		fwts_failed(fw, LOG_LEVEL_HIGH,
 			"HESTInvalidRecordsToPreallocate",
 			"HEST Hardware Error Source Number of Records "
-			"to Preallocate is 0x%" PRIx16 " and must be "
+			"to Preallocate is 0x%" PRIx32 " and must be "
 			"more than zero.",
 			source->number_of_records_to_preallocate);
 	}
@@ -635,7 +635,7 @@ static void hest_check_generic_error_source(
 		fwts_failed(fw, LOG_LEVEL_HIGH,
 			"HESTInvalidMaxSectionsPerRecord",
 			"HEST Hardware Error Source Max Sections Per "
-			"Record is 0x%" PRIx16 " and must be "
+			"Record is 0x%" PRIx32 " and must be "
 			"more than zero.",
 			source->max_sections_per_record);
 	}
@@ -740,7 +740,7 @@ static void hest_check_generic_error_source_v2(
 		fwts_failed(fw, LOG_LEVEL_HIGH,
 			"HESTInvalidRecordsToPreallocate",
 			"HEST Hardware Error Source Number of Records "
-			"to Preallocate is 0x%" PRIx16 " and must be "
+			"to Preallocate is 0x%" PRIx32 " and must be "
 			"more than zero.",
 			source->number_of_records_to_preallocate);
 	}
@@ -749,7 +749,7 @@ static void hest_check_generic_error_source_v2(
 		fwts_failed(fw, LOG_LEVEL_HIGH,
 			"HESTInvalidMaxSectionsPerRecord",
 			"HEST Hardware Error Source Max Sections Per "
-			"Record is 0x%" PRIx16 " and must be "
+			"Record is 0x%" PRIx32 " and must be "
 			"more than zero.",
 			source->max_sections_per_record);
 	}
