@@ -124,6 +124,13 @@ typedef enum {
 	EV_EFI_SPDM_DEVICE_AUTHORITY		= 0x800000e4,
 } fwts_tpmlog_event_type;
 
+/*
+ * H-CRTM resets PCR[0] to the locality-4 startup value (0...04, locality in
+ * the last octet) before extending the H-CRTM data; see TPM 2.0 Library
+ * Part 1, "H-CRTM before TPM2_Startup()".
+ */
+#define TPM2_HCRTM_PCR0_LOCALITY	0x04
+
 
 typedef struct {
 	uint32_t pcr_index;

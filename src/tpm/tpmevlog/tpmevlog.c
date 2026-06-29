@@ -255,6 +255,7 @@ static int tpmevlog_v2_check(
 	fwts_spec_id_event_alg_sz *alg_sz;
 	bool separator_seen[TPM2_FIRMWARE_PCR_COUNT] = { false };
 	bool startuplocality_seen = false;
+	bool hcrtm_seen = false;
 
 	/* specid_event_check */
 	if (len < sizeof(fwts_pc_client_pcr_event)) {
@@ -421,6 +422,13 @@ static int tpmevlog_v2_check(
 			if ((!tpmevlog_parsed) && (alg_id == TPM2_ALG_SHA256) &&
 			    (pcr_event2->event_type != EV_NO_ACTION) &&
 			    (pcr_event2->pcr_index < TPM2_FIRMWARE_PCR_COUNT)) {
+				/* H-CRTM reseeds PCR[0] before its digest is extended. */
+				if (pcr_event2->event_type == EV_EFI_HCRTM_EVENT &&
+				    pcr_event2->pcr_index == 0) {
+					tpmevlog_pcrs.pcr[0][TPM2_SHA256_DIGEST_SIZE - 1] =
+						TPM2_HCRTM_PCR0_LOCALITY;
+					hcrtm_seen = true;
+				}
 				fwts_tpm_extend_pcr(tpmevlog_pcrs.pcr[pcr_event2->pcr_index],
 						TPM2_SHA256_DIGEST_SIZE,
 						alg_id,
@@ -454,7 +462,8 @@ static int tpmevlog_v2_check(
 		pdata += sizeof(event_size);
 		len_remain -= sizeof(event_size);
 
-		if (pcr_event2->event_type == EV_NO_ACTION &&
+		if (!hcrtm_seen &&
+		    pcr_event2->event_type == EV_NO_ACTION &&
 		    pcr_event2->pcr_index == 0 &&
 		    event_size == 17 &&
 		    memcmp(pdata, "StartupLocality", sizeof("StartupLocality")) == 0) {
