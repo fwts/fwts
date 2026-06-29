@@ -328,7 +328,7 @@ static int tpmevlog_v2_check(
 		fwts_failed(fw, LOG_LEVEL_HIGH, "SpecIdEvAlgNumber",
 			"The number of Hash algorithms of SpecId event must "
 			"be set to a value of 0x01 or greater "
-			"got 0x%" PRIx8 ".", specid_evcent->number_of_alg);
+			"got 0x%" PRIx32 ".", specid_evcent->number_of_alg);
 		return FWTS_ERROR;
 	}
 
