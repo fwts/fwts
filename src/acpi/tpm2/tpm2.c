@@ -55,7 +55,7 @@ static int tpm2_test1(fwts_framework *fw)
 		passed = false;
 		fwts_failed(fw, LOG_LEVEL_HIGH,
 			"TPM2BadStartMethod",
-			"TPM2's Start Method must be between 0x1 and 0xd, got 0x%" PRIx16,
+			"TPM2's Start Method must be between 0x1 and 0xd, got 0x%" PRIx32,
 			tpm2->start_method);
 	}
 
