@@ -137,7 +137,7 @@ static void gpedump_block(
 
 		fwts_log_nl(fw);
 		fwts_log_info_verbatim(fw,
-			"    Register %" PRIu32 ": (GPE 0x%2.2" PRIx8 "-0x%2.2" PRIx8 ")",
+			"    Register %" PRIu32 ": (GPE 0x%4.4" PRIx16 "-0x%4.4" PRIx16 ")",
 			reg,
 			gpe_reg_info->BaseGpeNumber,
 			gpe_reg_info->BaseGpeNumber + (ACPI_GPE_REGISTER_WIDTH - 1));
