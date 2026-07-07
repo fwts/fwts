@@ -104,10 +104,15 @@ static int rsdp_test1(fwts_framework *fw)
 	/* check if revision number is valid. note: revision field for
 	 * ACPI 1.0 RSDP is 0, not 1, as per ACPI specification version
 	 * 6.2, p.122. */
-	if (rsdp->revision == 0 || rsdp->revision == 2)
-		fwts_passed(fw,
-			    "RSDP: revision is %" PRIu8 ".", rsdp->revision);
-	else
+	if (rsdp->revision == 0 || rsdp->revision == 2) {
+		if (fw->target_arch == FWTS_ARCH_RISCV64 && rsdp->revision == 0)
+			fwts_failed(fw, LOG_LEVEL_CRITICAL,
+					"RSDPBadRevisionId",
+					"RSDP: revision 0 is too old for RISC-V");
+		else
+			fwts_passed(fw,
+					"RSDP: revision is %" PRIu8 ".", rsdp->revision);
+	} else
 		fwts_failed(fw, LOG_LEVEL_MEDIUM,
 			"RSDPBadRevisionId",
 			"RSDP: revision is %" PRIu8 ", expected "
@@ -166,8 +171,11 @@ static int rsdp_test1(fwts_framework *fw)
 		break;
 
 	case FWTS_ARCH_RISCV64:
-		if (rsdp->xsdt_address != 0)
-			passed = true;
+		passed = true;
+		if (fw->flags & FWTS_FLAG_BRSI) {
+			if (rsdp->rsdt_address != 0 || rsdp->xsdt_address == 0)
+				passed = false;
+		}
 		break;
 
 	default:
@@ -231,6 +239,6 @@ static fwts_framework_ops rsdp_ops = {
 };
 
 FWTS_REGISTER("rsdp", &rsdp_ops, FWTS_TEST_ANYTIME, FWTS_FLAG_BATCH |
-	      FWTS_FLAG_ACPI | FWTS_FLAG_COMPLIANCE_ACPI)
+	      FWTS_FLAG_ACPI | FWTS_FLAG_COMPLIANCE_ACPI | FWTS_FLAG_BRSI)
 
 #endif
