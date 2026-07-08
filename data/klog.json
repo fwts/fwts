@@ -7531,6 +7531,13 @@
           "pattern": "Failed to start Microsoft fan extensions",
           "advice": "The ACPI fan driver failed to start the Microsoft fan extension support used for fan trip point notifications. Enhanced fan status updates may not be available.",
           "label": "KlogAcpiFanMicrosoftExtensionsStartFailed"
+         },
+         {
+          "compare_mode": "regex",
+          "log_level": "LOG_LEVEL_MEDIUM",
+          "pattern": "CPU.*: Invalid FFH LPI data",
+          "advice": "The ACPI processor idle driver rejected firmware-provided FFH LPI data for a CPU. Low-power idle states for that CPU may be unavailable or fall back to other idle mechanisms.",
+          "label": "KlogAcpiProcessorIdleFfhLpiDataInvalid"
          }
         ],
  "pm_error_warning_patterns":
