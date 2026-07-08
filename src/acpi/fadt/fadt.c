@@ -47,6 +47,8 @@ static int fadt_size;
 
 static const fwts_acpi_table_facs *facs;
 
+static bool is_reduce_hardware;
+
 static int fadt_init(fwts_framework *fw)
 {
 	fwts_acpi_table_info *table;
@@ -75,11 +77,13 @@ static int fadt_init(fwts_framework *fw)
 		}
 	}
 
+	is_reduce_hardware = fwts_acpi_is_reduced_hardware(fw);
+
 	/*
 	 * Some tests require data from the FACS (5.2.10), which
 	 * requires that we are not in hardware-reduced mode
 	 */
-	if (!fwts_acpi_is_reduced_hardware(fw)) {
+	if (!is_reduce_hardware) {
 		if (fwts_acpi_find_table(fw, "FACS", 0, &table) != FWTS_OK) {
 			fwts_log_error(fw, "Cannot read ACPI table FACS.");
 			return FWTS_ERROR;
@@ -250,7 +254,7 @@ static void acpi_table_check_fadt_firmware_ctrl(fwts_framework *fw)
 
 	/* for more recent FADTs, things get more complicated */
 	if (fadt->firmware_control == 0 && fadt->x_firmware_ctrl == 0) {
-		if (fwts_acpi_is_reduced_hardware(fw)) {
+		if (is_reduce_hardware) {
 			fwts_passed(fw,
 				    "FADT 32 bit FIRMWARE_CONTROL and "
 				    "64 bit X_FIRMWARE_CONTROL (FACS "
@@ -443,16 +447,14 @@ static void acpi_table_check_fadt_reduced_hardware(fwts_framework *fw)
 {
 	const char *IS = "IS";
 	const char *IS_NOT = "IS NOT";
-	bool rhw;
 	bool passed;
 	static const fwts_acpi_gas null_gas;
 	uint32_t flag_mask;
 
-	rhw = fwts_acpi_is_reduced_hardware(fw);
 	fwts_log_info(fw, "FADT indicates ACPI %s in reduced hardware mode.",
-		      rhw ? IS : IS_NOT);
+		      is_reduce_hardware ? IS : IS_NOT);
 
-	if (!rhw)
+	if (!is_reduce_hardware)
 		return;
 
 	passed = true;
@@ -1560,7 +1562,7 @@ static void acpi_table_check_fadt_p_lvl3_lat(fwts_framework *fw, uint64_t pblk, 
 
 static void acpi_table_check_fadt_x_gpex_blk(fwts_framework *fw) {
 
-	if (fwts_acpi_is_reduced_hardware(fw))
+	if (is_reduce_hardware)
 		return;
 
 	if (fadt->x_gpe0_blk.access_width == 1)
@@ -1588,7 +1590,7 @@ static void acpi_table_check_fadt_x_gpex_blk(fwts_framework *fw) {
 
 static void acpi_table_check_fadt_sleep_control_reg(fwts_framework *fw)
 {
-	if (fwts_acpi_is_reduced_hardware(fw)) {
+	if (is_reduce_hardware) {
 		if (fadt->sleep_control_reg.address == 0)
 			fwts_passed(fw, "FADT SLEEP_CONTROL_REG not in use.");
 		else {
@@ -1618,7 +1620,7 @@ static void acpi_table_check_fadt_sleep_control_reg(fwts_framework *fw)
 
 static void acpi_table_check_fadt_sleep_status_reg(fwts_framework *fw)
 {
-	if (fwts_acpi_is_reduced_hardware(fw)) {
+	if (is_reduce_hardware) {
 		if (fadt->sleep_status_reg.address == 0)
 			fwts_passed(fw, "FADT SLEEP_STATUS_REG not in use.");
 		else {
@@ -1661,7 +1663,7 @@ static int fadt_test1(fwts_framework *fw)
 	 * there is no other info (as far as this author knows) that can be
 	 * used to verify that the value is correct.
 	 */
-	if (!fwts_acpi_is_reduced_hardware(fw)) {
+	if (!is_reduce_hardware) {
 		fwts_log_info(fw, "FADT SCI_INT is %" PRIu16, fadt->sci_int);
 		acpi_table_check_fadt_smi_cmd(fw);
 		acpi_table_check_fadt_acpi_enable(fw);
@@ -1734,7 +1736,7 @@ static int fadt_test2(fwts_framework *fw)
 	uint32_t port, width, val32;
 	int ret = FWTS_OK;
 
-	if (fwts_acpi_is_reduced_hardware(fw)) {
+	if (is_reduce_hardware) {
 		fwts_skipped(fw, "In reduced hardware mode, skipping test.");
 		return FWTS_OK;
 	}
@@ -1814,7 +1816,7 @@ static int fadt_test2(fwts_framework *fw)
 
 static int fadt_test3(fwts_framework *fw)
 {
-	if (fwts_acpi_is_reduced_hardware(fw)) {
+	if (is_reduce_hardware) {
 		fwts_skipped(fw, "In reduced hardware mode, skipping test.");
 		return FWTS_OK;
 	}
