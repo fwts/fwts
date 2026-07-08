@@ -7489,6 +7489,20 @@
           "pattern": "Unrecognised MSC, MPAM not usable",
           "advice": "The ACPI MPAM parser found an MSC entry with unsupported or reserved fields set. MPAM cannot be enabled safely with this firmware description.",
           "label": "KlogAcpiMpamMscUnrecognised"
+         },
+         {
+          "compare_mode": "regex",
+          "log_level": "LOG_LEVEL_HIGH",
+          "pattern": "cannot register GSI#.* (.*)",
+          "advice": "The ACPI AGDI driver failed to register the firmware-provided GSIV as a Linux interrupt. AGDI diagnostic dump and reset interrupt handling may not be available.",
+          "label": "KlogAcpiAgdiGsiRegisterFailed"
+         },
+         {
+          "compare_mode": "regex",
+          "log_level": "LOG_LEVEL_HIGH",
+          "pattern": "cannot register IRQ .*",
+          "advice": "The ACPI AGDI driver failed to request the interrupt used for diagnostic dump and reset handling. AGDI interrupt signaling cannot be enabled.",
+          "label": "KlogAcpiAgdiIrqRegisterFailed"
          }
         ],
  "pm_error_warning_patterns":
