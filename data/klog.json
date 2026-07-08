@@ -7510,6 +7510,27 @@
           "pattern": "Could not find IOMMU node in RIMT",
           "advice": "The RISC-V ACPI RIMT driver could not find a firmware IOMMU node matching the device. IOMMU translation setup for that device cannot proceed.",
           "label": "KlogAcpiRimtIommuNodeNotFound"
+         },
+         {
+          "compare_mode": "regex",
+          "log_level": "LOG_LEVEL_MEDIUM",
+          "pattern": "Error retrieving current fan status: .*",
+          "advice": "The ACPI fan driver could not evaluate the current fan status from firmware. Fan speed reporting and notification handling may be incomplete.",
+          "label": "KlogAcpiFanCurrentStatusFailed"
+         },
+         {
+          "compare_mode": "regex",
+          "log_level": "LOG_LEVEL_MEDIUM",
+          "pattern": "Failed to update trip points: .*",
+          "advice": "The ACPI fan driver failed to update firmware trip points for fan speed notifications. Fan speed change notifications may be delayed or missed.",
+          "label": "KlogAcpiFanTripPointUpdateFailed"
+         },
+         {
+          "compare_mode": "string",
+          "log_level": "LOG_LEVEL_MEDIUM",
+          "pattern": "Failed to start Microsoft fan extensions",
+          "advice": "The ACPI fan driver failed to start the Microsoft fan extension support used for fan trip point notifications. Enhanced fan status updates may not be available.",
+          "label": "KlogAcpiFanMicrosoftExtensionsStartFailed"
          }
         ],
  "pm_error_warning_patterns":
