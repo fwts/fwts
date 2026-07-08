@@ -7538,6 +7538,13 @@
           "pattern": "CPU.*: Invalid FFH LPI data",
           "advice": "The ACPI processor idle driver rejected firmware-provided FFH LPI data for a CPU. Low-power idle states for that CPU may be unavailable or fall back to other idle mechanisms.",
           "label": "KlogAcpiProcessorIdleFfhLpiDataInvalid"
+         },
+         {
+          "compare_mode": "regex",
+          "log_level": "LOG_LEVEL_HIGH",
+          "pattern": "E820 table full; ignoring \\[mem .*\\]",
+          "advice": "The x86 E820 memory map table is full, so the kernel ignored a firmware-provided memory range. The system memory map may be incomplete, which can affect memory reservation and device resource handling.",
+          "label": "KlogX86E820TableFull"
          }
         ],
  "pm_error_warning_patterns":
