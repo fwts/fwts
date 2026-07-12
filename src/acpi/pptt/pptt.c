@@ -24,7 +24,16 @@
 #include <stdbool.h>
 
 static fwts_acpi_table_info *table;
-acpi_table_init(PPTT, &table)
+
+static int pptt_init(fwts_framework *fw)
+{
+	int rc;
+	rc = acpi_table_generic_init(fw, "PPTT", &table);
+	if (fw->flags & FWTS_FLAG_BRSI)
+		if (table == NULL || table->length == 0)
+			return FWTS_OK;
+	return rc;
+}
 
 static void pptt_processor_test(
 	fwts_framework *fw,
@@ -126,6 +135,18 @@ static int pptt_test1(fwts_framework *fw)
 	bool passed = true;
 	uint32_t offset;
 
+	if (table == NULL || table->length == 0) {
+		if (fw->flags & FWTS_FLAG_BRSI) {
+			fwts_failed(fw, LOG_LEVEL_HIGH, "RISCVNoImpPPTT",
+				"The Processor Properties Table (PPTT) MUST be implemented "
+				"on RISC-V BRS systems, even on systems with simple hart topology "
+				"(per ACPI_030).");
+			return FWTS_ERROR;
+		}
+		fwts_skipped(fw, "ACPI PPTT table does not exist, skipping test");
+		return FWTS_SKIP;
+	}
+
 	fwts_log_info_verbatim(fw, "PPTT Processor Properties Topology Table:");
 	pptt = (fwts_acpi_table_pptt *) table->data;
 
@@ -185,10 +206,10 @@ static fwts_framework_minor_test pptt_tests[] = {
 
 static fwts_framework_ops pptt_ops = {
 	.description = "PPTT Processor Properties Topology Table test.",
-	.init        = PPTT_init,
+	.init        = pptt_init,
 	.minor_tests = pptt_tests
 };
 
-FWTS_REGISTER("pptt", &pptt_ops, FWTS_TEST_ANYTIME, FWTS_FLAG_BATCH | FWTS_FLAG_ACPI | FWTS_FLAG_SBBR)
+FWTS_REGISTER("pptt", &pptt_ops, FWTS_TEST_ANYTIME, FWTS_FLAG_BATCH | FWTS_FLAG_ACPI | FWTS_FLAG_SBBR | FWTS_FLAG_BRSI)
 
 #endif
