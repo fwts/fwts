@@ -12,7 +12,7 @@ tpm2            0x4
 tpm2            FAILED [MEDIUM] TPM2ReservedNonZero: Test 1, TPM2 Reserved
 tpm2            field must be zero, got 0x0003 instead
 tpm2            FAILED [HIGH] TPM2BadStartMethod: Test 1, TPM2's Start
-tpm2            Method must be between 0x1 and 0xd, got 0xff
+tpm2            Method must be between 0x1 and 0xd or 0xf, got 0xff
 tpm2            
 tpm2            ==========================================================
 tpm2            0 passed, 3 failed, 0 warning, 0 aborted, 0 skipped, 0
