@@ -83,16 +83,15 @@ static int fadt_init(fwts_framework *fw)
 	 * Some tests require data from the FACS (5.2.10), which
 	 * requires that we are not in hardware-reduced mode
 	 */
-	if (!is_reduce_hardware) {
-		if (fwts_acpi_find_table(fw, "FACS", 0, &table) != FWTS_OK) {
-			fwts_log_error(fw, "Cannot read ACPI table FACS.");
-			return FWTS_ERROR;
-		}
-		if (table == NULL) {
-			fwts_log_error(fw, "ACPI table FACS does not exist!");
-			return FWTS_ERROR;
-		}
+	if (fwts_acpi_find_table(fw, "FACS", 0, &table) != FWTS_OK) {
+		fwts_log_error(fw, "Cannot read ACPI table FACS.");
+		return FWTS_ERROR;
+	}
+	if (table)
 		facs = (const fwts_acpi_table_facs *)table->data;
+	if (!is_reduce_hardware && facs == NULL) {
+		fwts_log_error(fw, "ACPI table FACS does not exist!");
+		return FWTS_ERROR;
 	}
 
 	return FWTS_OK;
@@ -1648,6 +1647,28 @@ static void acpi_table_check_fadt_sleep_status_reg(fwts_framework *fw)
 	}
 }
 
+static void acpi_table_check_fadt_riscv(fwts_framework *fw)
+{
+	if (fw->target_arch != FWTS_ARCH_RISCV64)
+		return;
+
+	if ((fw->flags & FWTS_FLAG_BRSI) == 0)
+		return;
+
+	/* ACPI_020: RISC-V MUST implement hardware-reduced ACPI mode (no FACS table) */
+	if (!is_reduce_hardware)
+		fwts_failed(fw, LOG_LEVEL_HIGH, "FADTRISCVNotReducedHW",
+			"RISC-V BRS ACPI_020 requires hardware-reduced ACPI "
+			"mode, but HW_REDUCED_ACPI is not set.");
+	if (facs)
+		fwts_failed(fw, LOG_LEVEL_HIGH, "RISCVExistFACS",
+			"RISC-V BRS ACPI_020 requires hardware-reduced ACPI "
+			"mode (no FACS table), but exist FACS table");
+	if (is_reduce_hardware && facs == NULL)
+		fwts_passed(fw, "FADT is in hardware-reduced mode as required "
+			"by RISC-V BRS ACPI_020.");
+}
+
 static int fadt_test1(fwts_framework *fw)
 {
 	acpi_table_check_fadt_firmware_ctrl(fw);
@@ -1655,6 +1676,7 @@ static int fadt_test1(fwts_framework *fw)
 	acpi_table_check_fadt_reserved(fw);
 	acpi_table_check_fadt_pm_profile(fw);
 	acpi_table_check_fadt_reduced_hardware(fw);
+	acpi_table_check_fadt_riscv(fw);
 
 	/*
 	 * If a field can be tested, we call a function to do so.  If
@@ -1899,5 +1921,5 @@ static fwts_framework_ops fadt_ops = {
 };
 
 FWTS_REGISTER("fadt", &fadt_ops, FWTS_TEST_ANYTIME, FWTS_FLAG_BATCH |
-	      FWTS_FLAG_ROOT_PRIV | FWTS_FLAG_ACPI | FWTS_FLAG_COMPLIANCE_ACPI)
+	      FWTS_FLAG_ROOT_PRIV | FWTS_FLAG_ACPI | FWTS_FLAG_COMPLIANCE_ACPI | FWTS_FLAG_BRSI)
 #endif
