@@ -100,6 +100,7 @@ fwts_SOURCES = main.c 				\
 	acpi/erst/erst.c			\
 	acpi/facs/facs.c 			\
 	acpi/fadt/fadt.c 			\
+	brs-i/fadt/fadt.c			\
 	sbbr/fadt/fadt.c 			\
 	acpi/fan/fan.c 				\
 	acpi/fpdt/fpdt.c 			\
