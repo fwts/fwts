@@ -135,6 +135,7 @@ fwts_SOURCES = main.c 				\
 	acpi/phat/phat.c 			\
 	acpi/pmtt/pmtt.c 			\
 	acpi/pptt/pptt.c 			\
+	brs-i/pptt/pptt.c 			\
 	acpi/rasf/rasf.c			\
 	acpi/ras2/ras2.c			\
 	acpi/rgrt/rgrt.c			\
