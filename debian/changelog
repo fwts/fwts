@@ -1,3 +1,41 @@
+fwts (26.07.00-0ubuntu1) stonking; urgency=medium
+
+  [Dat Mach]
+  * tpmevlog: handle PCR[0] replay for EV_EFI_HCRTM_EVENT
+
+  [Ivan Hu]
+  * dmi: dmicheck: fix bus error when copying SMBIOS tables from memory
+  * acpi: gpedump: Fix format string for BlockBaseNumber
+  * acpi: hest: Fix format strings for record/section counts
+  * acpi: tpm2: Fix format string for start_method
+  * tpm: tpmevlog: Fix format string for number_of_alg
+  * tpm: tpmevlogdump: Fix wrong field printed for specVersionMajor
+  * klog.json: Add ACPI MPAM error messages to klog database
+  * klog.json: Add ACPI AGDI interrupt registration error messages to klog
+    database
+  * klog.json: Add ACPI RIMT IOMMU lookup error message to klog database
+  * klog.json: Add ACPI fan status and extension error messages to klog database
+  * klog.json: Add ACPI processor FFH LPI error message to klog database
+  * klog.json: Add x86 E820 table overflow error message to klog database
+  * dmicheck: fix off-by-one in SMBIOS table size boundary check
+  * tpm2: accept Arm FF-A Start Method and validate its parameters
+  * fwts-test: update tpm2 expected output for Arm FF-A Start Method fix
+  * auto-packager: mkpackage.sh: remove questing
+
+  [Marc Bornand]
+  * build: link to zlib
+
+  [Thomas Huth]
+  * acpi: mcfg: Fix format string for pci_segment_group_number
+  * acpi: madt: Silence compiler warning when using Clang
+  * acpi: gpedump: Fix format string for BaseGpeNumber
+  * acpi: fadt: Fix format string for printing sci_int
+
+  [Xiang W]
+  * uefi: uefibootpath: correct error message for UART stop bits validation
+
+ -- Ivan Hu <ivan.hu@ubuntu.com>  Mon, 20 Jul 2026 04:36:32 +0000
+
 fwts (26.05.00-0ubuntu1) stonking; urgency=medium
 
   [Ivan Hu]
