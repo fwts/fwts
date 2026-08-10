@@ -114,7 +114,7 @@ static int fadt_sbbr_reduced_hw(fwts_framework *fw)
 	if (fadt->sci_int != 0) {
 		passed = false;
 		fwts_log_warning(fw, "SCI_INT is non-zero: 0x%x",
-			      fadt->smi_cmd);
+			      fadt->sci_int);
 	}
 	if (fadt->smi_cmd != 0) {
 		passed = false;
