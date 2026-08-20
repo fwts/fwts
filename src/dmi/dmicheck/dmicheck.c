@@ -23,7 +23,7 @@
 
 #include "fwts.h"
 
-#if defined(FWTS_ARCH_INTEL) || defined(FWTS_ARCH_AARCH64)
+#if defined(FWTS_ARCH_INTEL) || defined(FWTS_ARCH_AARCH64) || defined(FWTS_ARCH_RISCV)
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -37,6 +37,7 @@
 #define DMI_VERSION			(0x0390)
 #define VERSION_MAJOR(v)		((v) >> 8)
 #define VERSION_MINOR(v)		((v) & 0xff)
+#define BRS_I_SMBIOS_VERSION_MIN	0x0307  /* 3.7 */
 
 #define SMBIOS_END_OF_TABLE		(127)
 
@@ -101,6 +102,7 @@ typedef struct {
 
 static bool smbios_found = false;
 static bool smbios30_found = false;
+static uint16_t smbios30_version = 0;
 
 /*
  *  Table derived by scanning thousands of DMI table dumps from bug reports
@@ -424,10 +426,10 @@ static void* dmi_table_smbios(fwts_framework *fw, fwts_smbios_entry *entry)
 		free(table);
 	}
 
-#ifdef FWTS_ARCH_AARCH64
+#if defined(FWTS_ARCH_AARCH64) || defined(FWTS_ARCH_RISCV)
 	if (!fwts_kernel_config_exist() ||
 			fwts_kernel_config_set("CONFIG_STRICT_DEVMEM")) {
-		fwts_warning(fw, "Skipping scanning SMBIOS table in memory for arm64 systems");
+		fwts_warning(fw, "Skipping scanning SMBIOS table in memory for %s systems", fwts_arch_get_name(fw->target_arch));
 		return NULL;
 	}
 #endif
@@ -484,10 +486,10 @@ static void* dmi_table_smbios30(fwts_framework *fw, fwts_smbios30_entry *entry)
 		free(table);
 	}
 
-#ifdef FWTS_ARCH_AARCH64
+#if defined(FWTS_ARCH_AARCH64) || defined(FWTS_ARCH_RISCV)
 	if (!fwts_kernel_config_exist() ||
 			fwts_kernel_config_set("CONFIG_STRICT_DEVMEM")) {
-		fwts_warning(fw, "Skipping scanning SMBIOS3 table in memory for arm64 systems");
+		fwts_warning(fw, "Skipping scanning SMBIOS3 table in memory for %s systems", fwts_arch_get_name(fw->target_arch));
 		return NULL;
 	}
 #endif
@@ -791,10 +793,9 @@ static int smbios30_entry_check(fwts_framework *fw)
 	void *addr = 0;
 
 	fwts_smbios30_entry entry;
-	uint16_t version;
 	uint8_t checksum;
 
-	if ((addr = fwts_smbios30_find_entry(fw, &entry, &version)) == NULL)
+	if ((addr = fwts_smbios30_find_entry(fw, &entry, &smbios30_version)) == NULL)
 		return FWTS_ERROR;
 
 	fwts_passed(fw, "Found SMBIOS30 Table Entry Point at %p", addr);
@@ -854,7 +855,7 @@ static int dmicheck_test1(fwts_framework *fw)
 	}
 
 	if (!smbios30_found) {
-		if (!(fw->flags & FWTS_FLAG_SBBR)) {
+		if (!(fw->flags & (FWTS_FLAG_SBBR | FWTS_FLAG_BRSI))) {
 			if (smbios_found)
 				return FWTS_OK;
 		}
@@ -862,6 +863,22 @@ static int dmicheck_test1(fwts_framework *fw)
 			"SMBIOSNoEntryPoint",
 			"Could not find any SMBIOS Table Entry Points.");
 		return FWTS_ERROR;
+	}
+
+	if (fw->flags & FWTS_FLAG_BRSI) {
+		if (smbios30_version < BRS_I_SMBIOS_VERSION_MIN) {
+			fwts_failed(fw, LOG_LEVEL_HIGH, "BrsiSmbiosVersion",
+				"SMBIOS version %" PRIu16 ".%" PRIu16
+				" is below BRS-I minimum 3.7.0.",
+				VERSION_MAJOR(smbios30_version),
+				VERSION_MINOR(smbios30_version));
+			return FWTS_ERROR;
+		}
+		fwts_passed(fw,
+			"SMBIOS version %" PRIu16 ".%" PRIu16
+			" meets BRS-I requirement (>= 3.7.0).",
+			VERSION_MAJOR(smbios30_version),
+			VERSION_MINOR(smbios30_version));
 	}
 
 	return FWTS_OK;
@@ -2319,17 +2336,20 @@ static void dmi_scan_tables(fwts_framework *fw,
 
 #define RECOMMENDED_STRUCTURE_DEFAULT_MSG "This structure is recommended."
 
-/* Test Entry Structure */
+/*
+ * Generic SMBIOS structure requirement entry
+ * Used by both SBBR and BRS compliance tests.
+ */
 typedef struct {
 	const char *name;
 	const uint8_t type;
-	const uint8_t mandatory;
+	uint8_t mandatory;
 	const char *advice;
 	uint8_t found;
-} sbbr_test_entry;
+} smbios_req_entry;
 
-/* Test Definition Array */
-static sbbr_test_entry sbbr_test[] = {
+/* ARM SBBR SMBIOS structure requirement entries */
+static smbios_req_entry sbbr_smbios_req[] = {
 	{ "BIOS Information", 0, 1, 0, 0 },
 	{ "System Information", 1, 1, 0, 0 },
 	{ "Baseboard Information", 2, 0, RECOMMENDED_STRUCTURE_DEFAULT_MSG, 0 },
@@ -2351,13 +2371,40 @@ static sbbr_test_entry sbbr_test[] = {
 	{ 0, 0, 0, 0, 0 }
 };
 
-static void sbbr_test_entry_check(fwts_dmi_header *hdr)
+/* RISC-V BRS-I SMBIOS structure requirement entries */
+static smbios_req_entry brsi_smbios_req[] = {
+	{ "Baseboard/Module Information", 2, 0, "SHOULD be implemented.", 0 },
+	{ "Processor Information", 4, 1, 0, 0 },
+	{ "Port Connector Information", 8, 0, "SHOULD be implemented.", 0 },
+	{ "BIOS Language Information", 13, 0, "SHOULD be implemented.", 0 },
+	{ "IPMI Device Information", 38, 1, "MUST when an IPMIv1.0 host interface is present.", 0 },
+	{ "System Power Supply", 39, 0, "SHOULD be implemented.", 0 },
+	{ "Onboard Devices Extended Information", 41, 0, "SHOULD be implemented.", 0 },
+	{ "Redfish Host Interface", 42, 1, "MUST when a Redfish host interface is present.", 0 },
+	{ "TPM Device", 43, 1, "MUST when a TPM is present.", 0 },
+	{ "Processor Additional Information", 44, 1, 0, 0 },
+	{ "Firmware Inventory Information", 45, 0, "SHOULD be implemented.", 0 },
+	{ 0, 0, 0, 0, 0 }
+};
+
+static void smbios_req_check(fwts_framework *fw,
+				  fwts_dmi_header *hdr)
 {
 	uint32_t i;
-	for (i = 0; sbbr_test[i].name != NULL; i++) {
-		if (hdr->type == sbbr_test[i].type) {
-			sbbr_test[i].found = 1;
-			break;
+	if (fw->flags & FWTS_FLAG_SBBR) {
+		for (i = 0; sbbr_smbios_req[i].name != NULL; i++) {
+			if (hdr->type == sbbr_smbios_req[i].type) {
+				sbbr_smbios_req[i].found = 1;
+				break;
+			}
+		}
+	}
+	if (fw->flags & FWTS_FLAG_BRSI) {
+		for (i = 0; brsi_smbios_req[i].name != NULL; i++) {
+			if (hdr->type == brsi_smbios_req[i].type) {
+				brsi_smbios_req[i].found = 1;
+				break;
+			}
 		}
 	}
 }
@@ -2415,8 +2462,7 @@ static void dmi_scan_smbios30_table(fwts_framework *fw,
 
 		if ((next_entry - table) <= table_max_length) {
 			dmicheck_entry(fw, addr, &hdr, smbios_version);
-			if (fw->flags & FWTS_FLAG_SBBR)
-				sbbr_test_entry_check(&hdr);
+			smbios_req_check(fw, &hdr);
 		}
 		else {
 			fwts_failed(fw, LOG_LEVEL_HIGH, DMI_BAD_TABLE_LENGTH,
@@ -2523,35 +2569,118 @@ static int dmicheck_test4(fwts_framework *fw)
 	}
 
 	/* Check whether all SMBIOS structures needed by SBBR have been found. */
-	for (i = 0; sbbr_test[i].name != NULL; i++) {
-		if (!sbbr_test[i].found) {
-			if (sbbr_test[i].mandatory)
+	for (i = 0; sbbr_smbios_req[i].name != NULL; i++) {
+		if (!sbbr_smbios_req[i].found) {
+			if (sbbr_smbios_req[i].mandatory)
 				fwts_failed(fw, LOG_LEVEL_HIGH, "SbbrSmbiosNoStruct", "Cannot find SMBIOS "
-						"structure: %s (Type %d).", sbbr_test[i].name, sbbr_test[i].type);
+						"structure: %s (Type %d).", sbbr_smbios_req[i].name, sbbr_smbios_req[i].type);
 			else
 				fwts_skipped(fw, "SMBIOS structure %s (Type %d) not found. %s",
-						sbbr_test[i].name, sbbr_test[i].type,
-						sbbr_test[i].advice?sbbr_test[i].advice:"");
+						sbbr_smbios_req[i].name, sbbr_smbios_req[i].type,
+						sbbr_smbios_req[i].advice ? sbbr_smbios_req[i].advice : "");
 		} else
 			fwts_passed(fw, "SMBIOS structure %s (Type %d) found.",
-					sbbr_test[i].name, sbbr_test[i].type);
+					sbbr_smbios_req[i].name, sbbr_smbios_req[i].type);
 	}
 	return FWTS_OK;
 }
+
+static int dmicheck_test5(fwts_framework *fw)
+{
+	uint32_t i;
+
+	if (!(fw->flags & FWTS_FLAG_BRSI))
+		return FWTS_SKIP;
+
+	if (!smbios30_found) {
+		fwts_failed(fw, LOG_LEVEL_HIGH, "BrsiSmbiosNoStruct", "Cannot find SMBIOS30 table entry.");
+		return FWTS_ERROR;
+	}
+
+	/* Check whether all SMBIOS structures needed by RISC-V BRS-I have been found. */
+	for (i = 0; brsi_smbios_req[i].name != NULL; i++) {
+		if (!brsi_smbios_req[i].found) {
+			if (brsi_smbios_req[i].mandatory)
+				fwts_failed(fw, LOG_LEVEL_HIGH, "BrsiSmbiosNoStruct", "Cannot find SMBIOS "
+						"structure: %s (Type %d).", brsi_smbios_req[i].name, brsi_smbios_req[i].type);
+			else
+				fwts_skipped(fw, "SMBIOS structure %s (Type %d) not found. %s",
+						brsi_smbios_req[i].name, brsi_smbios_req[i].type,
+						brsi_smbios_req[i].advice ? brsi_smbios_req[i].advice : "");
+		} else
+			fwts_passed(fw, "SMBIOS structure %s (Type %d) found.",
+					brsi_smbios_req[i].name, brsi_smbios_req[i].type);
+	}
+	return FWTS_OK;
+}
+
+static void brsi_smbios_set_mandatory(uint8_t type, uint8_t mandatory)
+{
+	uint32_t i;
+
+	for (i = 0; brsi_smbios_req[i].name != NULL; i++) {
+		if (brsi_smbios_req[i].type == type) {
+			brsi_smbios_req[i].mandatory = mandatory;
+			return;
+		}
+	}
+}
+
+static int options_handler(
+	fwts_framework *fw,
+	int argc,
+	char * const argv[],
+	int option_char,
+	int long_index)
+{
+	FWTS_UNUSED(argc);
+	FWTS_UNUSED(argv);
+
+	if (option_char == 0) {
+		switch (long_index) {
+		case 0:	/* --brs-i-no-ipmi */
+			brsi_smbios_set_mandatory(38, 0);
+			fwts_log_info(fw, "BRS-I: no IPMIv1.0 host interface; SMBIOS Type 38 treated as optional.");
+			break;
+		case 1:	/* --brs-i-no-redfish */
+			brsi_smbios_set_mandatory(42, 0);
+			fwts_log_info(fw, "BRS-I: no Redfish host interface; SMBIOS Type 42 treated as optional.");
+			break;
+		case 2: /* --brs-i-no-tpm */
+			brsi_smbios_set_mandatory(43, 0);
+			fwts_log_info(fw, "BRS-I: no TPM device; SMBIOS Type 43 treated as optional.");
+			break;
+		}
+	}
+	return FWTS_OK;
+}
+
+static fwts_option options[] = {
+	{"brs-i-no-ipmi", "", 0,
+		"Platform has no IPMIv1.0 host interface; do not require SMBIOS Type 38."},
+	{"brs-i-no-redfish", "", 0,
+		"Platform has no Redfish host interface; do not require SMBIOS Type 42."},
+	{"brs-i-no-tpm", "", 0,
+		"Platform has no TPM; do not require SMBIOS Type 43."},
+	{NULL, NULL, 0, NULL}
+};
 
 static fwts_framework_minor_test dmicheck_tests[] = {
 	{ dmicheck_test1, "Find and test SMBIOS Table Entry Points." },
 	{ dmicheck_test2, "Test DMI/SMBIOS tables for errors." },
 	{ dmicheck_test3, "Test DMI/SMBIOS3 tables for errors." },
 	{ dmicheck_test4, "Test ARM SBBR SMBIOS structure requirements."},
+	{ dmicheck_test5, "Test RISC-V BRS-I SMBIOS structure requirements."},
 	{ NULL, NULL }
 };
 
 static fwts_framework_ops dmicheck_ops = {
 	.description = "DMI/SMBIOS table tests.",
-	.minor_tests = dmicheck_tests
+	.minor_tests = dmicheck_tests,
+	.options = options,
+	.options_handler = options_handler
 };
 
-FWTS_REGISTER("dmicheck", &dmicheck_ops, FWTS_TEST_ANYTIME, FWTS_FLAG_BATCH | FWTS_FLAG_ROOT_PRIV | FWTS_FLAG_SBBR)
+FWTS_REGISTER("dmicheck", &dmicheck_ops, FWTS_TEST_ANYTIME, FWTS_FLAG_BATCH | FWTS_FLAG_ROOT_PRIV | FWTS_FLAG_SBBR | FWTS_FLAG_BRSI)
 
 #endif
