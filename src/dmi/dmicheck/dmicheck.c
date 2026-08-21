@@ -1399,10 +1399,14 @@ static void dmicheck_entry(fwts_framework *fw,
 			dmi_str_check(fw, table, addr, "Version", hdr, 0x6);
 			dmi_str_check(fw, table, addr, "Serial Number", hdr, 0x7);
 			dmi_str_check(fw, table, addr, "Asset Tag", hdr, 0x8);
+			if (hdr->length < 0x0d)
+				break;
 			dmi_min_max_uint8_check(fw, table, addr, "Boot-up State", hdr, 0x9, 0x1, 0x6);
 			dmi_min_max_uint8_check(fw, table, addr, "Power Supply State", hdr, 0xa, 0x1, 0x6);
 			dmi_min_max_uint8_check(fw, table, addr, "Thermal State", hdr, 0xb, 0x1, 0x6);
 			dmi_min_max_uint8_check(fw, table, addr, "Security Status", hdr, 0xc, 0x1, 0x5);
+			if (hdr->length < 0x15)
+				break;
 			if (hdr->length < 0x15 + data[0x13] * data[0x14])
 				break;
 			ptr = data + 0x15;
@@ -1433,10 +1437,12 @@ static void dmicheck_entry(fwts_framework *fw,
 					}
 				}
 			}
-			if (hdr->length < 0x16 + data[0x13] * data[0x14])
+			if (smbios_version < 0x0207 ||
+			    hdr->length < 0x16 + data[0x13] * data[0x14])
 				break;
 			dmi_str_check(fw, table, addr, "SKU Number", hdr, 0x15 + data[0x13] * data[0x14]);
-			if (hdr->length < 0x17 + data[0x13] * data[0x14])
+			if (smbios_version < 0x0309 ||
+			    hdr->length < 0x17 + data[0x13] * data[0x14])
 				break;
 			dmi_min_max_uint8_check(fw, table, addr, "Rack Type", hdr, 0x16 + data[0x13] * data[0x14], 0x0, 0x1);
 			break;
@@ -1646,6 +1652,13 @@ static void dmicheck_entry(fwts_framework *fw,
 						data[0x10], table, addr, "Device/Function Number", 0x10);
 			}
 
+			/*
+			 * Peer grouping count is at offset 0x12; make sure the
+			 * formatted area actually contains it before use to avoid
+			 * reading past the end of short (length 0x11) structures.
+			 */
+			if (hdr->length < 0x13)
+				break;
 			if (hdr->length < (0x18 + 5 * data[0x12]))
 				break;
 
@@ -1771,6 +1784,8 @@ static void dmicheck_entry(fwts_framework *fw,
 		case 17: /* 7.18 */
 			table = "Memory Device (Type 17)";
 
+			if (hdr->length < 0x0e)
+				break;
 			/* skip if memory module is not installed (size = 0) */
 			if (GET_UINT16(data + 0xc) == 0)
 				break;
@@ -1808,9 +1823,11 @@ static void dmicheck_entry(fwts_framework *fw,
 			default:
 				break;
 			}
-			if (hdr->length < 0x54)
+			if (hdr->length < 0x58)
 				break;
 			dmi_reserved_bits_check(fw, table, addr, "Extended Speed", hdr, sizeof(uint32_t), 0x54, 31, 31);
+			if (hdr->length < 0x5c)
+				break;
 			dmi_reserved_bits_check(fw, table, addr, "Extended Configured Memory Speed", hdr, sizeof(uint32_t), 0x58, 31, 31);
 
 			break;
