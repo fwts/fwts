@@ -34,7 +34,7 @@
 #include <limits.h>
 #include <fcntl.h>
 
-#define DMI_VERSION			(0x0380)
+#define DMI_VERSION			(0x0390)
 #define VERSION_MAJOR(v)		((v) >> 8)
 #define VERSION_MINOR(v)		((v) & 0xff)
 
@@ -1436,6 +1436,9 @@ static void dmicheck_entry(fwts_framework *fw,
 			if (hdr->length < 0x16 + data[0x13] * data[0x14])
 				break;
 			dmi_str_check(fw, table, addr, "SKU Number", hdr, 0x15 + data[0x13] * data[0x14]);
+			if (hdr->length < 0x17 + data[0x13] * data[0x14])
+				break;
+			dmi_min_max_uint8_check(fw, table, addr, "Rack Type", hdr, 0x16 + data[0x13] * data[0x14], 0x0, 0x1);
 			break;
 
 		case 4: /* 7.5 */
@@ -1773,10 +1776,10 @@ static void dmicheck_entry(fwts_framework *fw,
 				break;
 			if (hdr->length < 0x15)
 				break;
-			dmi_min_max_uint8_check(fw, table, addr, "Form Factor", hdr, 0xe, 0x1, 0x11);
+			dmi_min_max_uint8_check(fw, table, addr, "Form Factor", hdr, 0xe, 0x1, 0x13);
 			dmi_str_check(fw, table, addr, "Locator", hdr, 0x10);
 			dmi_str_check(fw, table, addr, "Bank Locator", hdr, 0x11);
-			fwts_dmi_value_range t17_ranges[] = {{0x1, 0x14}, {0x18, 0x24}};
+			fwts_dmi_value_range t17_ranges[] = {{0x1, 0x14}, {0x18, 0x25}};
 			dmi_ranges_uint8_check(fw, table, addr, "Memory Type", hdr, 0x12, t17_ranges);
 			dmi_reserved_bits_check(fw, table, addr, "Type Detail", hdr, sizeof(uint16_t), 0x13, 0, 0);
 			if (hdr->length < 0x1b)
@@ -2133,10 +2136,17 @@ static void dmicheck_entry(fwts_framework *fw,
 
 		case 44: /* 7.45 */
 			table = "Processor Additional Information (Type 44)";
-			if (hdr->length < 0x6)
+			if (hdr->length < 0x08)
 				break;
 
-			dmi_min_max_uint8_check(fw, table, addr, "IProcessor Architecture Types", hdr, 0x7, 0x0, 0xa);
+			dmi_min_max_uint8_check(fw, table, addr, "Processor Architecture Type", hdr, 0x7, 0x1, 0xa);
+			if (hdr->length != 0x08 + data[0x06]) {
+				fwts_failed(fw, LOG_LEVEL_HIGH, DMI_BAD_TABLE_LENGTH,
+					"Type 44 expects length of 0x%2.2x from its Processor-specific "
+					"Block Length, has incorrect length of 0x%2.2" PRIx8,
+					0x08 + data[0x06], hdr->length);
+				break;
+			}
 			break;
 
 		case 45: /* 7.46 */
