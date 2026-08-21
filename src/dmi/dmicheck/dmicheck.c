@@ -1345,7 +1345,7 @@ static void dmicheck_entry(fwts_framework *fw,
 			dmi_str_check(fw, table, addr, "Release Date", hdr, 0x8);
 			if (hdr->length < 0x18)
 				break;
-			dmi_reserved_bits_check(fw, table, addr, "BIOS Characteristics Extension Byte 2", hdr, sizeof(uint8_t), 0x13, 5, 7);
+			dmi_reserved_bits_check(fw, table, addr, "BIOS Characteristics Extension Byte 2", hdr, sizeof(uint8_t), 0x13, 7, 7);
 
 			/* new fields in spec 3.11 */
 			if (hdr->length < 0x1a)
@@ -1364,7 +1364,7 @@ static void dmicheck_entry(fwts_framework *fw,
 			if (hdr->length < 0x19)
 				break;
 			dmi_uuid_check(fw, table, addr, "UUID", hdr, 0x8);
-			dmi_min_max_uint8_check(fw, table, addr, "Wakeup Type", hdr, 0x18, 0x0, 0x08);
+			dmi_min_max_uint8_check(fw, table, addr, "Wakeup Type", hdr, 0x18, 0x1, 0x08);
 			if (hdr->length < 0x1b)
 				break;
 			dmi_str_check(fw, table, addr, "SKU Number", hdr, 0x19);
@@ -1619,7 +1619,7 @@ static void dmicheck_entry(fwts_framework *fw,
 			if (hdr->length < 0x0c)
 				break;
 			dmi_str_check(fw, table, addr, "Slot Designation", hdr, 0x4);
-			fwts_dmi_value_range t9_ranges[] = {{1, 0x28}, {0x30, 0x30}, {0xa0, 0xc6}};
+			fwts_dmi_value_range t9_ranges[] = {{1, 0x28}, {0x30, 0x30}, {0xa0, 0xb6}, {0xb8, 0xc6}};
 			dmi_ranges_uint8_check(fw, table, addr, "Slot Type", hdr, 0x5, t9_ranges);
 			dmi_min_max_uint8_check(fw, table, addr, "Slot Data Bus Width", hdr, 0x6, 0x1, 0xe);
 			dmi_min_max_uint8_check(fw, table, addr, "Current Usage", hdr, 0x7, 0x1, 0x5);
@@ -1704,7 +1704,7 @@ static void dmicheck_entry(fwts_framework *fw,
 			dmi_reserved_bits_check(fw, table, addr, "Flags", hdr, sizeof(uint8_t), 0x5, 1, 7);
 			if (hdr->length < 0x15)
 				break;
-			for (i = 0x6; i < 15; i++)
+			for (i = 0x6; i < 0x15; i++)
 				dmi_reserved_uint8_check(fw, table, addr, "Reserved", hdr, i);
 			if (hdr->length < 0x16)
 				break;
@@ -1954,7 +1954,7 @@ static void dmicheck_entry(fwts_framework *fw,
 
 		case 26: /* 7.27 */
 			table = "Voltage Probe (Type 26)";
-			if (hdr->length < 0x16)
+			if (hdr->length < 0x14)
 				break;
 			dmi_str_check(fw, table, addr, "Description", hdr, 0x4);
 			dmi_min_max_mask_uint8_check(fw, table, addr, "Location (bits 0..4)", hdr, 0x5, 0x1, 0xb, 0, 0x1f);
@@ -1964,6 +1964,8 @@ static void dmicheck_entry(fwts_framework *fw,
 			dmi_min_max_uint16_check(fw, table, addr, "Resolution", hdr, 0xa, 0, 0x8000);
 			dmi_min_max_uint16_check(fw, table, addr, "Tolerance", hdr, 0xc, 0, 0x8000);
 			dmi_min_max_uint16_check(fw, table, addr, "Accuracy", hdr, 0xe, 0, 0x8000);
+			if (hdr->length < 0x16)
+				break;
 			dmi_min_max_uint16_check(fw, table, addr, "Nominal Value", hdr, 0x14, 0, 0x8000);
 
 			break;
@@ -1991,7 +1993,7 @@ static void dmicheck_entry(fwts_framework *fw,
 
 		case 28: /* 7.29 */
 			table = "Temperature Probe (Type 28)";
-			if (hdr->length < 0x16)
+			if (hdr->length < 0x14)
 				break;
 			dmi_str_check(fw, table, addr, "Description", hdr, 0x4);
 			dmi_min_max_mask_uint8_check(fw, table, addr, "Location (bits 0..4)", hdr, 0x5, 0x1, 0xf, 0, 0x1f);
@@ -2001,12 +2003,14 @@ static void dmicheck_entry(fwts_framework *fw,
 			dmi_min_max_uint16_check(fw, table, addr, "Resolution", hdr, 0xa, 0, 0x8000);
 			dmi_min_max_uint16_check(fw, table, addr, "Tolerance", hdr, 0xc, 0, 0x8000);
 			dmi_min_max_uint16_check(fw, table, addr, "Accuracy", hdr, 0xe, 0, 0x8000);
+			if (hdr->length < 0x16)
+				break;
 			dmi_min_max_uint16_check(fw, table, addr, "Nominal Value", hdr, 0x14, 0, 0x8000);
 			break;
 
 		case 29: /* 7.30 */
 			table = "Electrical Current Probe (Type 29)";
-			if (hdr->length < 0x16)
+			if (hdr->length < 0x14)
 				break;
 			dmi_str_check(fw, table, addr, "Description", hdr, 0x4);
 			dmi_min_max_mask_uint8_check(fw, table, addr, "Location (bits 0..4)", hdr, 0x5, 0x1, 0xb, 0, 0x1f);
@@ -2016,6 +2020,8 @@ static void dmicheck_entry(fwts_framework *fw,
 			dmi_min_max_uint16_check(fw, table, addr, "Resolution", hdr, 0xa, 0, 0x8000);
 			dmi_min_max_uint16_check(fw, table, addr, "Tolerance", hdr, 0xc, 0, 0x8000);
 			dmi_min_max_uint16_check(fw, table, addr, "Accuracy", hdr, 0xe, 0, 0x8000);
+			if (hdr->length < 0x16)
+				break;
 			dmi_min_max_uint16_check(fw, table, addr, "Nominal Value", hdr, 0x14, 0, 0x8000);
 			break;
 
@@ -2183,8 +2189,23 @@ static void dmicheck_entry(fwts_framework *fw,
 
 		case 46: /* 7.47 */
 			table = "String Property (Type 46)";
-			if (hdr->length < 0x7)
+			if (hdr->length < 0x9)
 				break;
+			/*
+			 * String Property ID (Table 139): 0000h and 0002h-7FFFh
+			 * are reserved; 0001h and 8000h-FFFFh are valid.
+			 */
+			{
+				uint16_t prop_id = GET_UINT16(data + 0x4);
+				if (prop_id == 0x0000 ||
+				    (prop_id >= 0x0002 && prop_id <= 0x7fff))
+					fwts_failed(fw, LOG_LEVEL_MEDIUM, DMI_VALUE_OUT_OF_RANGE,
+						"Reserved value 0x%4.4" PRIx16 " was used "
+						"while accessing entry '%s' @ 0x%8.8" PRIx32
+						", field '%s', offset 0x%2.2x",
+						prop_id, table, addr, "String Property ID", 0x4);
+			}
+			dmi_str_check(fw, table, addr, "String Property Value", hdr, 0x6);
 			break;
 
 		case 126: /* 7.48 */
