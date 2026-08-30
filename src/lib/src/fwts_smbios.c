@@ -22,7 +22,7 @@
 #include <unistd.h>
 #include "fwts.h"
 
-#if defined(FWTS_ARCH_INTEL) || defined(FWTS_ARCH_AARCH64)
+#if defined(FWTS_ARCH_INTEL) || defined(FWTS_ARCH_AARCH64) || defined(FWTS_ARCH_RISCV)
 
 /*
  *  fwts_load_file()
