@@ -155,6 +155,7 @@ fwts_SOURCES = main.c 				\
         acpi/slic/slic.c                        \
 	acpi/slit/slit.c 			\
 	acpi/spcr/spcr.c 			\
+	brs-i/spcr/spcr.c			\
 	acpi/spmi/spmi.c 			\
 	acpi/srat/srat.c 			\
 	acpi/stao/stao.c			\
