@@ -223,9 +223,95 @@ static int method_brsi_aml010(fwts_framework *fw)
 	return FWTS_OK;
 }
 
+static int method_brsi_aml020(fwts_framework *fw)
+{
+	fwts_list *methods;
+	fwts_list_link *item;
+	bool found = false;
+	bool lookup_failed = false;
+	unsigned int candidates = 0;
+
+	if ((methods = fwts_acpi_object_get_names()) != NULL) {
+		fwts_list_foreach(item, methods) {
+			char *name = fwts_list_data(char *, item);
+			size_t len;
+			ACPI_HANDLE handle;
+			ACPI_OBJECT_TYPE type;
+			ACPI_STATUS status;
+			const char *which;
+
+			if (name == NULL)
+				continue;
+
+			len = strlen(name);
+			if (len < 4)
+				continue;
+
+			if (strncmp(name + len - 4, "_PRS", 4) == 0)
+				which = "_PRS";
+			else if (strncmp(name + len - 4, "_SRS", 4) == 0)
+				which = "_SRS";
+			else
+				continue;
+
+			status = AcpiGetHandle(NULL, name, &handle);
+			if (ACPI_FAILURE(status)) {
+				lookup_failed = true;
+				candidates++;
+				fwts_log_warning(fw, "AML_020: AcpiGetHandle(%s) failed: %s.",
+					name, AcpiFormatException(status));
+				continue;
+			}
+
+			status = AcpiGetType(handle, &type);
+			if (ACPI_FAILURE(status)) {
+				lookup_failed = true;
+				candidates++;
+				fwts_log_warning(fw, "AML_020: AcpiGetType(%s) failed: %s.",
+					name, AcpiFormatException(status));
+				continue;
+			}
+
+			/* Skip namespace scopes that happen to end in the same suffix. */
+			if (type == ACPI_TYPE_LOCAL_SCOPE)
+				continue;
+
+			found = true;
+			fwts_log_info(fw, "AML_020: found %s method %s.", which, name);
+		}
+	}
+
+	if (found) {
+		fwts_warning(fw,
+			"AML_020: _PRS and/or _SRS methods are implemented. "
+			"BRS-I says these methods SHOULD NOT be implemented.");
+		fwts_advice(fw,
+			"ACPI resource descriptors are typically used for "
+			"devices with fixed resource ranges. Flexible resource "
+			"assignment via _PRS/_SRS is not supported by most "
+			"modern ACPI operating systems. Remove these methods "
+			"unless a device truly requires runtime rebalancing. "
+			"Note that PCI Interrupt Link devices (PNP0C0F) require "
+			"_PRS/_SRS by definition; the usual fix is to use static "
+			"GSIs in the _PRT.");
+	} else if (lookup_failed) {
+		fwts_warning(fw,
+			"AML_020: found %u name(s) ending in _PRS/_SRS, but "
+			"AcpiGetHandle/AcpiGetType failed; not treated as "
+			"\"no methods are implemented\".", candidates);
+	} else {
+		fwts_passed(fw,
+			"AML_020: no _PRS or _SRS methods are implemented.");
+	}
+
+	return FWTS_OK;
+}
+
 static fwts_framework_minor_test method_brsi_tests[] = {
 	{ method_brsi_aml010,
 	  "AML_010: PCIe Root Complex _CRS SHOULD NOT return I/O ranges." },
+	{ method_brsi_aml020,
+	  "AML_020: _PRS and _SRS methods SHOULD NOT be implemented." },
 	{ NULL, NULL }
 };
 
