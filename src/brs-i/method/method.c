@@ -24,7 +24,9 @@
 /* Standard AML IDs for an ECAM-capable PCI host bridge. */
 #define CID_PCI			"PNP0A03"
 #define HID_ECAM		"PNP0A08"
+#define HID_CPU			"ACPI0007"
 
+static fwts_acpi_table_info *mtable;
 static bool acpi_initialized;
 
 static int method_brsi_init(fwts_framework *fw)
@@ -307,11 +309,213 @@ static int method_brsi_aml020(fwts_framework *fw)
 	return FWTS_OK;
 }
 
+typedef struct {
+	fwts_framework *fw;
+	unsigned int under_sb;
+	unsigned int under_pr;
+	unsigned int elsewhere;
+	unsigned int uid_mismatch;
+} method_brsi_cpu_ctx;
+
+static fwts_list madt_rintc_uids;
+
+static int method_brsi_collect_rintc_uids(fwts_framework *fw)
+{
+	uint8_t *data;
+	ssize_t length;
+	uint32_t *uid;
+	fwts_acpi_madt_rintc *rintc;
+
+	data = mtable->data;
+	length = mtable->length;
+	if (length < (ssize_t)sizeof(fwts_acpi_table_madt)) {
+		fwts_log_error(fw, "AML_030: MADT is truncated.");
+		return FWTS_ERROR;
+	}
+
+	data += sizeof(fwts_acpi_table_madt);
+	length -= sizeof(fwts_acpi_table_madt);
+
+	while (length > (ssize_t)sizeof(fwts_acpi_madt_sub_table_header)) {
+		fwts_acpi_madt_sub_table_header *hdr =
+			(fwts_acpi_madt_sub_table_header *)data;
+		ssize_t body;
+
+		if (hdr->length < sizeof(*hdr) || hdr->length > length) {
+			fwts_log_error(fw,
+				"AML_030: The MADT subtable header Length is incorrect.");
+			return FWTS_ERROR;
+		}
+
+		data += sizeof(*hdr);
+		length -= sizeof(*hdr);
+		body = hdr->length - sizeof(*hdr);
+
+		if (hdr->type == FWTS_MADT_RINTC) {
+			if (body < (ssize_t) sizeof(fwts_acpi_madt_rintc)) {
+				fwts_log_error(fw,
+					"AML_030: The MADT RINTC subtable header Length is too small.");
+				return FWTS_ERROR;
+			}
+			rintc = (fwts_acpi_madt_rintc* )data;
+			uid = malloc(sizeof(*uid));
+			if (!uid) {
+				fwts_log_error(fw, "AML_030: failed to allocate memory for RINTC UID.");
+				return FWTS_OUT_OF_MEMORY;
+			}
+			*uid = rintc->uid;
+			fwts_list_append(&madt_rintc_uids, uid);
+		}
+		data += body;
+		length -= body;
+	}
+	return FWTS_OK;
+}
+
+static bool method_brsi_eval_uid(ACPI_HANDLE handle, uint64_t *out)
+{
+	bool rc = false;
+	ACPI_STATUS status;
+	ACPI_BUFFER buf = { ACPI_ALLOCATE_BUFFER, NULL };
+	ACPI_OBJECT *obj;
+
+	status = AcpiEvaluateObject(handle, "_UID", NULL, &buf);
+	if (ACPI_FAILURE(status) || buf.Pointer == NULL)
+		return false;
+
+	obj = buf.Pointer;
+	if (obj->Type == ACPI_TYPE_INTEGER) {
+		*out = obj->Integer.Value;
+		rc = true;
+	} else if(obj->Type == ACPI_TYPE_STRING) {
+		char *end = NULL;
+		unsigned long long v;
+		v = strtoull(obj->String.Pointer, &end, 0);
+		if (end != obj->String.Pointer && end != NULL && *end == '\0') {
+			*out = v;
+			rc = true;
+		}
+	}
+
+	free(buf.Pointer);
+	return rc;
+}
+
+static ACPI_STATUS method_brsi_cpu_walk(
+	ACPI_HANDLE handle,
+	UINT32 nesting_level,
+	void *context,
+	void **return_value)
+{
+	method_brsi_cpu_ctx *ctx = context;
+	uint64_t uid;
+	char path[128];
+
+	FWTS_UNUSED(nesting_level);
+	FWTS_UNUSED(return_value);
+
+	method_brsi_acpi_fullname(handle, path, sizeof(path));
+	fwts_log_info(ctx->fw, "AML_030: found %s at %s.", HID_CPU, path);
+
+	if (strncmp(path, "\\_SB", 4) == 0)
+		ctx->under_sb++;
+	else if (strncmp(path, "\\_PR", 4) == 0)
+		ctx->under_pr++;
+	else
+		ctx->elsewhere++;
+
+	if (!method_brsi_eval_uid(handle, &uid)) {
+		fwts_log_error(ctx->fw,
+			"AML_030: failed to evaluate _UID for per-hart object at %s.",
+			path);
+	} else {
+		bool found = false;
+		fwts_list_link *item;
+		fwts_list_foreach(item, &madt_rintc_uids) {
+			if (*(uint32_t*)item->data == uid) {
+				found = true;
+				break;
+			}
+		}
+		if (!found) {
+			fwts_log_error(ctx->fw,
+				"AML_030: No matching RINTC found for %s(%s) in the MADT table",
+				HID_CPU, path);
+			ctx->uid_mismatch++;
+		}
+	}
+
+	return AE_OK;
+}
+
+static int method_brsi_aml030(fwts_framework *fw)
+{
+	int rintc_count;
+	method_brsi_cpu_ctx ctx;
+
+	if (fwts_acpi_find_table(fw, "APIC", 0, &mtable) != FWTS_OK) {
+		fwts_failed(fw, LOG_LEVEL_CRITICAL, "AML_030",
+			"Cannot find ACPI MADT tables.");
+		return FWTS_OK;
+	}
+
+	if (!mtable || mtable->length == 0) {
+		fwts_failed(fw, LOG_LEVEL_CRITICAL, "AML_030",
+			"Required ACPI MADT (APIC) table not found");
+		return FWTS_OK;
+	}
+
+	fwts_list_init(&madt_rintc_uids);
+	if (method_brsi_collect_rintc_uids(fw) != FWTS_OK) {
+		fwts_list_free_items(&madt_rintc_uids, free);
+		return FWTS_OK;
+	}
+	rintc_count = fwts_list_len(&madt_rintc_uids);
+
+	memset(&ctx, 0, sizeof(ctx));
+	ctx.fw = fw;
+
+	AcpiGetDevices(HID_CPU, method_brsi_cpu_walk, &ctx, NULL);
+	AcpiWalkNamespace(ACPI_TYPE_PROCESSOR, ACPI_ROOT_OBJECT, ACPI_UINT32_MAX,
+		method_brsi_cpu_walk, NULL, &ctx, NULL);
+
+	if (ctx.under_pr || ctx.elsewhere) {
+		fwts_failed(fw, LOG_LEVEL_CRITICAL, "AML_030",
+			"Per-hart %s objects must be under \\_SB, "
+			"not deprecated \\_PR (%u under \\_PR, %u elsewhere, "
+			"%u under \\_SB).",
+			HID_CPU, ctx.under_pr, ctx.elsewhere, ctx.under_sb);
+	} else if (ctx.under_sb == 0 && rintc_count > 0) {
+		fwts_failed(fw, LOG_LEVEL_CRITICAL, "AML_030",
+			"MADT has %u RINTC entr%s but no %s per-hart objects "
+			"found under \\_SB.", rintc_count,
+			rintc_count == 1 ? "y" : "ies", HID_CPU);
+	} else if (ctx.uid_mismatch || ctx.under_sb != rintc_count) {
+		fwts_failed(fw, LOG_LEVEL_CRITICAL, "AML_030",
+			"Per-hart objects under \\_SB (%u) do not match MADT RINTC "
+			"entries (%u): %u _UID mismatch%s.", ctx.under_sb, rintc_count,
+			ctx.uid_mismatch,ctx.uid_mismatch == 1 ? "" : "es");
+	} else if (ctx.under_sb) {
+		fwts_passed(fw,
+			"AML_030: %s per-hart objects are under \\_SB.",
+			HID_CPU);
+	} else {
+		fwts_skipped(fw,
+			"AML_030: no %s per-hart objects found.",
+			HID_CPU);
+	}
+
+	fwts_list_free_items(&madt_rintc_uids, free);
+	return FWTS_OK;
+}
+
 static fwts_framework_minor_test method_brsi_tests[] = {
 	{ method_brsi_aml010,
 	  "AML_010: PCIe Root Complex _CRS SHOULD NOT return I/O ranges." },
 	{ method_brsi_aml020,
 	  "AML_020: _PRS and _SRS methods SHOULD NOT be implemented." },
+	{ method_brsi_aml030,
+	  "AML_030: per-hart devices MUST be under \\_SB, not \\_PR." },
 	{ NULL, NULL }
 };
 
