@@ -20,12 +20,16 @@
 #if defined(FWTS_HAS_ACPI) && defined(FWTS_ARCH_RISCV)
 
 #include "fwts_acpi_object_eval.h"
+#include <fwts_uefi.h>
+#include <fwts_efi_module.h>
 
 /* Standard AML IDs for an ECAM-capable PCI host bridge. */
 #define CID_PCI			"PNP0A03"
 #define HID_ECAM		"PNP0A08"
 #define HID_CPU			"ACPI0007"
 #define HID_CONTAINER		"ACPI0010"
+/* ACPI Time and Alarm Device, same HID as src/acpi/devices/time/time.c. */
+#define HID_TAD			"ACPI000E"
 
 /* RISC-V FFH LPI entry method types (bits[63:60]). */
 #define LPI_FFH_TYPE_WFI		0x0
@@ -86,6 +90,7 @@ static fwts_acpi_table_info *mtable;
 static bool acpi_initialized;
 static bool no_os_idle_states;
 static bool no_os_perf_ctrl;
+static bool no_osbus_rtc;
 
 static int method_brsi_init(fwts_framework *fw)
 {
@@ -430,28 +435,55 @@ static int method_brsi_collect_rintc_uids(fwts_framework *fw)
 	return FWTS_OK;
 }
 
-static bool method_brsi_eval_uid(ACPI_HANDLE handle, uint64_t *out)
+/*
+ * Evaluate `name` under `handle`.
+ * Optional `args` / `arg_count` are passed through (used by _SRT).
+ *
+ * On success:
+ *   Integer                      -> *value = Integer.Value
+ *   Buffer named "_GRT"          -> *value = Buffer.Length
+ *   numeric String named "_UID"  -> *value = parsed number
+ */
+static bool method_brsi_eval(
+	ACPI_HANDLE handle,
+	char *name,
+	ACPI_OBJECT *args,
+	UINT32 arg_count,
+	uint64_t *value)
 {
-	bool rc = false;
-	ACPI_STATUS status;
 	ACPI_BUFFER buf = { ACPI_ALLOCATE_BUFFER, NULL };
+	ACPI_OBJECT_LIST arg_list;
 	ACPI_OBJECT *obj;
+	ACPI_STATUS status;
+	bool rc = false;
 
-	status = AcpiEvaluateObject(handle, "_UID", NULL, &buf);
+	if (args && arg_count) {
+		arg_list.Count = arg_count;
+		arg_list.Pointer = args;
+		status = AcpiEvaluateObject(handle, name, &arg_list, &buf);
+	} else {
+		status = AcpiEvaluateObject(handle, name, NULL, &buf);
+	}
 	if (ACPI_FAILURE(status) || buf.Pointer == NULL)
 		return false;
 
 	obj = buf.Pointer;
 	if (obj->Type == ACPI_TYPE_INTEGER) {
-		*out = obj->Integer.Value;
 		rc = true;
-	} else if(obj->Type == ACPI_TYPE_STRING) {
+		if (value)
+			*value = obj->Integer.Value;
+	} else if (obj->Type == ACPI_TYPE_BUFFER && !strcmp(name, "_GRT")) {
+		rc = true;
+		if (value)
+			*value = obj->Buffer.Length;
+	} else if(obj->Type == ACPI_TYPE_STRING && !strcmp(name, "_UID")) {
 		char *end = NULL;
 		unsigned long long v;
 		v = strtoull(obj->String.Pointer, &end, 0);
 		if (end != obj->String.Pointer && end != NULL && *end == '\0') {
-			*out = v;
 			rc = true;
+			if(value)
+				*value = v;
 		}
 	}
 
@@ -482,7 +514,7 @@ static ACPI_STATUS method_brsi_cpu_walk(
 	else
 		ctx->elsewhere++;
 
-	if (!method_brsi_eval_uid(handle, &uid)) {
+	if (!method_brsi_eval(handle, "_UID", NULL, 0, &uid)) {
 		fwts_log_error(ctx->fw,
 			"AML_030: failed to evaluate _UID for per-hart object at %s.",
 			path);
@@ -1445,6 +1477,174 @@ static int method_brsi_aml050(fwts_framework *fw)
 	return FWTS_OK;
 }
 
+typedef struct {
+	fwts_framework *fw;
+	unsigned int found;
+	unsigned int failed;
+} method_brsi_tad_ctx;
+
+static ACPI_STATUS method_brsi_aml060_walk(
+	ACPI_HANDLE handle,
+	UINT32 nesting_level,
+	void *context,
+	void **return_value)
+{
+	method_brsi_tad_ctx *ctx = context;
+	char device_path[128];
+	fwts_acpi_time_buffer real_time;
+	ACPI_OBJECT arg0;
+	uint64_t gcp = 0;
+	uint64_t grt_len = 0;
+	uint64_t srt = 0;
+
+	FWTS_UNUSED(nesting_level);
+	FWTS_UNUSED(return_value);
+
+	ctx->found++;
+
+	method_brsi_acpi_fullname(handle, device_path, sizeof(device_path));
+
+	fwts_log_info(ctx->fw, "AML_060: found TAD %s (HID %s).",
+		device_path, HID_TAD);
+
+	if (!method_brsi_eval(handle, "_GCP", NULL, 0, &gcp)) {
+		fwts_log_error(ctx->fw,
+			"AML_060: %s._GCP is mandatory but missing, failed "
+			"to evaluate, or did not return an Integer.",
+			device_path);
+			goto FAILED;
+	} else {
+		fwts_log_info(ctx->fw, "AML_060: %s._GCP returned 0x%" PRIx64 ".",
+			device_path, gcp);
+		if (gcp & ~0x1ff) {
+			fwts_log_error(ctx->fw,
+				"AML_060: %s._GCP reserved bits 9..31 are set.",
+				device_path);
+			goto FAILED;
+		} else if (!(gcp & 0x4)) {
+			fwts_log_error(ctx->fw,
+				"AML_060: %s._GCP bit 2 (get/set real time) is not set.",
+				device_path);
+			goto FAILED;
+		}
+	}
+
+	if (!method_brsi_eval(handle, "_GRT", NULL, 0, &grt_len)) {
+		fwts_log_error(ctx->fw,
+			"AML_060: %s._GRT is mandatory but missing, failed "
+			"to evaluate, or did not return a Buffer.",
+			device_path);
+		goto FAILED;
+	} else if (grt_len != sizeof(fwts_acpi_time_buffer)) {
+		fwts_log_error(ctx->fw,
+			"AML_060: %s._GRT returned a Buffer of %" PRIu64
+			" bytes, expected %zu.",
+			device_path, grt_len,
+			sizeof(fwts_acpi_time_buffer));
+		goto FAILED;
+	} else {
+		fwts_log_info(ctx->fw,
+			"AML_060: %s._GRT returned a %" PRIu64 "-byte time buffer.",
+			device_path, grt_len);
+	}
+
+	memset(&real_time, 0, sizeof(real_time));
+	real_time.year = 2000;
+	real_time.month = 1;
+	real_time.day = 1;
+	real_time.hour = 0;
+	real_time.minute = 0;
+	real_time.milliseconds = 1;
+	real_time.timezone = 0;
+
+	arg0.Type = ACPI_TYPE_BUFFER;
+	arg0.Buffer.Length = sizeof(real_time);
+	arg0.Buffer.Pointer = (void *)&real_time;
+
+	if (!method_brsi_eval(handle, "_SRT", &arg0, 1, &srt)) {
+		fwts_log_error(ctx->fw,
+			"AML_060: %s._SRT is mandatory but missing, failed "
+			"to evaluate, or did not return an Integer.",
+			device_path);
+		goto FAILED;
+	} else {
+		fwts_log_info(ctx->fw, "AML_060: %s._SRT returned 0x%" PRIx64 ".",
+			device_path, srt);
+		if (srt != 0) {
+			fwts_log_error(ctx->fw,
+				"AML_060: %s._SRT returned non-zero (0x%" PRIx64
+				"), expected 0 (success).",
+				device_path, srt);
+			goto FAILED;
+		}
+	}
+	return AE_OK;
+
+FAILED:
+	ctx->failed++;
+
+	return AE_OK;
+}
+
+static int method_brsi_aml060(fwts_framework *fw)
+{
+	int fd;
+	uint32_t runtimeservicessupported;
+	uint32_t runtimeservicesexpect;
+	method_brsi_tad_ctx ctx;
+
+	if (fwts_lib_efi_runtime_module_init(fw, &fd) == FWTS_OK) {
+		fwts_uefi_rt_support_status_get(fd, &runtimeservicessupported);
+		runtimeservicesexpect = EFI_RT_SUPPORTED_GET_TIME | EFI_RT_SUPPORTED_SET_TIME;
+		if ((runtimeservicessupported & runtimeservicesexpect) == runtimeservicesexpect) {
+			fwts_skipped(fw,
+				"AML_060: UEFI Runtime Services GetTime and "
+				"SetTime are supported. The RTC is not on an "
+				"OS-managed bus, so Time and Alarm Device is "
+				"not required.");
+			return FWTS_OK;
+		}
+	}
+
+	memset(&ctx, 0, sizeof(ctx));
+	ctx.fw = fw;
+
+	AcpiGetDevices(HID_TAD, method_brsi_aml060_walk, &ctx, NULL);
+
+	if (ctx.failed) {
+		fwts_failed(fw, LOG_LEVEL_CRITICAL, "AML_060",
+			"%u of %u Time and Alarm Device(s) have a malformed "
+			"or non-functional _GCP (bit 2), _GRT or _SRT.",
+			ctx.failed, ctx.found);
+		return FWTS_OK;
+	}
+
+	if (ctx.found == 0) {
+		if (no_osbus_rtc)
+			fwts_skipped(fw,
+				"AML_060: --brs-i-no-osbus-rtc specified; no RTC "
+				"on an OS-managed bus, Time and Alarm Device is "
+				"not required.");
+		else
+			fwts_failed(fw, LOG_LEVEL_CRITICAL, "AML_060",
+				"No Time and Alarm Device (HID %s) found. "
+				"Systems with an RTC on an OS-managed bus MUST "
+				"implement a TAD with functioning _GCP (bit 2), "
+				"_GRT and _SRT. Re-run with --brs-i-no-osbus-rtc "
+				"if this system has no such RTC.",
+				HID_TAD);
+	} else {
+		fwts_passed(fw,
+			"AML_060: %u Time and Alarm Device(s) implement "
+			"functioning _GCP (bit 2 set), _GRT and _SRT "
+			"(AML returned expected types and values; "
+			"fwts simulates all address spaces).",
+			ctx.found);
+	}
+
+	return FWTS_OK;
+}
+
 static int options_handler(
 	fwts_framework *fw,
 	int argc,
@@ -1464,6 +1664,10 @@ static int options_handler(
 		case 1:	/* --brs-i-no-os-idle-states */
 			no_os_idle_states = true;
 			break;
+		case 2:	/* --brs-i-no-osbus-rtc */
+			no_osbus_rtc = true;
+			break;
+
 		}
 	}
 	return FWTS_OK;
@@ -1474,6 +1678,8 @@ static fwts_option options[] = {
 	  "Platform has no OS-directed hart performance control (skip AML_040)" },
 	{ "brs-i-no-os-idle-states", "", 0,
 	  "Platform has no OS-directed hart idle states (skip AML_050)" },
+	{ "brs-i-no-osbus-rtc", "", 0,
+	  "Platform has no RTC on an OS-managed bus (skip AML_060)" },
 	{ NULL, NULL, 0, NULL }
 };
 
@@ -1488,6 +1694,8 @@ static fwts_framework_minor_test method_brsi_tests[] = {
 	  "AML_040: OS-directed hart performance control MUST use CPPC (_CPC)." },
 	{ method_brsi_aml050,
 	  "AML_050: processor idle states MUST be described using _LPI." },
+	{ method_brsi_aml060,
+	  "AML_060: TAD with _GCP bit 2, _GRT and _SRT if RTC is on an OS-managed bus." },
 	{ NULL, NULL }
 };
 
