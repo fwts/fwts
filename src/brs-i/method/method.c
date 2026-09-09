@@ -20,6 +20,11 @@
 #if defined(FWTS_HAS_ACPI) && defined(FWTS_ARCH_RISCV)
 
 #include "fwts_acpi_object_eval.h"
+#include <acmacros.h>
+#include <aclocal.h>
+#include <acobject.h>
+#include <acstruct.h>
+#include <acutils.h>
 #include <fwts_uefi.h>
 #include <fwts_efi_module.h>
 
@@ -1645,6 +1650,159 @@ static int method_brsi_aml060(fwts_framework *fw)
 	return FWTS_OK;
 }
 
+typedef struct {
+	fwts_framework *fw;
+	char name[128];
+	bool has_gsbus;
+	bool has_reg;
+	unsigned int regions;
+} method_brsi_region_info;
+
+typedef struct {
+	fwts_framework *fw;
+	unsigned int found;
+	fwts_list list;
+} method_brsi_aml070_ctx;
+
+static ACPI_STATUS method_brsi_region_walk(
+	ACPI_HANDLE handle,
+	UINT32 nesting_level,
+	void *context,
+	void **return_value)
+{
+	method_brsi_region_info *info = context;
+	ACPI_NAMESPACE_NODE *node;
+	ACPI_OPERAND_OBJECT *obj;
+	UINT8 space_id;
+	const char *space;
+
+	FWTS_UNUSED(nesting_level);
+	FWTS_UNUSED(return_value);
+
+	node = ACPI_CAST_PTR(ACPI_NAMESPACE_NODE, handle);
+	if (node == NULL || node->Object == NULL)
+		return AE_OK;
+
+	obj = node->Object;
+	space_id = obj->Region.SpaceId;
+	space = AcpiUtGetRegionName(space_id);
+	info->regions++;
+
+	switch (space_id) {
+	case ACPI_ADR_SPACE_GSBUS:
+		fwts_log_warning(info->fw, "AML_070: %s parent has %s OperationRegion",
+			info->name, space);
+		info->has_gsbus = true;
+		break;
+	default:
+		fwts_log_info(info->fw, "AML_070: %s parent has %s OperationRegion",
+			info->name, space);
+		break;
+	}
+
+	return AE_OK;
+}
+
+static ACPI_STATUS method_brsi_aml070_walk(
+	ACPI_HANDLE handle,
+	UINT32 nesting_level,
+	void *context,
+	void **return_value)
+{
+	method_brsi_aml070_ctx *ctx = context;
+	method_brsi_region_info *info;
+	ACPI_HANDLE parent = NULL;
+	ACPI_HANDLE reg_handle = NULL;
+
+	FWTS_UNUSED(nesting_level);
+	FWTS_UNUSED(return_value);
+
+	ctx->found++;
+
+	info = calloc(1, sizeof(*info));
+	if (info == NULL)
+		return FWTS_OUT_OF_MEMORY;
+
+	method_brsi_acpi_fullname(handle, info->name, sizeof(info->name));
+
+	fwts_log_info(ctx->fw, "AML_070: found TAD %s (HID %s).",
+		info->name, HID_TAD);
+
+	info->fw = ctx->fw;
+	if (ACPI_SUCCESS(AcpiGetParent(handle, &parent)) && parent) {
+		if (ACPI_SUCCESS(AcpiGetHandle(parent, "_REG", &reg_handle) && reg_handle)) {
+			info->has_reg = true;
+			fwts_log_warning(ctx->fw, "AML_070: %s parent has _REG", info->name);
+		}
+	}
+
+
+	AcpiWalkNamespace(ACPI_TYPE_REGION, parent ? parent : handle, ACPI_UINT32_MAX,
+		method_brsi_region_walk, NULL, info, NULL);
+	if (info->regions == 0)
+		fwts_log_warning(ctx->fw, "AML_070: %s parent do not have any OperationRegion", info->name);
+
+	fwts_list_append(&ctx->list, info);
+
+	return AE_OK;
+}
+
+static int method_brsi_aml070(fwts_framework *fw)
+{
+	method_brsi_aml070_ctx ctx;
+	fwts_list_link *item;
+
+	memset(&ctx, 0, sizeof(ctx));
+	ctx.fw = fw;
+	fwts_list_init(&ctx.list);
+
+	AcpiGetDevices(HID_TAD, method_brsi_aml070_walk, &ctx, NULL);
+
+	if (ctx.found == 0) {
+		fwts_skipped(fw,
+			"AML_070: no Time and Alarm Device (HID %s) found; "
+			"requirement applies only when a TAD is implemented.",
+			HID_TAD);
+		goto done;
+	}
+
+	fwts_list_foreach(item, &ctx.list) {
+	method_brsi_region_info *info =
+		fwts_list_data(method_brsi_region_info *, item);
+
+		if (info->regions == 0) {
+			fwts_warning(fw,
+				"AML_070: %s parent has no OperationRegion. "
+				"Cannot confirm compliance.",
+				info->name);
+		} else if (info->has_gsbus || info->has_reg) {
+			fwts_warning(fw,
+				"AML_070: %s may depend on an OS driver "
+				"(parent has %s%s%s). Cannot confirm compliance.",
+				info->name,
+				info->has_gsbus ? "GenericSerialBus" : "",
+				(info->has_gsbus && info->has_reg) ? " and " : "",
+				info->has_reg ? "_REG" : "");
+		} else {
+			fwts_warning(fw,
+				"AML_070: %s parent has no GenericSerialBus and no _REG. "
+				"No strong signal of driver dependency, but compliance "
+				"is not confirmed.",
+				info->name);
+		}
+	}
+
+	fwts_advice(fw,
+		"AML_070 requires TADs to function without vendor-specific "
+		"OS drivers. This check only inspects OperationRegions and "
+		"_REG under the parent node. It cannot prove which regions "
+		"_GRT/_SRT/_GCP actually use.");
+
+done:
+	fwts_list_free_items(&ctx.list, free);
+	return FWTS_OK;
+}
+
 static int options_handler(
 	fwts_framework *fw,
 	int argc,
@@ -1696,6 +1854,8 @@ static fwts_framework_minor_test method_brsi_tests[] = {
 	  "AML_050: processor idle states MUST be described using _LPI." },
 	{ method_brsi_aml060,
 	  "AML_060: TAD with _GCP bit 2, _GRT and _SRT if RTC is on an OS-managed bus." },
+	{ method_brsi_aml070,
+	  "AML_070: TAD MUST work in fwts ACPICA without kernel bus drivers." },
 	{ NULL, NULL }
 };
 
