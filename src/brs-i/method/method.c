@@ -35,6 +35,8 @@
 #define HID_CONTAINER		"ACPI0010"
 /* ACPI Time and Alarm Device, same HID as src/acpi/devices/time/time.c. */
 #define HID_TAD			"ACPI000E"
+#define HID_PLIC		"RSCV0001"
+#define HID_APLIC		"RSCV0002"
 
 /* RISC-V FFH LPI entry method types (bits[63:60]). */
 #define LPI_FFH_TYPE_WFI		0x0
@@ -1803,6 +1805,91 @@ done:
 	return FWTS_OK;
 }
 
+typedef struct {
+	fwts_framework *fw;
+	const char *hid;
+	const char *kind;
+	unsigned int found;
+	unsigned int failed;
+} method_brsi_gsb_ctx;
+
+static ACPI_STATUS method_brsi_gsb_walk(
+	ACPI_HANDLE handle,
+	UINT32 nesting_level,
+	void *context,
+	void **return_value)
+{
+	method_brsi_gsb_ctx *ctx = context;
+	char device_path[128];
+	uint64_t gsb = 0;
+
+	FWTS_UNUSED(nesting_level);
+	FWTS_UNUSED(return_value);
+
+	ctx->found++;
+
+	method_brsi_acpi_fullname(handle, device_path, sizeof(device_path));
+
+	fwts_log_info(ctx->fw, "AML_080: found %s %s (HID %s).",
+		ctx->kind, device_path, ctx->hid);
+
+	if (!method_brsi_eval(handle, "_GSB", NULL, 0, &gsb)) {
+		fwts_log_error(ctx->fw,
+			"AML_080: %s._GSB is mandatory but missing, failed "
+			"to evaluate, or did not return an Integer.",
+			device_path);
+		ctx->failed++;
+	} else {
+		fwts_log_info(ctx->fw,
+			"AML_080: %s._GSB returned GSI base 0x%" PRIx64 ".",
+			device_path, gsb);
+	}
+
+	return AE_OK;
+}
+
+static int method_brsi_aml080(fwts_framework *fw)
+{
+	method_brsi_gsb_ctx ctx;
+
+	/*
+	 * AML_080: every PLIC (RSCV0001) and APLIC (RSCV0002) namespace
+	 * device must implement _GSB returning the GSI base as an Integer.
+	 * Device presence when MADT has matching entries is AML_100.
+	 */
+	memset(&ctx, 0, sizeof(ctx));
+	ctx.fw = fw;
+
+	ctx.hid = HID_PLIC;
+	ctx.kind = "PLIC";
+	AcpiGetDevices(HID_PLIC, method_brsi_gsb_walk, &ctx, NULL);
+
+	ctx.hid = HID_APLIC;
+	ctx.kind = "APLIC";
+	AcpiGetDevices(HID_APLIC, method_brsi_gsb_walk, &ctx, NULL);
+
+	if (ctx.found == 0) {
+		fwts_skipped(fw,
+			"AML_080: no PLIC (HID %s) or APLIC (HID %s) device "
+			"found; _GSB is required on those objects when they "
+			"exist.",
+			HID_PLIC, HID_APLIC);
+		return FWTS_OK;
+	}
+
+	if (ctx.failed)
+		fwts_failed(fw, LOG_LEVEL_CRITICAL, "AML_080",
+			"%u of %u PLIC/APLIC device(s) failed _GSB.",
+			ctx.failed, ctx.found);
+	else
+		fwts_passed(fw,
+			"AML_080: %u PLIC/APLIC device(s) implement _GSB "
+			"returning an Integer GSI base.",
+			ctx.found);
+
+	return FWTS_OK;
+}
+
 static int options_handler(
 	fwts_framework *fw,
 	int argc,
@@ -1856,6 +1943,8 @@ static fwts_framework_minor_test method_brsi_tests[] = {
 	  "AML_060: TAD with _GCP bit 2, _GRT and _SRT if RTC is on an OS-managed bus." },
 	{ method_brsi_aml070,
 	  "AML_070: TAD MUST work in fwts ACPICA without kernel bus drivers." },
+	{ method_brsi_aml080,
+	  "AML_080: PLIC and APLIC devices MUST implement _GSB." },
 	{ NULL, NULL }
 };
 
