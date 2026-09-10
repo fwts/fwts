@@ -2121,6 +2121,327 @@ static int method_brsi_aml090(fwts_framework *fw)
 	return FWTS_OK;
 }
 
+typedef enum {
+	METHOD_BRSI_INTC_PLIC,
+	METHOD_BRSI_INTC_APLIC,
+	METHOD_BRSI_INTC_MAX,
+} method_brsi_intc_type;
+
+typedef struct {
+	method_brsi_intc_type	type;
+	uint8_t			id;
+	uint32_t		gsi_base;
+	bool			matched;
+} method_brsi_intc;
+
+typedef struct {
+	fwts_framework		*fw;
+	fwts_list		intc_list;
+	method_brsi_intc_type	type;
+	unsigned int		found;
+	unsigned int		failed;
+	unsigned int		unmatched;
+} method_brsi_intc_ctx;
+
+static char *method_brsi_intc_kind(method_brsi_intc_type type)
+{
+	char* kinds[] = {"PLIC", "APLIC"};
+	return type < METHOD_BRSI_INTC_MAX ? kinds[type] : "(unknown)";
+}
+
+static char *method_brsi_intc_hid(method_brsi_intc_type type)
+{
+	char* hids[] = {HID_PLIC, HID_APLIC};
+	return type < METHOD_BRSI_INTC_MAX ? hids[type] : "(unknown)";
+}
+
+static void method_brsi_intc_add(
+	fwts_list *list,
+	method_brsi_intc_type type,
+	uint8_t id,
+	uint32_t gsi_base)
+{
+	method_brsi_intc *ic;
+
+	ic = calloc(1, sizeof(*ic));
+	if (ic == NULL)
+		return;
+
+	ic->type = type;
+	ic->id = id;
+	ic->gsi_base = gsi_base;
+	fwts_list_append(list, ic);
+}
+
+static int method_brsi_collect_madt_intc(
+	fwts_framework *fw,
+	method_brsi_intc_ctx *ctx)
+{
+	uint8_t *data;
+	ssize_t length;
+
+	fwts_list_init(&ctx->intc_list);
+
+	data = mtable->data;
+	length = mtable->length;
+	if (length < (ssize_t)sizeof(fwts_acpi_table_madt)) {
+		fwts_log_error(fw, "AML_100: MADT is truncated.");
+		return FWTS_ERROR;
+	}
+
+	data += sizeof(fwts_acpi_table_madt);
+	length -= sizeof(fwts_acpi_table_madt);
+
+	while (length > (ssize_t)sizeof(fwts_acpi_madt_sub_table_header)) {
+		fwts_acpi_madt_sub_table_header *hdr =
+			(fwts_acpi_madt_sub_table_header *)data;
+		ssize_t body;
+
+		if (hdr->length < sizeof(*hdr) || hdr->length > length)
+			break;
+
+		data += sizeof(*hdr);
+		length -= sizeof(*hdr);
+		body = hdr->length - sizeof(*hdr);
+
+		if (hdr->type == FWTS_MADT_PLIC &&
+		    body >= (ssize_t)sizeof(fwts_acpi_madt_plic)) {
+			fwts_acpi_madt_plic *plic = (fwts_acpi_madt_plic *)data;
+
+			method_brsi_intc_add(&ctx->intc_list,
+				METHOD_BRSI_INTC_PLIC, plic->id, plic->gsi_base);
+			fwts_log_info(fw,
+				"AML_100: MADT PLIC id=%u gsi_base=0x%" PRIx32 ".",
+				plic->id, plic->gsi_base);
+		} else if (hdr->type == FWTS_MADT_APLIC &&
+			   body >= (ssize_t)sizeof(fwts_acpi_madt_aplic)) {
+			fwts_acpi_madt_aplic *aplic =
+				(fwts_acpi_madt_aplic *)data;
+
+			method_brsi_intc_add(&ctx->intc_list,
+				METHOD_BRSI_INTC_APLIC, aplic->id,
+				aplic->gsi_base);
+			fwts_log_info(fw,
+				"AML_100: MADT APLIC id=%u gsi_base=0x%" PRIx32 ".",
+				aplic->id, aplic->gsi_base);
+		}
+
+		data += body;
+		length -= body;
+	}
+
+	return FWTS_OK;
+}
+
+static ACPI_STATUS method_brsi_intc_walk(
+	ACPI_HANDLE handle,
+	UINT32 nesting_level,
+	void *context,
+	void **return_value)
+{
+	method_brsi_intc_ctx *ctx = context;
+	method_brsi_intc *hit = NULL;
+	fwts_list_link *item;
+	char device_path[128];
+	const char *kind = method_brsi_intc_kind(ctx->type);
+	const char *hid = method_brsi_intc_hid(ctx->type);
+	bool have_uid;
+	bool have_gsb;
+	uint64_t uid = 0;
+	uint64_t gsb = 0;
+
+	FWTS_UNUSED(nesting_level);
+	FWTS_UNUSED(return_value);
+
+	ctx->found++;
+
+	method_brsi_acpi_fullname(handle, device_path, sizeof(device_path));
+
+	fwts_log_info(ctx->fw, "AML_100: found %s %s (HID %s).",
+		kind, device_path, hid);
+
+	have_uid = method_brsi_eval(handle, "_UID", NULL, 0, &uid);
+	have_gsb = method_brsi_eval(handle, "_GSB", NULL, 0, &gsb);
+
+	if (have_uid)
+		fwts_log_info(ctx->fw, "AML_100: %s._UID = 0x%" PRIx64 ".",
+			device_path, uid);
+	else
+		fwts_log_warning(ctx->fw,
+			"AML_100: %s._UID missing or not Integer/numeric String.",
+			device_path);
+
+	if (have_gsb)
+		fwts_log_info(ctx->fw, "AML_100: %s._GSB = 0x%" PRIx64 ".",
+			device_path, gsb);
+	else
+		fwts_log_warning(ctx->fw,
+			"AML_100: %s._GSB missing or not Integer.",
+			device_path);
+
+	if (!have_uid && !have_gsb) {
+		fwts_log_error(ctx->fw,
+			"AML_100: %s has neither _UID nor _GSB; cannot match "
+			"a MADT %s entry.",
+			device_path, kind);
+		ctx->failed++;
+		return AE_OK;
+	}
+
+	fwts_list_foreach(item, &ctx->intc_list) {
+		method_brsi_intc *ic =
+			fwts_list_data(method_brsi_intc *, item);
+		bool uid_ok;
+		bool gsb_ok;
+
+		if (ic->type != ctx->type)
+			continue;
+
+		/*
+		 * A device without _UID matches any MADT entry of the same type
+		 * with the same GSI base (and vice versa). This is acceptable
+		 * because AML_080 already requires _GSB on these devices.
+		 */
+		uid_ok = !have_uid || ic->id == uid;
+		gsb_ok = !have_gsb || ic->gsi_base == gsb;
+
+		if (uid_ok && gsb_ok) {
+			hit = ic;
+			break;
+		}
+	}
+
+	if (hit == NULL) {
+		fwts_log_warning(ctx->fw,
+			"AML_100: %s has no matching MADT %s entry "
+			"(_UID%s0x%" PRIx64 ", _GSB%s0x%" PRIx64 ").",
+			device_path, kind,
+			have_uid ? "=" : " n/a ", have_uid ? uid : 0,
+			have_gsb ? "=" : " n/a ", have_gsb ? gsb : 0);
+		ctx->unmatched++;
+		return AE_OK;
+	}
+
+	if (hit->matched)
+		fwts_log_warning(ctx->fw,
+			"AML_100: MADT %s id=%u gsi_base=0x%" PRIx32
+			" matches more than one namespace device.",
+			kind, hit->id, hit->gsi_base);
+
+	hit->matched = true;
+	fwts_log_info(ctx->fw,
+		"AML_100: %s matches MADT %s id=%u gsi_base=0x%" PRIx32 ".",
+		device_path, kind, hit->id, hit->gsi_base);
+
+	return AE_OK;
+}
+
+static unsigned int method_brsi_intc_unmatched(
+	fwts_framework *fw,
+	fwts_list *list)
+{
+	fwts_list_link *item;
+	unsigned int n = 0;
+
+	fwts_list_foreach(item, list) {
+		method_brsi_intc *ic =
+			fwts_list_data(method_brsi_intc *, item);
+
+		if (ic->matched)
+			continue;
+
+		fwts_log_error(fw,
+			"AML_100: MADT %s id=%u gsi_base=0x%" PRIx32
+			" has no namespace device.",
+			method_brsi_intc_kind(ic->type), ic->id, ic->gsi_base);
+		n++;
+	}
+
+	return n;
+}
+
+static int method_brsi_aml100(fwts_framework *fw)
+{
+	method_brsi_intc_ctx ctx;
+	unsigned int intc_cnt;
+	unsigned int missing;
+
+	if (fwts_acpi_find_table(fw, "APIC", 0, &mtable) != FWTS_OK) {
+		fwts_failed(fw, LOG_LEVEL_CRITICAL, "AML_100",
+			"Cannot find ACPI MADT tables.");
+		return FWTS_ERROR;
+	}
+
+	if (!mtable || mtable->length == 0) {
+		fwts_failed(fw, LOG_LEVEL_CRITICAL, "AML_100",
+			"Required ACPI MADT (APIC) table not found");
+		return FWTS_ERROR;
+	}
+	/*
+	 * AML_100: a PLIC (RSCV0001) / APLIC (RSCV0002) namespace
+	 * device MUST exist for every corresponding MADT entry.
+	 * Match namespace _UID to MADT Id and _GSB to MADT GsiBase.
+	 */
+	memset(&ctx, 0, sizeof(ctx));
+	ctx.fw = fw;
+
+	if (method_brsi_collect_madt_intc(fw, &ctx) != FWTS_OK) {
+		fwts_skipped(fw, "AML_100: MADT not available; skipping.");
+		goto done;
+	}
+
+	intc_cnt = fwts_list_len(&ctx.intc_list);
+	if (intc_cnt == 0) {
+		fwts_skipped(fw,
+			"AML_100: no MADT PLIC or APLIC entries; skipping.");
+		goto done;
+	}
+
+	ctx.type = METHOD_BRSI_INTC_PLIC;
+	AcpiGetDevices(method_brsi_intc_hid(ctx.type),
+		method_brsi_intc_walk, &ctx, NULL);
+
+	ctx.type = METHOD_BRSI_INTC_APLIC;
+	AcpiGetDevices(method_brsi_intc_hid(ctx.type),
+		method_brsi_intc_walk, &ctx, NULL);
+
+	missing = method_brsi_intc_unmatched(fw, &ctx.intc_list);
+
+	if (ctx.failed) {
+		fwts_failed(fw, LOG_LEVEL_CRITICAL, "AML_100",
+			"%u namespace PLIC/APLIC device(s) failed to match "
+			"any MADT entry (missing _UID/_GSB or inconsistent "
+			"values).",
+			ctx.failed);
+		goto done;
+	}
+
+	if (ctx.unmatched) {
+		fwts_warning(fw,
+			"AML_100: %u namespace PLIC/APLIC device(s) have no "
+			"corresponding MADT entry. The requirement only "
+			"covers MADT → namespace; extra devices are not a "
+			"failure.",
+			ctx.unmatched);
+	}
+
+	if (missing) {
+		fwts_failed(fw, LOG_LEVEL_CRITICAL, "AML_100",
+			"%u MADT PLIC/APLIC entry(ies) lack a matching "
+			"namespace device (MADT entries %u, devices %u).",
+			missing, intc_cnt, ctx.found);
+	} else {
+		fwts_passed(fw,
+			"AML_100: all %u MADT PLIC/APLIC entries have a "
+			"matching namespace device via _UID/_GSB.",
+			intc_cnt);
+	}
+
+done:
+	fwts_list_free_items(&ctx.intc_list, free);
+	return FWTS_OK;
+}
+
 static int options_handler(
 	fwts_framework *fw,
 	int argc,
@@ -2178,6 +2499,8 @@ static fwts_framework_minor_test method_brsi_tests[] = {
 	  "AML_080: PLIC and APLIC devices MUST implement _GSB." },
 	{ method_brsi_aml090,
 	  "AML_090: RSCV0003 UART devices MUST implement UART device properties." },
+	{ method_brsi_aml100,
+	  "AML_100: PLIC/APLIC namespace devices MUST exist for MADT entries." },
 	{ NULL, NULL }
 };
 
