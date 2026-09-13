@@ -25,6 +25,37 @@
 #define CID_PCI			"PNP0A03"
 #define HID_ECAM		"PNP0A08"
 #define HID_CPU			"ACPI0007"
+#define HID_CONTAINER		"ACPI0010"
+
+/* RISC-V FFH LPI entry method types (bits[63:60]). */
+#define LPI_FFH_TYPE_WFI		0x0
+#define LPI_FFH_TYPE_SBI_HSM		0x1
+
+/* Indices into the _LPI package (ACPI 8.4.4.3). */
+#define LPI_IDX_REVISION		0
+#define LPI_IDX_LEVELID			1
+#define LPI_IDX_COUNT			2
+#define LPI_STATE_FIRST			3
+#define LPI_STATE_MIN_ENT		7
+#define LPI_ST_MIN_RESIDENCY		0
+#define LPI_ST_WAKE_LATENCY		1
+#define LPI_ST_FLAGS			2
+#define LPI_ST_ARCH_FLAGS		3
+#define LPI_ST_RES_FREQ			4
+#define LPI_ST_PARENT_STATE		5
+#define LPI_ST_ENTRY_METHOD		6
+#define LPI_ST_RES_COUNTER		7
+#define LPI_ST_USAGE_COUNTER		8
+#define LPI_ST_NAME			9
+#define LPI_ARCH_FLAGS_RESERVED_MASK	(~0x1ULL)
+
+#define SBI_HSM_SUSP_NON_RET_BIT		0x80000000
+#define SBI_HSM_SUSP_PLAT_BASE			0x10000000
+#define SBI_HSM_SUSPEND_RET_DEFAULT		0x00000000
+#define SBI_HSM_SUSPEND_RET_PLATFORM		SBI_HSM_SUSP_PLAT_BASE
+#define SBI_HSM_SUSPEND_NON_RET_DEFAULT		SBI_HSM_SUSP_NON_RET_BIT
+#define SBI_HSM_SUSPEND_NON_RET_PLATFORM	(SBI_HSM_SUSP_NON_RET_BIT | \
+						 SBI_HSM_SUSP_PLAT_BASE)
 
 /* Generic Register Descriptor (ACPI 6.4.3.7): 0x82 + length word + 12-byte GAS. */
 #define AML_GENERIC_REG_DESC		0x82
@@ -53,6 +84,7 @@
 
 static fwts_acpi_table_info *mtable;
 static bool acpi_initialized;
+static bool no_os_idle_states;
 static bool no_os_perf_ctrl;
 
 static int method_brsi_init(fwts_framework *fw)
@@ -855,8 +887,9 @@ static unsigned int method_brsi_count_pstate(fwts_framework *fw)
 	return n;
 }
 
-/* OSC_SB_CPCV2_SUPPORT from Linux include/linux/acpi.h */
+/* OSC_SB_CPCV2_SUPPORT / OSC_SB_PCLPI_SUPPORT from Linux include/linux/acpi.h */
 #define OSC_SB_CPCV2_SUPPORT	0x00000040
+#define OSC_SB_PCLPI_SUPPORT	0x00000080
 
 /* System Bus _OSC UUID: 0811B06E-4A27-44F9-8D60-3CBBC22E7B48 */
 static uint8_t sb_osc_uuid[16] = {
@@ -865,11 +898,21 @@ static uint8_t sb_osc_uuid[16] = {
 };
 
 /*
- * Optional AML_040 check: Linux only uses _CPC after \_SB._OSC
- * acknowledges OSC_SB_CPCV2_SUPPORT (unless cpc_supported_by_cpu()).
+ * Optional check: Linux only uses _CPC / _LPI after
+ * \_SB._OSC acknowledges the corresponding capability bit.
  * Missing \_SB._OSC is common and not a failure.
+ *
+ * bit:        OSC_SB_CPCV2_SUPPORT or OSC_SB_PCLPI_SUPPORT
+ * has_object: true if usable _CPC / _LPI was found
+ * tag:        "AML_040" or "AML_050"
+ * what:       "CPPC v2" or "Processor Container LPI"
  */
-static void method_brsi_check_sb_osc_cppc2(fwts_framework *fw, bool has_cpc)
+static void method_brsi_check_sb_osc(
+	fwts_framework *fw,
+	uint32_t bit,
+	bool has_object,
+	const char *tag,
+	const char *what)
 {
 	ACPI_STATUS status;
 	ACPI_OBJECT args[4];
@@ -878,8 +921,8 @@ static void method_brsi_check_sb_osc_cppc2(fwts_framework *fw, bool has_cpc)
 	ACPI_OBJECT *ret;
 	uint32_t caps = 0;
 	bool acked = false;
+	uint32_t cap_in[2] = { 0x1, bit };	/* Query flag + requested bit */
 
-	/* Build a minimal query _OSC call */
 	args[0].Type = ACPI_TYPE_BUFFER;
 	args[0].Buffer.Length = 16;
 	args[0].Buffer.Pointer = (uint8_t *)sb_osc_uuid;
@@ -890,8 +933,6 @@ static void method_brsi_check_sb_osc_cppc2(fwts_framework *fw, bool has_cpc)
 	args[2].Type = ACPI_TYPE_INTEGER;
 	args[2].Integer.Value = 2;		/* Count of capabilities DWORDs */
 
-	/* Query flag set, ask for CPC v2 */
-	uint32_t cap_in[2] = { 0x1, OSC_SB_CPCV2_SUPPORT };
 	args[3].Type = ACPI_TYPE_BUFFER;
 	args[3].Buffer.Length = sizeof(cap_in);
 	args[3].Buffer.Pointer = (uint8_t *)cap_in;
@@ -899,9 +940,9 @@ static void method_brsi_check_sb_osc_cppc2(fwts_framework *fw, bool has_cpc)
 	status = AcpiEvaluateObject(NULL, "\\_SB._OSC", &arg_list, &buf);
 	if (ACPI_FAILURE(status) || !buf.Pointer) {
 		fwts_log_error(fw,
-			"AML_040: \\_SB._OSC evaluation failed (%s); "
-			"skipping CPPC v2 acknowledgement check.",
-			AcpiFormatException(status));
+			"%s: \\_SB._OSC evaluation failed (%s); "
+			"skipping %s acknowledgement check.",
+			tag, AcpiFormatException(status), what);
 		return;
 	}
 
@@ -909,29 +950,30 @@ static void method_brsi_check_sb_osc_cppc2(fwts_framework *fw, bool has_cpc)
 	if (ret->Type == ACPI_TYPE_BUFFER &&
 	    ret->Buffer.Length >= 8 &&
 	    ret->Buffer.Pointer) {
-		/* Capabilities DWORD is the second DWORD (index 1) */
 		caps = ((uint32_t *)ret->Buffer.Pointer)[1];
-		acked = !!(caps & OSC_SB_CPCV2_SUPPORT);
+		acked = !!(caps & bit);
 	}
-
 	free(buf.Pointer);
 
 	if (acked) {
 		fwts_log_info(fw,
-			"AML_040: \\_SB._OSC acknowledged OSC_SB_CPCV2_SUPPORT.");
-	} else if (has_cpc) {
+			"%s: \\_SB._OSC acknowledged %s (0x%x).",
+			tag, what, bit);
+	} else if (has_object) {
 		fwts_warning(fw,
-			"AML_040: _CPC is present but \\_SB._OSC did not "
-			"acknowledge OSC_SB_CPCV2_SUPPORT (0x40). "
-			"Linux may ignore these _CPC objects unless the CPU "
-			"reports support via cpc_supported_by_cpu().");
+			"%s: %s objects are present but \\_SB._OSC did not "
+			"acknowledge the corresponding capability bit (0x%x). "
+			"Linux may ignore them.",
+			tag, what, bit);
 		fwts_advice(fw,
-			"Set the CPPC v2 bit in the capabilities returned by "
-			"\\_SB._OSC if the platform intends the OS to use CPPC.");
+			"Set the %s bit in the capabilities returned by "
+			"\\_SB._OSC if the platform intends the OS to use it.",
+			what);
 	} else {
 		fwts_log_info(fw,
-			"AML_040: \\_SB._OSC present but OSC_SB_CPCV2_SUPPORT "
-			"not set (no _CPC found either).");
+			"%s: \\_SB._OSC present but %s not set "
+			"(no corresponding objects found either).",
+			tag, what);
 	}
 }
 
@@ -947,7 +989,9 @@ static int method_brsi_aml040(fwts_framework *fw)
 	AcpiWalkNamespace(ACPI_TYPE_PROCESSOR, ACPI_ROOT_OBJECT, ACPI_UINT32_MAX,
                   method_brsi_cpc_walk, NULL, &ctx, NULL);
 
-	method_brsi_check_sb_osc_cppc2(fw, ctx.with_cpc > 0 && !ctx.failed);
+	method_brsi_check_sb_osc(fw, OSC_SB_CPCV2_SUPPORT,
+		ctx.with_cpc > 0 && !ctx.failed,
+		"AML_040", "CPPC v2");
 
 	pstate = method_brsi_count_pstate(fw);
 
@@ -1006,6 +1050,401 @@ static int method_brsi_aml040(fwts_framework *fw)
 	return FWTS_OK;
 }
 
+typedef struct {
+	fwts_framework *fw;
+	unsigned int harts;
+	unsigned int containers;
+	unsigned int with_lpi;
+	unsigned int absent;
+	unsigned int failed;
+} method_brsi_lpi_ctx;
+
+static bool method_brsi_sbi_suspend_state_is_valid(uint32_t state)
+{
+	if (state > SBI_HSM_SUSPEND_RET_DEFAULT &&
+	    state < SBI_HSM_SUSPEND_RET_PLATFORM)
+		return false;
+
+	if (state > SBI_HSM_SUSPEND_NON_RET_DEFAULT &&
+	    state < SBI_HSM_SUSPEND_NON_RET_PLATFORM)
+		return false;
+
+	return true;
+}
+
+static bool method_brsi_lpi_entry_ok(
+	fwts_framework *fw,
+	const char *path,
+	unsigned int state,
+	const ACPI_OBJECT *obj)
+{
+	fwts_acpi_gas gas;
+	bool is_null = true;
+	uint64_t addr;
+	uint8_t type;
+	uint32_t mid;
+	uint32_t suspend_type;
+
+	if (!method_brsi_cpc_parse_reg(obj, &gas, &is_null) || is_null) {
+		fwts_log_error(fw,
+			"AML_050: %s._LPI state %u Entry Method is missing, "
+			"malformed or a NULL register.",
+			path, state);
+		return false;
+	}
+
+	fwts_log_info(fw,
+		"AML_050: %s._LPI state %u Entry Method space=0x%" PRIx8
+		" width=%u addr=0x%" PRIx64 ".",
+		path, state, gas.address_space_id,
+		gas.register_bit_width, (uint64_t)gas.address);
+
+	if (gas.address_space_id != ACPI_ADR_SPACE_FFH)
+		return false;
+
+	addr = gas.address;
+	type = (addr >> 60) & 0xf;
+	mid = (addr >> 32) & 0xfffffff;
+	suspend_type = addr & 0xffffffff;
+
+	if (gas.register_bit_width != 64 ||
+	    gas.register_bit_offset != 0 ||
+	    gas.access_width != 4) {
+		fwts_log_error(fw,
+			"AML_050: %s._LPI state %u FFixedHW Entry Method "
+			"must be 64-bit, offset 0, AccessSize QWord.",
+			path, state);
+		return false;
+	}
+	if (mid != 0) {
+		fwts_log_error(fw,
+			"AML_050: %s._LPI state %u FFixedHW bits[59:32] "
+			"must be 0.",
+			path, state);
+		return false;
+	}
+	if (type != LPI_FFH_TYPE_SBI_HSM) {
+		fwts_log_error(fw,
+			"AML_050: %s._LPI state %u FFixedHW type 0x%x is "
+			"reserved (want 0x1 SBI HSM).",
+			path, state, type);
+		return false;
+	}
+
+	if (!method_brsi_sbi_suspend_state_is_valid(suspend_type)) {
+		fwts_log_error(fw,
+			"AML_050: SBI suspend type 0x%" PRIx32
+			" is reserved or invalid.", suspend_type);
+		return false;
+	}
+
+	return true;
+}
+
+static bool method_brsi_lpi_state_ok(
+	fwts_framework *fw,
+	const char *path,
+	unsigned int state,
+	const ACPI_OBJECT *pkg)
+{
+	char *name;
+	uint64_t arch, minresidency, wakelatency, flag;
+
+	if (pkg->Type != ACPI_TYPE_PACKAGE ||
+	    pkg->Package.Count < LPI_ST_NAME) {
+		fwts_log_error(fw,
+			"AML_050: %s._LPI state %u is not a usable Package "
+			"(type %u, count=%u, need >= %u).",
+			path, state, pkg->Type,
+			pkg->Type == ACPI_TYPE_PACKAGE ? pkg->Package.Count : 0,
+			LPI_ST_NAME);
+		return false;
+	}
+
+	if (pkg->Package.Elements[LPI_ST_ARCH_FLAGS].Type != ACPI_TYPE_INTEGER) {
+		fwts_log_error(fw,
+			"AML_050: %s._LPI state %u Arch. Context Lost Flags "
+			"is not an Integer (type %u).",
+			path, state,
+			pkg->Package.Elements[LPI_ST_ARCH_FLAGS].Type);
+		return false;
+	}
+	if (pkg->Package.Elements[LPI_ST_MIN_RESIDENCY].Type != ACPI_TYPE_INTEGER) {
+		fwts_log_error(fw,
+			"AML_050: %s._LPI state %u MinResidency is not an "
+			"Integer (type %u).",
+			path, state,
+			pkg->Package.Elements[LPI_ST_MIN_RESIDENCY].Type);
+		return false;
+	}
+	if (pkg->Package.Elements[LPI_ST_WAKE_LATENCY].Type != ACPI_TYPE_INTEGER) {
+		fwts_log_error(fw,
+			"AML_050: %s._LPI state %u WakeLatency is not an "
+			"Integer (type %u).",
+			path, state,
+			pkg->Package.Elements[LPI_ST_WAKE_LATENCY].Type);
+		return false;
+	}
+	if (pkg->Package.Elements[LPI_ST_FLAGS].Type != ACPI_TYPE_INTEGER) {
+		fwts_log_error(fw,
+			"AML_050: %s._LPI state %u Flags is not an Integer "
+			"(type %u).",
+			path, state,
+			pkg->Package.Elements[LPI_ST_FLAGS].Type);
+		return false;
+	}
+	if (pkg->Package.Elements[LPI_ST_NAME].Type != ACPI_TYPE_STRING || pkg->Package.Elements[LPI_ST_NAME].String.Pointer == NULL) {
+		fwts_log_error(fw,
+			"AML_050: %s._LPI state %u Name is not a valid String "
+			"(type %u).",
+			path, state,
+			pkg->Package.Elements[LPI_ST_NAME].Type);
+		return false;
+	}
+
+	arch = pkg->Package.Elements[LPI_ST_ARCH_FLAGS].Integer.Value;
+	minresidency = pkg->Package.Elements[LPI_ST_MIN_RESIDENCY].Integer.Value;
+	wakelatency = pkg->Package.Elements[LPI_ST_WAKE_LATENCY].Integer.Value;
+	flag = pkg->Package.Elements[LPI_ST_FLAGS].Integer.Value;
+	name = pkg->Package.Elements[LPI_ST_NAME].String.Pointer;
+
+	fwts_log_info(fw,
+		"AML_050: %s._LPI state %u Name=%s MinResidency=%" PRIu64" WakeLatency=%"
+		PRIu64 " Flags=0x%" PRIx64 " ArchFlags=0x%" PRIx64 ".",
+		path, state, name, minresidency, wakelatency, flag, arch);
+
+	if (arch & LPI_ARCH_FLAGS_RESERVED_MASK) {
+		fwts_log_error(fw,
+			"AML_050: %s._LPI state %u Arch. Context Lost Flags 0x%" PRIx64
+			" has reserved bits set (RISC-V FFH only allows bit 0).",
+			path, state, arch);
+		return false;
+	}
+
+	return method_brsi_lpi_entry_ok(fw, path, state,
+			&pkg->Package.Elements[LPI_ST_ENTRY_METHOD]);
+}
+
+static void method_brsi_lpi_eval(
+	method_brsi_lpi_ctx *ctx,
+	ACPI_HANDLE handle,
+	const char *path)
+{
+	fwts_framework *fw = ctx->fw;
+	ACPI_BUFFER buf = { ACPI_ALLOCATE_BUFFER, NULL };
+	ACPI_OBJECT *obj;
+	ACPI_STATUS status;
+	uint64_t rev, count,levelid;
+	unsigned int i;
+
+	status = AcpiEvaluateObject(handle, "_LPI", NULL, &buf);
+	if (ACPI_FAILURE(status) || buf.Pointer == NULL) {
+		fwts_log_warning(fw,
+			"AML_050: %s._LPI is missing or failed to evaluate (%s).",
+			path, AcpiFormatException(status));
+		ctx->absent++;
+		return;
+	}
+
+	obj = buf.Pointer;
+
+	if (obj->Type != ACPI_TYPE_PACKAGE ||
+	    obj->Package.Count < LPI_STATE_FIRST + 1) {
+		fwts_log_error(fw,
+			"AML_050: %s._LPI is not a usable Package; see the "
+			"generic method _LPI test.",
+			path);
+		goto FAILED;
+	}
+
+	if (obj->Package.Elements[LPI_IDX_REVISION].Type != ACPI_TYPE_INTEGER) {
+		fwts_log_error(fw,
+			"AML_050: %s._LPI Revision is not an Integer (type %u).",
+			path, obj->Package.Elements[LPI_IDX_REVISION].Type);
+		goto FAILED;
+	}
+	if (obj->Package.Elements[LPI_IDX_COUNT].Type != ACPI_TYPE_INTEGER) {
+		fwts_log_error(fw,
+			"AML_050: %s._LPI Count is not an Integer (type %u).",
+			path, obj->Package.Elements[LPI_IDX_REVISION].Type);
+		goto FAILED;
+	}
+
+	if (obj->Package.Elements[LPI_IDX_LEVELID].Type != ACPI_TYPE_INTEGER) {
+		fwts_log_error(fw,
+			"AML_050: %s._LPI LevelID is not an Integer (type %u).",
+			path, obj->Package.Elements[LPI_IDX_REVISION].Type);
+		goto FAILED;
+	}
+
+	rev = obj->Package.Elements[LPI_IDX_REVISION].Integer.Value;
+	count = obj->Package.Elements[LPI_IDX_COUNT].Integer.Value;
+	levelid = obj->Package.Elements[LPI_IDX_LEVELID].Integer.Value;
+
+	if (rev != 0) {
+		fwts_log_error(fw,
+			"AML_050: %s._LPI revision %" PRIu64
+			" is not 0 (BRS requires revision 0).",
+			path, rev);
+		goto FAILED;
+	}
+
+	if (count != obj->Package.Count - LPI_STATE_FIRST) {
+		fwts_log_error(fw,
+			"AML_050: %s._LPI Count (%" PRIu64
+			") does not match the number of state packages (%u).",
+			path, count,
+			obj->Package.Count - LPI_STATE_FIRST);
+		goto FAILED;
+	}
+
+	fwts_log_info(fw,
+		"AML_050: %s._LPI revision=%" PRIu64 " LevelID=0x%" PRIx64
+		" Count=%" PRIu64 " (package count %u).",
+		path, rev, levelid, count, obj->Package.Count);
+
+	for (i = LPI_STATE_FIRST; i < obj->Package.Count; i++) {
+		if (!method_brsi_lpi_state_ok(fw, path,
+				i - LPI_STATE_FIRST + 1,
+				&obj->Package.Elements[i]))
+			goto FAILED;
+	}
+	ctx->with_lpi++;
+	free(buf.Pointer);
+	return;
+FAILED:
+	ctx->failed++;
+	free(buf.Pointer);
+	return;
+}
+
+static ACPI_STATUS method_brsi_lpi_walk(
+	ACPI_HANDLE handle,
+	UINT32 nesting_level,
+	void *context,
+	void **return_value)
+{
+	method_brsi_lpi_ctx *ctx = context;
+	char device_path[128];
+
+	FWTS_UNUSED(nesting_level);
+	FWTS_UNUSED(return_value);
+
+	ctx->harts++;
+	method_brsi_acpi_fullname(handle, device_path, sizeof(device_path));
+
+	fwts_log_info(ctx->fw, "AML_050: found per-hart device %s.",
+		device_path);
+
+	method_brsi_lpi_eval(ctx, handle, device_path);
+
+	return AE_OK;
+}
+
+static unsigned int method_brsi_count_cstate(fwts_framework *fw)
+{
+	fwts_list *methods;
+	fwts_list_link *item;
+	unsigned int n = 0;
+
+	methods = fwts_acpi_object_get_names();
+	if (methods == NULL)
+		return 0;
+
+	fwts_list_foreach(item, methods) {
+		char *name = fwts_list_data(char *, item);
+		size_t len;
+
+		if (name == NULL)
+			continue;
+		len = strlen(name);
+		if (len < 4)
+			continue;
+		if (strncmp(name + len - 4, "_CST", 4) != 0 &&
+		    strncmp(name + len - 4, "_CSD", 4) != 0)
+			continue;
+
+		fwts_log_info(fw,
+			"AML_050: found legacy C-state method %s.", name);
+		n++;
+	}
+
+	return n;
+}
+
+static int method_brsi_aml050(fwts_framework *fw)
+{
+	method_brsi_lpi_ctx ctx;
+	unsigned int cstate;
+
+	memset(&ctx, 0, sizeof(ctx));
+	ctx.fw = fw;
+
+	AcpiGetDevices(HID_CPU, method_brsi_lpi_walk, &ctx, NULL);
+	AcpiWalkNamespace(ACPI_TYPE_PROCESSOR, ACPI_ROOT_OBJECT, ACPI_UINT32_MAX,
+		method_brsi_lpi_walk, NULL, &ctx, NULL);
+
+	method_brsi_check_sb_osc(fw, OSC_SB_PCLPI_SUPPORT,
+		ctx.with_lpi > 0 && !ctx.failed,
+		"AML_050", "LPI");
+
+	cstate = method_brsi_count_cstate(fw);
+
+	if (ctx.harts == 0) {
+		fwts_failed(fw, LOG_LEVEL_CRITICAL, "AML_050",
+			"No per-hart "HID_CPU" or Processor() objects found. "
+			"This should not happen on a valid RISC-V ACPI system.");
+		return FWTS_OK;
+	}
+
+	if (ctx.failed) {
+		fwts_failed(fw, LOG_LEVEL_CRITICAL, "AML_050",
+			"%u of %u per-hart object(s) have a malformed or "
+			"invalid _LPI implementation.",
+			ctx.failed, ctx.harts);
+		return FWTS_OK;
+	}
+
+	if (cstate) {
+		if (ctx.absent)
+			fwts_failed(fw, LOG_LEVEL_CRITICAL, "AML_050",
+				"Found legacy C-state methods (OS-directed "
+				"idle is supported), but %u of %u per-hart "
+				"object(s) are missing _LPI.",
+				ctx.absent, ctx.harts);
+		else
+			fwts_passed(fw,
+				"AML_050: %u per-hart object(s) describe idle "
+				"states via usable _LPI.",
+				ctx.with_lpi);
+	} else {
+		if (no_os_idle_states)
+			fwts_skipped(fw,
+				"AML_050: --brs-i-no-os-idle-states specified; "
+				"platform does not describe OS-directed "
+				"hart idle states.");
+		else if (ctx.with_lpi == 0)
+			fwts_warning(fw,
+				"AML_050: no usable _LPI and no legacy C-states "
+				"found. If the platform does not support "
+				"OS-directed idle states, re-run with "
+				"--brs-i-no-os-idle-states.");
+		else if (ctx.absent)
+			fwts_failed(fw, LOG_LEVEL_CRITICAL, "AML_050",
+				"%u of %u per-hart object(s) expose usable "
+				"_LPI, but %u are missing it. "
+				"Incomplete _LPI implementation.",
+				ctx.with_lpi, ctx.harts, ctx.absent);
+		else
+			fwts_passed(fw,
+				"AML_050: %u per-hart object(s) describe idle "
+				"states via usable _LPI.",
+				ctx.with_lpi);
+	}
+
+	return FWTS_OK;
+}
+
 static int options_handler(
 	fwts_framework *fw,
 	int argc,
@@ -1022,6 +1461,9 @@ static int options_handler(
 		case 0:	/* --brs-i-no-os-perf-ctrl */
 			no_os_perf_ctrl = true;
 			break;
+		case 1:	/* --brs-i-no-os-idle-states */
+			no_os_idle_states = true;
+			break;
 		}
 	}
 	return FWTS_OK;
@@ -1030,6 +1472,8 @@ static int options_handler(
 static fwts_option options[] = {
 	{ "brs-i-no-os-perf-ctrl", "", 0,
 	  "Platform has no OS-directed hart performance control (skip AML_040)" },
+	{ "brs-i-no-os-idle-states", "", 0,
+	  "Platform has no OS-directed hart idle states (skip AML_050)" },
 	{ NULL, NULL, 0, NULL }
 };
 
@@ -1042,6 +1486,8 @@ static fwts_framework_minor_test method_brsi_tests[] = {
 	  "AML_030: per-hart devices MUST be under \\_SB, not \\_PR." },
 	{ method_brsi_aml040,
 	  "AML_040: OS-directed hart performance control MUST use CPPC (_CPC)." },
+	{ method_brsi_aml050,
+	  "AML_050: processor idle states MUST be described using _LPI." },
 	{ NULL, NULL }
 };
 
