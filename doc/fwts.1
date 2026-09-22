@@ -368,10 +368,13 @@ root privileges. PCR comparison is skipped unless \-\-tpm\-pcrs is also supplied
 .TP
 .B \-\-tpm\-pcrs=directory
 read a saved PCR snapshot from the specified directory when running tpmevlog.
-The SHA-256 snapshot contains files pcr-sha256/0 through pcr-sha256/7, each
-holding 64 hexadecimal digits followed by a newline. The snapshot must come
-from the same TPM and boot as the event log. Missing, unreadable or malformed
-PCR files are reported as failures.
+PCR files are named pcr-<algorithm>/<index>, where algorithm is sha1, sha256,
+sha384 or sha512 and index is 0 through 7. Each file contains the hexadecimal
+PCR value followed by a newline, using 40, 64, 96 or 128 digits respectively.
+The snapshot must come from the same TPM and boot as the event log. Only
+supported banks advertised by the log are compared. Missing bank directories
+are skipped. Unreadable banks and missing or malformed files within an
+existing bank are reported as failures.
 .TP
 .B \-u, \-\-utils
 run utilities. Designed to dump system information, such as annotated ACPI tables, CMOS memory,

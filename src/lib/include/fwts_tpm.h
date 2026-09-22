@@ -24,12 +24,20 @@ PRAGMA_PACK_WARN_OFF
 
 #define FWTS_TPM_EVENTLOG_V2_SIGNATURE	"Spec ID Event03"
 
-/* define from tpm2-tss */
+/* TPM 2.0 hash digest sizes */
 #define TPM2_SHA_DIGEST_SIZE     20
 #define TPM2_SHA1_DIGEST_SIZE    20
 #define TPM2_SHA256_DIGEST_SIZE  32
 #define TPM2_SHA384_DIGEST_SIZE  48
 #define TPM2_SHA512_DIGEST_SIZE  64
+#define TPM2_SHA256_192_DIGEST_SIZE 24
+#define TPM2_SM3_256_DIGEST_SIZE 32
+#define TPM2_SHA3_256_DIGEST_SIZE 32
+#define TPM2_SHA3_384_DIGEST_SIZE 48
+#define TPM2_SHA3_512_DIGEST_SIZE 64
+#define TPM2_SHAKE256_192_DIGEST_SIZE 24
+#define TPM2_SHAKE256_256_DIGEST_SIZE 32
+#define TPM2_SHAKE256_512_DIGEST_SIZE 64
 
 /* Number of PCRs used for firmware, rather than OS, measurements */
 #define TPM2_FIRMWARE_PCR_COUNT 8
@@ -48,6 +56,7 @@ typedef uint16_t TPM2_ALG_ID;
 #define TPM2_ALG_SHA256              ((TPM2_ALG_ID) 0x000B)
 #define TPM2_ALG_SHA384              ((TPM2_ALG_ID) 0x000C)
 #define TPM2_ALG_SHA512              ((TPM2_ALG_ID) 0x000D)
+#define TPM2_ALG_SHA256_192          ((TPM2_ALG_ID) 0x000E)
 #define TPM2_ALG_NULL                ((TPM2_ALG_ID) 0x0010)
 #define TPM2_ALG_SM3_256             ((TPM2_ALG_ID) 0x0012)
 #define TPM2_ALG_SM4                 ((TPM2_ALG_ID) 0x0013)
@@ -72,6 +81,9 @@ typedef uint16_t TPM2_ALG_ID;
 #define TPM2_ALG_SHA3_256            ((TPM2_ALG_ID) 0x0027)
 #define TPM2_ALG_SHA3_384            ((TPM2_ALG_ID) 0x0028)
 #define TPM2_ALG_SHA3_512            ((TPM2_ALG_ID) 0x0029)
+#define TPM2_ALG_SHAKE256_192        ((TPM2_ALG_ID) 0x002C)
+#define TPM2_ALG_SHAKE256_256        ((TPM2_ALG_ID) 0x002D)
+#define TPM2_ALG_SHAKE256_512        ((TPM2_ALG_ID) 0x002E)
 #define TPM2_ALG_OFB                 ((TPM2_ALG_ID) 0x0041)
 #define TPM2_ALG_CBC                 ((TPM2_ALG_ID) 0x0042)
 #define TPM2_ALG_CFB                 ((TPM2_ALG_ID) 0x0043)
