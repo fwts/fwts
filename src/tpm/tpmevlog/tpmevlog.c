@@ -123,8 +123,12 @@ static int tpmevlog_pcrindex_value_check(fwts_framework *fw, const uint32_t pcr)
 	return FWTS_OK;
 }
 
-static int tpmevlog_eventtype_check(fwts_framework *fw, const fwts_tpmlog_event_type event_type)
+static int tpmevlog_eventtype_check(fwts_framework *fw, fwts_list *unknown_event_types,
+	const fwts_tpmlog_event_type event_type)
 {
+	fwts_list_link *item;
+	uint32_t *value;
+
 	switch (event_type) {
 	case EV_PREBOOT_CERT:
 	case EV_POST_CODE:
@@ -166,13 +170,30 @@ static int tpmevlog_eventtype_check(fwts_framework *fw, const fwts_tpmlog_event_
 	case EV_COMPACT_HASH:
 		return FWTS_OK;
 	default:
-		fwts_failed(fw, LOG_LEVEL_HIGH, "PCREventType",
-			"The Event Type is undefined, 0x%8.8" PRIx32 ".",
-			event_type);
-		return FWTS_ERROR;
+		break;
 	}
 
+	fwts_list_foreach(item, unknown_event_types) {
+		const uint32_t *seen = fwts_list_data(const uint32_t *, item);
+
+		if (*seen == event_type)
+			return FWTS_OK;
+	}
+	value = malloc(sizeof(*value));
+	if (!value)
+		goto err;
+	*value = event_type;
+	if (!fwts_list_append(unknown_event_types, value)) {
+		free(value);
+		goto err;
+	}
+	fwts_warning(fw,
+		"Event type 0x%8.8" PRIx32 " is not recognized by FWTS; continuing.", event_type);
 	return FWTS_OK;
+err:
+	fwts_failed(fw, LOG_LEVEL_HIGH, "PCREventTypeTracking",
+		"Cannot record unrecognized event type 0x%8.8" PRIx32 ".", event_type);
+	return FWTS_ERROR;
 }
 
 static int tpmevlog_algid_check(fwts_framework *fw, const TPM2_ALG_ID hash)
@@ -265,6 +286,7 @@ static int tpmevlog_pcr_type_event_check(
 
 static int tpmevlog_v2_check(
 	fwts_framework *fw,
+	fwts_list *unknown_event_types,
 	uint8_t *data,
 	const size_t len)
 {
@@ -294,7 +316,7 @@ static int tpmevlog_v2_check(
 	ret = tpmevlog_pcrindex_value_check(fw, pc_event->pcr_index);
 	if (ret != FWTS_OK)
 		return ret;
-	ret = tpmevlog_eventtype_check(fw, pc_event->event_type);
+	ret = tpmevlog_eventtype_check(fw, unknown_event_types, pc_event->event_type);
 	if (ret != FWTS_OK)
 		return ret;
 	for (i = 0; i < TPM2_SHA1_DIGEST_SIZE; i++) {
@@ -416,7 +438,7 @@ static int tpmevlog_v2_check(
 		ret = tpmevlog_pcrindex_value_check(fw, pcr_event2->pcr_index);
 		if (ret != FWTS_OK)
 			return ret;
-		ret = tpmevlog_eventtype_check(fw, pcr_event2->event_type);
+		ret = tpmevlog_eventtype_check(fw, unknown_event_types, pcr_event2->event_type);
 		if (ret != FWTS_OK)
 			return ret;
 
@@ -539,7 +561,8 @@ static int tpmevlog_v2_check(
 	return FWTS_OK;
 }
 
-static int tpmevlog_check(fwts_framework *fw, uint8_t *data, size_t len)
+static int tpmevlog_check(fwts_framework *fw, fwts_list *unknown_event_types,
+	uint8_t *data, size_t len)
 {
 	uint8_t *pdata = data;
 	fwts_pc_client_pcr_event *pc_event = NULL;
@@ -560,7 +583,7 @@ static int tpmevlog_check(fwts_framework *fw, uint8_t *data, size_t len)
 		ret = tpmevlog_pcrindex_value_check(fw, pc_event->pcr_index);
 		if (ret != FWTS_OK)
 			return ret;
-		ret = tpmevlog_eventtype_check(fw, pc_event->event_type);
+		ret = tpmevlog_eventtype_check(fw, unknown_event_types, pc_event->event_type);
 		if (ret != FWTS_OK)
 			return ret;
 
@@ -631,6 +654,7 @@ err_no_data:
 
 static int tpmevlog_parse_file(fwts_framework *fw, const char *path)
 {
+	fwts_list unknown_event_types = FWTS_LIST_INIT;
 	uint8_t *data;
 	size_t length;
 	int fd;
@@ -656,12 +680,13 @@ static int tpmevlog_parse_file(fwts_framework *fw, const char *path)
 		   FWTS_TPM_EVENTLOG_V2_SIGNATURE,
 		   sizeof(FWTS_TPM_EVENTLOG_V2_SIGNATURE)) == 0) {
 		fwts_log_info_verbatim(fw, "Crypto agile log format (TPM2.0):");
-		ret = tpmevlog_v2_check(fw, data, length);
+		ret = tpmevlog_v2_check(fw, &unknown_event_types, data, length);
 	} else {
 		fwts_log_info_verbatim(fw, "SHA1 log format (TPM1.2):");
-		ret = tpmevlog_check(fw, data, length);
+		ret = tpmevlog_check(fw, &unknown_event_types, data, length);
 	}
 
+	fwts_list_free_items(&unknown_event_types, free);
 	free(data);
 	if (ret != FWTS_OK)
 		tpmevlog_parsed = false;
