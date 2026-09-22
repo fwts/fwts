@@ -58,6 +58,9 @@ bool fwts_tpm_extend_pcr(uint8_t *pcr, const size_t pcr_len,
 		return false;
 
 	switch (alg) {
+	case TPM2_ALG_SHA1:
+		hasher = g_checksum_new(G_CHECKSUM_SHA1);
+		break;
 	case TPM2_ALG_SHA256:
 		hasher = g_checksum_new(G_CHECKSUM_SHA256);
 		break;
