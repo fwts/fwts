@@ -353,6 +353,11 @@ static int tpmevlog_v2_check(
 		alg_sz = (fwts_spec_id_event_alg_sz *)pdata;
 	}
 
+	if (len_remain < sizeof(vendor_info_size)) {
+		fwts_failed(fw, LOG_LEVEL_MEDIUM, "SpecidEventLength",
+			"The SpecId event does not contain VendorInfoSize.");
+		return FWTS_ERROR;
+	}
 	vendor_info_size = *(uint8_t *)pdata;
 	pdata += sizeof(vendor_info_size);
 	len_remain -= sizeof(vendor_info_size);
@@ -395,8 +400,14 @@ static int tpmevlog_v2_check(
 		len_remain -= sizeof(fwts_tcg_pcr_event2);
 		for (i = 0; i < pcr_event2->digests_count; i++) {
 			uint8_t hash_size;
+			TPM2_ALG_ID alg_id;
 
-			TPM2_ALG_ID alg_id = *(TPM2_ALG_ID *)pdata;
+			if (len_remain < sizeof(alg_id)) {
+				fwts_failed(fw, LOG_LEVEL_MEDIUM, "EventV2Length",
+					"The event does not contain digest algorithm %d.", i + 1);
+				return FWTS_ERROR;
+			}
+			alg_id = *(TPM2_ALG_ID *)pdata;
 
 			ret = tpmevlog_algid_check(fw, alg_id);
 			if (ret != FWTS_OK)
@@ -412,6 +423,13 @@ static int tpmevlog_v2_check(
 						"is smaller than the tcg pcr event2 %zd bytes.",
 						len_remain,
 						sizeof(fwts_tcg_pcr_event2));
+				return FWTS_ERROR;
+			}
+
+			if (len_remain < hash_size) {
+				fwts_failed(fw, LOG_LEVEL_MEDIUM, "EventV2HashSize",
+					"Only %zu bytes remain for a %" PRIu8 "-byte event digest.",
+					len_remain, hash_size);
 				return FWTS_ERROR;
 			}
 
@@ -438,28 +456,30 @@ static int tpmevlog_v2_check(
 			len_remain -= hash_size;
 		}
 
+		if (len_remain < sizeof(event_size)) {
+			fwts_failed(fw, LOG_LEVEL_MEDIUM, "EventV2Length",
+				"The event does not contain EventSize.");
+			return FWTS_ERROR;
+		}
 		event_size = *(uint32_t *)pdata;
+		pdata += sizeof(event_size);
+		len_remain -= sizeof(event_size);
 		if (len_remain < event_size) {
 			fwts_failed(fw, LOG_LEVEL_MEDIUM, "EventV2Length",
-					"The remain length of the event2 is %zd bytes "
-					"is smaller than required event2 length %zd bytes.",
-					len_remain,
-					sizeof(event_size));
+				"Only %zu bytes remain for a %" PRIu32 "-byte event payload.",
+				len_remain, event_size);
 			return FWTS_ERROR;
 		}
 
 		ret = tpmevlog_pcr_type_event_check(fw, pcr_event2->pcr_index,
 				pcr_event2->event_type,
-				event_size, pdata + sizeof(event_size));
+				event_size, pdata);
 		if (ret != FWTS_OK)
 			return ret;
 
 		if ((pcr_event2->pcr_index < TPM2_FIRMWARE_PCR_COUNT) &&
 		    (pcr_event2->event_type == EV_SEPARATOR))
 			separator_seen[pcr_event2->pcr_index] = true;
-
-		pdata += sizeof(event_size);
-		len_remain -= sizeof(event_size);
 
 		if (!hcrtm_seen &&
 		    pcr_event2->event_type == EV_NO_ACTION &&
@@ -590,6 +610,10 @@ static int tpmevlog_test1(fwts_framework *fw)
 	DIR *dir;
 	struct dirent *tpmdir;
 	bool tpm_logfile_found = false;
+	int ret = FWTS_OK;
+
+	tpmevlog_parsed = false;
+	memset(&tpmevlog_pcrs, 0, sizeof(tpmevlog_pcrs));
 
 	if (!(dir = opendir(FWTS_TPM_LOG_DIR_PATH))) {
 		fwts_log_info(fw, "Cannot find the TPM event log. Aborted.");
@@ -614,23 +638,32 @@ static int tpmevlog_test1(fwts_framework *fw)
 				data = tpmevlog_load_file(fd, &length);
 				tpm_logfile_found = true;
 				if (data == NULL) {
+					tpmevlog_parsed = false;
 					fwts_log_info(fw, "Cannot load the TPM event logs. Aborted.");
 					(void)closedir(dir);
 					(void)close(fd);
 					return FWTS_ABORTED;
 				} else {
 					/* check if the TPM2 eventlog */
-					if (strstr((char *)(data + sizeof(fwts_pc_client_pcr_event)), FWTS_TPM_EVENTLOG_V2_SIGNATURE)) {
+					if (length >= sizeof(fwts_pc_client_pcr_event) +
+						      sizeof(FWTS_TPM_EVENTLOG_V2_SIGNATURE) &&
+					    memcmp(data + sizeof(fwts_pc_client_pcr_event),
+						   FWTS_TPM_EVENTLOG_V2_SIGNATURE,
+						   sizeof(FWTS_TPM_EVENTLOG_V2_SIGNATURE)) == 0) {
 						fwts_log_info_verbatim(fw, "Crypto agile log format (TPM2.0):");
-						tpmevlog_v2_check(fw, data, length);
+						ret = tpmevlog_v2_check(fw, data, length);
 					} else {
 						fwts_log_info_verbatim(fw, "SHA1 log format (TPM1.2):");
-						tpmevlog_check(fw, data, length);
+						ret = tpmevlog_check(fw, data, length);
 					}
 
 					free(data);
 				}
 				(void)close(fd);
+				if (ret != FWTS_OK) {
+					tpmevlog_parsed = false;
+					break;
+				}
 			}
 		}
 	} while (tpmdir);
@@ -641,7 +674,7 @@ static int tpmevlog_test1(fwts_framework *fw)
 		fwts_log_info(fw, "Cannot find the TPM event log. Aborted.");
 		return FWTS_ABORTED;
 	}
-	return FWTS_OK;
+	return ret;
 }
 
 static int tpmevlog_test2(fwts_framework *fw)
