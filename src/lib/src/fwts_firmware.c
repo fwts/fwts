@@ -57,7 +57,7 @@ int fwts_firmware_features(void)
 
 	if (!stat("/sys/firmware/acpi", &statbuf))
 		features |= FWTS_FW_FEATURE_ACPI;
-	else if (!stat("/sys/firmware/devicetree/base", &statbuf))
+	if (!stat("/sys/firmware/devicetree/base", &statbuf))
 		features |= FWTS_FW_FEATURE_DEVICETREE;
 
 	/* just check for IPMI device presence */
