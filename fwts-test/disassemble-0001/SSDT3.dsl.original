@@ -1,11 +1,11 @@
 /*
  * Intel ACPI Component Architecture
- * AML/ASL+ Disassembler version 20260408 (64-bit version)
+ * AML/ASL+ Disassembler version 20260930 (64-bit version)
  * Copyright (c) 2000 - 2026 Intel Corporation
  * 
  * Disassembling to non-symbolic legacy ASL operators
  *
- * Disassembly of /tmp/fwts_tmp_table_180856_SSDT_14.dsl
+ * Disassembly of /tmp/fwts_tmp_table_84875_SSDT_14.dsl
  *
  * Original Table Header:
  *     Signature        "SSDT"
@@ -34,36 +34,44 @@ DefinitionBlock ("", "SSDT", 1, "PmRef", "Cpu0Tst", 0x00003000)
             {
                 Return (Package (0x02)
                 {
-                    Buffer (0x11)
+                    ResourceTemplate ()
                     {
-                        /* 0000 */  0x82, 0x0C, 0x00, 0x7F, 0x00, 0x00, 0x00, 0x00,  // ........
-                        /* 0008 */  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x79,  // .......y
-                        /* 0010 */  0x00                                             // .
+                        Register (FFixedHW, 
+                            0x00,               // Bit Width
+                            0x00,               // Bit Offset
+                            0x0000000000000000, // Address
+                            ,)
                     }, 
 
-                    Buffer (0x11)
+                    ResourceTemplate ()
                     {
-                        /* 0000 */  0x82, 0x0C, 0x00, 0x7F, 0x00, 0x00, 0x00, 0x00,  // ........
-                        /* 0008 */  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x79,  // .......y
-                        /* 0010 */  0x00                                             // .
+                        Register (FFixedHW, 
+                            0x00,               // Bit Width
+                            0x00,               // Bit Offset
+                            0x0000000000000000, // Address
+                            ,)
                     }
                 })
             }
 
             Return (Package (0x02)
             {
-                Buffer (0x11)
+                ResourceTemplate ()
                 {
-                    /* 0000 */  0x82, 0x0C, 0x00, 0x01, 0x04, 0x01, 0x00, 0x10,  // ........
-                    /* 0008 */  0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x79,  // .......y
-                    /* 0010 */  0x00                                             // .
+                    Register (SystemIO, 
+                        0x04,               // Bit Width
+                        0x01,               // Bit Offset
+                        0x0000000000001010, // Address
+                        ,)
                 }, 
 
-                Buffer (0x11)
+                ResourceTemplate ()
                 {
-                    /* 0000 */  0x82, 0x0C, 0x00, 0x01, 0x04, 0x01, 0x00, 0x10,  // ........
-                    /* 0008 */  0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x79,  // .......y
-                    /* 0010 */  0x00                                             // .
+                    Register (SystemIO, 
+                        0x04,               // Bit Width
+                        0x01,               // Bit Offset
+                        0x0000000000001010, // Address
+                        ,)
                 }
             })
         }

@@ -15,6 +15,21 @@
                              tests.
 --batch-experimental         Run Batch
                              Experimental tests.
+--brs-i                      Run RISC-V BRS-I
+                             tests.
+--brs-i-no-ipmi              Platform has no
+                             IPMIv1.0 host
+                             interface; do not
+                             require SMBIOS Type
+                             38.
+--brs-i-no-redfish           Platform has no
+                             Redfish host
+                             interface; do not
+                             require SMBIOS Type
+                             42.
+--brs-i-no-tpm               Platform has no TPM;
+                             do not require SMBIOS
+                             Type 43.
 --clog                       Specify a coreboot
                              logfile dump
 --disassemble-aml            Disassemble AML from
