@@ -6,146 +6,8 @@
 
 /******************************************************************************
  *
- * 1. Copyright Notice
- *
- * Some or all of this work - Copyright (c) 1999 - 2026, Intel Corp.
- * All rights reserved.
- *
- * 2. License
- *
- * 2.1. This is your license from Intel Corp. under its intellectual property
- * rights. You may have additional license terms from the party that provided
- * you this software, covering your right to use that party's intellectual
- * property rights.
- *
- * 2.2. Intel grants, free of charge, to any person ("Licensee") obtaining a
- * copy of the source code appearing in this file ("Covered Code") an
- * irrevocable, perpetual, worldwide license under Intel's copyrights in the
- * base code distributed originally by Intel ("Original Intel Code") to copy,
- * make derivatives, distribute, use and display any portion of the Covered
- * Code in any form, with the right to sublicense such rights; and
- *
- * 2.3. Intel grants Licensee a non-exclusive and non-transferable patent
- * license (with the right to sublicense), under only those claims of Intel
- * patents that are infringed by the Original Intel Code, to make, use, sell,
- * offer to sell, and import the Covered Code and derivative works thereof
- * solely to the minimum extent necessary to exercise the above copyright
- * license, and in no event shall the patent license extend to any additions
- * to or modifications of the Original Intel Code. No other license or right
- * is granted directly or by implication, estoppel or otherwise;
- *
- * The above copyright and patent license is granted only if the following
- * conditions are met:
- *
- * 3. Conditions
- *
- * 3.1. Redistribution of Source with Rights to Further Distribute Source.
- * Redistribution of source code of any substantial portion of the Covered
- * Code or modification with rights to further distribute source must include
- * the above Copyright Notice, the above License, this list of Conditions,
- * and the following Disclaimer and Export Compliance provision. In addition,
- * Licensee must cause all Covered Code to which Licensee contributes to
- * contain a file documenting the changes Licensee made to create that Covered
- * Code and the date of any change. Licensee must include in that file the
- * documentation of any changes made by any predecessor Licensee. Licensee
- * must include a prominent statement that the modification is derived,
- * directly or indirectly, from Original Intel Code.
- *
- * 3.2. Redistribution of Source with no Rights to Further Distribute Source.
- * Redistribution of source code of any substantial portion of the Covered
- * Code or modification without rights to further distribute source must
- * include the following Disclaimer and Export Compliance provision in the
- * documentation and/or other materials provided with distribution. In
- * addition, Licensee may not authorize further sublicense of source of any
- * portion of the Covered Code, and must include terms to the effect that the
- * license from Licensee to its licensee is limited to the intellectual
- * property embodied in the software Licensee provides to its licensee, and
- * not to intellectual property embodied in modifications its licensee may
- * make.
- *
- * 3.3. Redistribution of Executable. Redistribution in executable form of any
- * substantial portion of the Covered Code or modification must reproduce the
- * above Copyright Notice, and the following Disclaimer and Export Compliance
- * provision in the documentation and/or other materials provided with the
- * distribution.
- *
- * 3.4. Intel retains all right, title, and interest in and to the Original
- * Intel Code.
- *
- * 3.5. Neither the name Intel nor any other trademark owned or controlled by
- * Intel shall be used in advertising or otherwise to promote the sale, use or
- * other dealings in products derived from or relating to the Covered Code
- * without prior written authorization from Intel.
- *
- * 4. Disclaimer and Export Compliance
- *
- * 4.1. INTEL MAKES NO WARRANTY OF ANY KIND REGARDING ANY SOFTWARE PROVIDED
- * HERE. ANY SOFTWARE ORIGINATING FROM INTEL OR DERIVED FROM INTEL SOFTWARE
- * IS PROVIDED "AS IS," AND INTEL WILL NOT PROVIDE ANY SUPPORT, ASSISTANCE,
- * INSTALLATION, TRAINING OR OTHER SERVICES. INTEL WILL NOT PROVIDE ANY
- * UPDATES, ENHANCEMENTS OR EXTENSIONS. INTEL SPECIFICALLY DISCLAIMS ANY
- * IMPLIED WARRANTIES OF MERCHANTABILITY, NONINFRINGEMENT AND FITNESS FOR A
- * PARTICULAR PURPOSE.
- *
- * 4.2. IN NO EVENT SHALL INTEL HAVE ANY LIABILITY TO LICENSEE, ITS LICENSEES
- * OR ANY OTHER THIRD PARTY, FOR ANY LOST PROFITS, LOST DATA, LOSS OF USE OR
- * COSTS OF PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES, OR FOR ANY INDIRECT,
- * SPECIAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THIS AGREEMENT, UNDER ANY
- * CAUSE OF ACTION OR THEORY OF LIABILITY, AND IRRESPECTIVE OF WHETHER INTEL
- * HAS ADVANCE NOTICE OF THE POSSIBILITY OF SUCH DAMAGES. THESE LIMITATIONS
- * SHALL APPLY NOTWITHSTANDING THE FAILURE OF THE ESSENTIAL PURPOSE OF ANY
- * LIMITED REMEDY.
- *
- * 4.3. Licensee shall not export, either directly or indirectly, any of this
- * software or system incorporating such software without first obtaining any
- * required license or other approval from the U. S. Department of Commerce or
- * any other agency or department of the United States Government. In the
- * event Licensee exports any such software from the United States or
- * re-exports any such software from a foreign destination, Licensee shall
- * ensure that the distribution and export/re-export of the software is in
- * compliance with all laws, regulations, orders, or other restrictions of the
- * U.S. Export Administration Regulations. Licensee agrees that neither it nor
- * any of its subsidiaries will export/re-export any technical data, process,
- * software, or service, directly or indirectly, to any country for which the
- * United States government or any agency thereof requires an export license,
- * other governmental approval, or letter of assurance, without first obtaining
- * such license, approval or letter.
- *
- *****************************************************************************
- *
- * Alternatively, you may choose to be licensed under the terms of the
- * following license:
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions, and the following disclaimer,
- *    without modification.
- * 2. Redistributions in binary form must reproduce at minimum a disclaimer
- *    substantially similar to the "NO WARRANTY" disclaimer below
- *    ("Disclaimer") and any redistribution must be conditioned upon
- *    including a substantially similar Disclaimer requirement for further
- *    binary redistribution.
- * 3. Neither the names of the above-listed copyright holders nor the names
- *    of any contributors may be used to endorse or promote products derived
- *    from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * Alternatively, you may choose to be licensed under the terms of the
- * GNU General Public License ("GPL") version 2 as published by the Free
- * Software Foundation.
+ * Copyright (c) 1999 - 2026, Intel Corp.
+ * SPDX-License-Identifier: BSD-3-Clause OR GPL-2.0-only
  *
  *****************************************************************************/
 
@@ -182,6 +44,7 @@
 #define ACPI_SIG_MADT           "APIC"      /* Multiple APIC Description Table */
 #define ACPI_SIG_MCFG           "MCFG"      /* PCI Memory Mapped Configuration table */
 #define ACPI_SIG_MCHI           "MCHI"      /* Management Controller Host Interface table */
+#define ACPI_SIG_MISC           "MISC"      /* Miscellaneous GUIDed Table */
 #define ACPI_SIG_MPAM           "MPAM"      /* Memory System Resource Partitioning and Monitoring Table */
 #define ACPI_SIG_MPST           "MPST"      /* Memory Power State Table */
 #define ACPI_SIG_MRRM           "MRRM"      /* Memory Range and Region Mapping table */
@@ -205,6 +68,7 @@
 #define ACPI_SIG_SVKL           "SVKL"      /* Storage Volume Key Location Table */
 #define ACPI_SIG_SWFT           "SWFT"      /* SoundWire File Table */
 #define ACPI_SIG_TDEL           "TDEL"      /* TD Event Log Table */
+#define ACPI_SIG_UBRT           "UBRT"      /* UnifiedBus Root Table */
 
 
 /*
@@ -1190,6 +1054,14 @@ typedef struct acpi_iovt_iommu
 
 } ACPI_IOVT_IOMMU;
 
+/* Masks for Flags field above */
+
+#define ACPI_IOVT_IOMMU_PCI_DEVICE           (1<<0)
+#define ACPI_IOVT_IOMMU_PXM_VALID            (1<<1)
+#define ACPI_IOVT_IOMMU_MAGAGE_BY_SEGMENT    (1<<2)
+#define ACPI_IOVT_IOMMU_HW_CAP_SUPPORT       (1<<3)
+#define ACPI_IOVT_IOMMU_MSI_INT_BYPASS       (1<<4)
+
 typedef struct acpi_iovt_device_entry
 {
     UINT8                   Type;
@@ -1471,6 +1343,7 @@ typedef struct acpi_keyp_common_header {
 enum AcpiKeypType
 {
     ACPI_KEYP_TYPE_CONFIG_UNIT      = 0,
+    ACPI_KEYP_TYPE_RESERVED         = 1,
 };
 
 /* Root Port Information Structure */
@@ -1500,6 +1373,10 @@ enum AcpiKeypProtocolType
     ACPI_KEYP_PROTO_TYPE_CXL,
     ACPI_KEYP_PROTO_TYPE_RESERVED
 };
+
+/* Only version 1 of the KCU Structure is currently defined in the spec*/
+
+#define ACPI_KEYP_CONFIG_UNIT_VERSION   1
 
 #define ACPI_KEYP_F_TVM_USABLE      (1)
 
@@ -2241,6 +2118,37 @@ typedef struct acpi_table_mchi
     UINT8                   PciFunction;
 
 } ACPI_TABLE_MCHI;
+
+
+/*******************************************************************************
+ *
+ * MISC - Miscellaneous GUIDed Table
+ *
+ * Conforms to section "Miscellaneous GUIDed Table Entries" of ACPI
+ * Specification v6.5
+ *
+ ******************************************************************************/
+
+typedef struct acpi_misc_guid_entry {
+    UINT8       EntryGuid[16];
+    UINT32      EntryLength;
+    UINT32      Revision;
+    char        ProducerId[ACPI_NAMESEG_SIZE] ACPI_NONSTRING;   /* ACPI Vendor ID */
+    UINT8       Data[];
+} ACPI_MISC_GUID_ENTRY;
+
+/* Minimum length of a MISC entry (the header fields, without any Data) */
+
+#define ACPI_MISC_MIN_ENTRY_LENGTH  28
+
+
+typedef struct acpi_table_misc {
+    ACPI_TABLE_HEADER       Header;             /* Common ACPI table header */
+    /*
+     * Immediately followed by one or more variable-length entries:
+     * ACPI_MISC_GUID_ENTRY Entries[];
+     */
+} ACPI_TABLE_MISC;
 
 /*******************************************************************************
  *
@@ -4343,6 +4251,176 @@ typedef struct acpi_table_tdel
     UINT64                  LogAreaStartAddress;
 
 } ACPI_TABLE_TDEL;
+
+
+/*******************************************************************************
+ *
+ * UBRT - UnifiedBus Root Table
+ *        Revision 1
+ *
+ * Conforms to "UnifiedBus Root Table (UBRT) Specification"
+ * Revision 1.0, Release Date 2026-03-05
+ *
+ ******************************************************************************/
+
+typedef struct acpi_table_ubrt
+{
+    ACPI_TABLE_HEADER       Header;             /* Common ACPI table header */
+    UINT32                  Count;              /* Number of sub-tables */
+
+} ACPI_TABLE_UBRT;
+
+/* UBRT sub-table entry (16 bytes) */
+
+typedef struct acpi_ubrt_subtable
+{
+    UINT8                   Type;               /* Sub-table type (0=UBC, 1=UMMU, 2=ReservedMem) */
+    UINT8                   Reserved[7];        /* Reserved, must be zero */
+    UINT64                  Pointer;            /* Physical address of the sub-table */
+
+} ACPI_UBRT_SUBTABLE;
+
+/* Values for Type field above */
+
+#define ACPI_UBRT_TYPE_UBC              0       /* UBC information sub-table */
+#define ACPI_UBRT_TYPE_UMMU             1       /* UMMU information sub-table */
+#define ACPI_UBRT_TYPE_RESERVED_MEM     2       /* UB reserved memory information sub-table */
+
+/*
+ * UBRT Sub-tables, correspond to Type in ACPI_UBRT_SUBTABLE.
+ * These are accessed via the physical Pointer field - not contiguous with UBRT.
+ */
+
+/* Common header for all UBRT sub-tables */
+
+typedef struct acpi_ubrt_header
+{
+    char                    Name[16];           /* Table name, null-terminated */
+    UINT32                  TotalSize;          /* Total size including header */
+    UINT8                   Version;            /* Version number */
+    UINT8                   Reserved[3];        /* Reserved, must be zero */
+    UINT32                  RemainingSize;      /* Remaining size of the sub-table */
+    UINT32                  Checksum;           /* Entire table must sum to zero */
+
+} ACPI_UBRT_HEADER;
+
+/* Type 0: UBC Information Table */
+
+typedef struct acpi_ubrt_ubc
+{
+    ACPI_UBRT_HEADER        Header;             /* Common sub-table header */
+    UINT32                  LocalCnaStart;      /* Start CNA available for local UBPU */
+    UINT32                  LocalCnaEnd;        /* End CNA available for local UBPU (included) */
+    UINT32                  LocalEidStart;      /* Start EID available for local UBPU */
+    UINT32                  LocalEidEnd;        /* End EID available for local UBPU (included) */
+    UINT8                   FeatureSets;        /* Features enabled for the UBC */
+    UINT8                   Reserved[3];        /* Reserved, must be zero */
+    UINT16                  ClusterMode;        /* System operating mode */
+    UINT16                  UbcCount;           /* Number of UBC structures */
+
+} ACPI_UBRT_UBC;
+
+/* Values for FeatureSets field above */
+
+#define ACPI_UBRT_UBC_FEAT_MMIO_TOKEN       (1<<0)  /* Bit 0: MMIO token value */
+#define ACPI_UBRT_UBC_FEAT_MCTP_UB          (1<<1)  /* Bit 1: MCTP over UB */
+
+/* Values for ClusterMode field above */
+
+#define ACPI_UBRT_CLUSTER_MODE_STANDALONE   0
+#define ACPI_UBRT_CLUSTER_MODE_SUPERPOD     1
+
+/* UBC Structure entry (one per UbcCount) */
+
+typedef struct acpi_ubrt_ubc_entry
+{
+    UINT32                  InterruptIdStart;       /* Start interrupt ID */
+    UINT32                  InterruptIdEnd;         /* End interrupt ID (included) */
+    UINT64                  HpaBase;                /* Base address of available HPA */
+    UINT64                  HpaSize;                /* Size of available HPA */
+    UINT8                   MemorySizeLimit;        /* Maximum address bit width */
+    UINT8                   DmaCca;                 /* DMA and cache coherent attribute */
+    UINT16                  UmmuMapping;            /* Mapping between UBC and UMMU */
+    UINT16                  ProximityDomain;        /* NUMA domain sequence number */
+    UINT16                  Reserved;               /* Reserved, must be zero */
+    UINT64                  MsgQueueBase;           /* MSG queue register base address */
+    UINT64                  MsgQueueSize;           /* MSG queue register size */
+    UINT16                  MsgQueueDepth;          /* MSG queue depth */
+    UINT16                  MsgQueueInterrupt;      /* MSG queue interrupt ID */
+    UINT8                   MsgQueueInterruptAttr;  /* MSG queue interrupt attribute */
+    UINT8                   Reserved1[59];          /* Reserved, must be zero */
+    UINT8                   Guid[16];               /* UBC GUID */
+    UINT8                   VendorInfo[256];        /* Vendor-defined information */
+
+} ACPI_UBRT_UBC_ENTRY;
+
+/* Values for DmaCca field above */
+
+#define ACPI_UBRT_UBC_DMA_ONLY               0
+#define ACPI_UBRT_UBC_DMA_CCA                1
+
+/* Values for MsgQueueInterruptAttr field above */
+
+#define ACPI_UBRT_UBC_MSG_INT_LEVEL          (0<<0)  /* Bit 0: level-triggered */
+#define ACPI_UBRT_UBC_MSG_INT_EDGE           (1<<0)  /* Bit 0: edge-triggered */
+#define ACPI_UBRT_UBC_MSG_INT_HIGH           (0<<1)  /* Bit 1: high level (rising edge) */
+#define ACPI_UBRT_UBC_MSG_INT_LOW            (1<<1)  /* Bit 1: low level (falling edge) */
+
+/* Type 1: UMMU Information Table */
+
+typedef struct acpi_ubrt_ummu
+{
+    ACPI_UBRT_HEADER        Header;             /* Common sub-table header */
+    UINT16                  UmmuCount;          /* Number of UMMU structures */
+    UINT8                   Reserved[6];        /* Reserved, must be zero */
+
+} ACPI_UBRT_UMMU;
+
+/* UMMU Structure entry (one per UmmuCount) */
+
+typedef struct acpi_ubrt_ummu_entry
+{
+    UINT64                  BaseAddress;        /* Base address of UMMU register */
+    UINT64                  Size;               /* Size of UMMU register */
+    UINT32                  Reserved;           /* Reserved, must be zero */
+    UINT16                  ProximityDomain;    /* NUMA domain sequence number */
+    UINT16                  Reserved1;          /* Reserved, must be zero */
+    UINT64                  PmuBaseAddress;     /* PMU register base address */
+    UINT64                  PmuSize;            /* PMU register size */
+    UINT32                  Reserved2;          /* Reserved, must be zero */
+    UINT32                  MinTokenId;         /* Minimum TokenID */
+    UINT32                  MaxTokenId;         /* Maximum TokenID */
+    UINT8                   Reserved3[26];      /* Reserved, must be zero */
+    UINT16                  VendorId;           /* Vendor ID */
+    UINT8                   VendorInfo[80];     /* Vendor-defined information */
+
+} ACPI_UBRT_UMMU_ENTRY;
+
+/* Type 2: UB Reserved Memory Information Table */
+
+typedef struct acpi_ubrt_reserved_mem
+{
+    ACPI_UBRT_HEADER        Header;                 /* Common sub-table header */
+    UINT16                  MemoryRangesCount;      /* Number of memory ranges */
+    UINT8                   Reserved[6];            /* Reserved, must be zero */
+
+} ACPI_UBRT_RESERVED_MEM;
+
+/* Memory Range entry (one per MemoryRangesCount) */
+
+typedef struct acpi_ubrt_mem_range
+{
+    UINT8                   Flags;              /* Memory segment flags */
+    UINT8                   Reserved[7];        /* Reserved, must be zero */
+    UINT64                  MemoryBase;         /* Base address of allocated UB memory (64KB aligned) */
+    UINT64                  MemorySize;         /* Size of allocated UB memory (64KB aligned) */
+
+} ACPI_UBRT_MEM_RANGE;
+
+/* Values for Flags field above */
+
+#define ACPI_UBRT_MEM_FLAG_1_1_MAPPING     (1<<0)  /* Bit 0: 1:1 mapped mode */
+
 
 /* Reset to default packing */
 
