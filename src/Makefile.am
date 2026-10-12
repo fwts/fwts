@@ -116,6 +116,7 @@ fwts_SOURCES = main.c 				\
 	acpi/lpit/lpit.c 			\
 	acpi/madt/madt.c			\
 	acpi/mcfg/mcfg.c 			\
+	brs-i/mcfg/mcfg.c			\
 	acpi/mchi/mchi.c 			\
         acpi/misc/misc.c                        \
 	acpi/mpam/mpam.c 			\
@@ -123,6 +124,7 @@ fwts_SOURCES = main.c 				\
 	acpi/msct/msct.c 			\
 	acpi/msdm/msdm.c 			\
 	acpi/method/method.c 			\
+	brs-i/method/method.c 			\
 	acpi/nfit/nfit.c 			\
 	acpi/nhlt/nhlt.c			\
 	acpi/nhltdump/nhltdump.c 		\
@@ -154,6 +156,7 @@ fwts_SOURCES = main.c 				\
         acpi/slic/slic.c                        \
 	acpi/slit/slit.c 			\
 	acpi/spcr/spcr.c 			\
+	brs-i/spcr/spcr.c			\
 	acpi/spmi/spmi.c 			\
 	acpi/srat/srat.c 			\
 	acpi/stao/stao.c			\
