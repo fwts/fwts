@@ -46,6 +46,19 @@ TESTS_ENVIRONMENT += export FWTS='$(srcdir)/src/fwts';
 TESTS_ENVIRONMENT += export FWTSTESTDIR='$(srcdir)/fwts-test';
 TESTS_ENVIRONMENT += export TMP=/tmp;
 TESTS_ENVIRONMENT += export FAILURE_LOG=/tmp/failure.log;
+TESTS_ENVIRONMENT += export PCC_STATE_TEST='$(builddir)/pcc-state-test';
+
+check_PROGRAMS = pcc-state-test
+pcc_state_test_SOURCES = fwts-test/method-pcc-0001/pcc-state-test.c
+pcc_state_test_CPPFLAGS = \
+	-I$(top_builddir) \
+	-I$(top_srcdir)/src/lib/include \
+	-I$(top_srcdir)/src/acpica/source/include \
+	@GIO_CFLAGS@ @GLIB_CFLAGS@ -Wall $(WERROR) -Wextra
+pcc_state_test_LDADD = \
+	$(top_builddir)/src/lib/src/libfwts.la \
+	$(top_builddir)/src/libfwtsiasl/libfwtsiasl.la \
+	$(top_builddir)/src/libfwtsacpica/libfwtsacpica.la
 
 TESTS = fwts-test/acpidump-0001/test-0001.sh \
 	fwts-test/acpitables-0001/test-0001.sh \
@@ -158,6 +171,8 @@ TESTS = fwts-test/acpidump-0001/test-0001.sh \
 	fwts-test/msdm-0001/test-0001.sh \
 	fwts-test/msdm-0001/test-0002.sh \
 	fwts-test/method-0001/test-0001.sh \
+	fwts-test/method-pcc-0001/test-0001.sh \
+	fwts-test/method-pcc-0001/test-0002.sh \
         fwts-test/nhlt-0001/test-0001.sh \
         fwts-test/nhlt-0001/test-0002.sh \
 	fwts-test/nfit-0001/test-0001.sh \

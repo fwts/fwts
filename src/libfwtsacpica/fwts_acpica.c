@@ -85,6 +85,8 @@ UINT32  AcpiGbl_InitFileLineCount = 0;
 
 static ACPI_TABLE_DESC		Tables[ACPI_MAX_INIT_TABLES];	/* ACPICA Table descriptors */
 static bool			region_handler_called;		/* Region handler tracking */
+/* Unsupported PCC transaction tracking */
+static bool			pcc_handler_called;
 
 static sem_info			sem_table[MAX_SEMAPHORES];	/* Semaphore accounting for AcpiOs*Semaphore() */
 static pthread_mutex_t		mutex_lock_sem_table;		/* Semaphore accounting mutex */
@@ -249,6 +251,19 @@ bool fwts_acpi_region_handler_called_get(void)
 	return region_handler_called;
 }
 
+void fwts_acpi_pcc_handler_called_set(const bool val)
+{
+	pcc_handler_called = val;
+}
+
+bool fwts_acpi_pcc_handler_called_get_and_clear(void)
+{
+	bool called = pcc_handler_called;
+
+	pcc_handler_called = false;
+	return called;
+}
+
 static ACPI_STATUS fwts_region_handler(
 	UINT32                  function,
 	ACPI_PHYSICAL_ADDRESS   address,
@@ -273,6 +288,16 @@ static ACPI_STATUS fwts_region_handler(
 	fwts_acpi_region_handler_called_set(true);
 
 	switch (regionobject->Region.SpaceId) {
+	case ACPI_ADR_SPACE_PLATFORM_COMM:
+		/*
+		 * PCC OperationRegion accesses require communication with
+		 * platform hardware. FWTS userspace cannot perform the PCC
+		 * transaction, so report the access as unsupported rather than
+		 * fabricating a response.
+		 */
+		fwts_acpi_pcc_handler_called_set(true);
+		return AE_SUPPORT;
+
 	case ACPI_ADR_SPACE_SYSTEM_IO:
 		switch (function & ACPI_IO_MASK) {
 		case ACPI_READ:
@@ -921,6 +946,8 @@ static int fwtsInstallLateHandlers(fwts_framework *fw)
 {
 	int i;
 	ACPI_STATUS status;
+	/* ACPICA fills this context before dispatching a PCC transaction. */
+	static ACPI_PCC_INFO pcc_context;
 	static ACPI_ADR_SPACE_TYPE fwts_space_id_list[] =
 	{
 		ACPI_ADR_SPACE_SYSTEM_MEMORY,
@@ -932,14 +959,20 @@ static int fwtsInstallLateHandlers(fwts_framework *fw)
 		ACPI_ADR_SPACE_GPIO,
 		ACPI_ADR_SPACE_PCI_BAR_TARGET,
 		ACPI_ADR_SPACE_IPMI,
+		ACPI_ADR_SPACE_PLATFORM_COMM,
 		ACPI_ADR_SPACE_FIXED_HARDWARE,
 		ACPI_ADR_SPACE_USER_DEFINED1,
 		ACPI_ADR_SPACE_USER_DEFINED2
 	};
 
 	for (i = 0; i < ACPI_ARRAY_LENGTH(fwts_space_id_list); i++) {
+		void *context =
+			fwts_space_id_list[i] == ACPI_ADR_SPACE_PLATFORM_COMM ?
+			&pcc_context : NULL;
+
 		status = AcpiInstallAddressSpaceHandler(ACPI_ROOT_OBJECT,
-		    fwts_space_id_list[i], fwts_region_handler, fwts_region_init, NULL);
+		    fwts_space_id_list[i], fwts_region_handler,
+		    fwts_region_init, context);
 		if ((status != AE_OK) && (status != AE_SAME_HANDLER)) {
 			fwts_log_error(fw,
 				"Failed to install an OpRegion handler for %s space(%u)",

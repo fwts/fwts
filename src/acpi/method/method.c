@@ -350,39 +350,10 @@ void method_evaluate_found_method(
 	void *private,
 	ACPI_OBJECT_LIST *arg_list)
 {
-	ACPI_BUFFER       buf;
-	ACPI_STATUS	  ret;
-	int sem_acquired;
-	int sem_released;
+	ACPI_HANDLE parent = NULL;
 
-	fwts_acpica_sem_count_clear();
-
-	ret = fwts_acpi_object_evaluate(fw, name, arg_list, &buf);
-
-	if (ACPI_FAILURE(ret) != AE_OK) {
-		fwts_acpi_object_evaluate_report_error(fw, name, ret);
-	} else {
-		if (check_func != NULL) {
-			ACPI_OBJECT *obj = buf.Pointer;
-			check_func(fw, name, &buf, obj, private);
-		}
-	}
-	free(buf.Pointer);
-
-	fwts_acpica_sem_count_get(&sem_acquired, &sem_released);
-	if (sem_acquired != sem_released) {
-		fwts_failed(fw, LOG_LEVEL_MEDIUM, "AMLLocksAcquired",
-			"%s left %d locks in an acquired state.",
-			name, sem_acquired - sem_released);
-		fwts_advice(fw,
-			"Locks left in an acquired state generally indicates "
-			"that the AML code is not releasing a lock. This can "
-			"sometimes occur when a method hits an error "
-			"condition and exits prematurely without releasing an "
-			"acquired lock. It may be occurring in the method "
-			"being tested or other methods used while evaluating "
-			"the method.");
-	}
+	fwts_evaluate_found_method(fw, &parent, name, check_func, private,
+		arg_list);
 }
 
 /*

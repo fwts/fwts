@@ -31,5 +31,7 @@ void fwts_acpica_sem_count_clear(void);
 void fwts_acpica_sem_count_get(int *acquired, int *released);
 void fwts_acpi_region_handler_called_set(const bool val);
 bool fwts_acpi_region_handler_called_get(void);
+void fwts_acpi_pcc_handler_called_set(const bool val);
+bool fwts_acpi_pcc_handler_called_get_and_clear(void);
 
 #endif

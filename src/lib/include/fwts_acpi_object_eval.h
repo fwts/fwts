@@ -33,8 +33,12 @@ fwts_list *fwts_acpi_object_get_names(void);
 void fwts_acpi_object_dump(fwts_framework *fw, const ACPI_OBJECT *obj);
 void fwts_acpi_object_evaluate_report_error(fwts_framework *fw,
 	const char *name, const ACPI_STATUS status);
+void fwts_acpi_object_evaluate_report_error_with_pcc(fwts_framework *fw,
+	const char *name, const ACPI_STATUS status, const bool pcc_unsupported);
 ACPI_STATUS fwts_acpi_object_evaluate(fwts_framework *fw, char *name,
 	ACPI_OBJECT_LIST *arg_list, ACPI_BUFFER *buf);
+ACPI_STATUS fwts_acpi_object_evaluate_with_pcc(const fwts_framework *fw, char *name,
+	ACPI_OBJECT_LIST *arg_list, ACPI_BUFFER *buf, bool *pcc_unsupported);
 
 /* Test types */
 #define METHOD_MANDATORY	1

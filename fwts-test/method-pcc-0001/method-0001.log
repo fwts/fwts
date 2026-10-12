@@ -1,0 +1,11 @@
+method          SKIPPED: Test 155, Cannot evaluate '\_SB_.PMC0._GAI': PCC OperationRegion communication is not supported by the FWTS userspace ACPICA environment.
+method          SKIPPED: Test 155, Cannot evaluate '\_SB_.PMC1._GAI': PCC OperationRegion communication is not supported by the FWTS userspace ACPICA environment.
+method          PASSED: Test 155, \_SB_.GOOD._GAI correctly returned an integer.
+method          FAILED [CRITICAL] AENotFound: Test 155, Detected error 'Not found' when evaluating '\_SB_.BAD0._GAI'.
+method          FAILED [CRITICAL] AENotExist: Test 155, Detected error 'Not exist' when evaluating '\_SB_.BAD1._GAI'.
+method          SKIPPED: Test 156, Cannot evaluate '\_SB_.PMC0._GHL': PCC OperationRegion communication is not supported by the FWTS userspace ACPICA environment.
+method          SKIPPED: Test 156, Cannot evaluate '\_SB_.PMC1._GHL': PCC OperationRegion communication is not supported by the FWTS userspace ACPICA environment.
+method          PASSED: Test 156, \_SB_.GOOD._GHL correctly returned an integer.
+method          SKIPPED: Test 159, Cannot evaluate '\_SB_.PMC0._PMM': PCC OperationRegion communication is not supported by the FWTS userspace ACPICA environment.
+method          SKIPPED: Test 159, Cannot evaluate '\_SB_.PMC1._PMM': PCC OperationRegion communication is not supported by the FWTS userspace ACPICA environment.
+method          PASSED: Test 159, \_SB_.GOOD._PMM correctly returned an integer.
