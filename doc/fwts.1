@@ -361,6 +361,21 @@ output SUCCESS or FAILED to stdout at end of tests.
 specify the path containing ACPI tables. These tables need to be named in the format: tablename.dat,
 for example DSDT.dat, for example, as extracted using acpidump or fwts \-\-dump and then acpixtract.
 .TP
+.B \-\-tpm\-event\-log=filename
+read the specified binary TPM event log when running tpmevlog, instead of
+discovering logs in /sys/kernel/security. Saved logs can be checked without
+root privileges. PCR comparison is skipped unless \-\-tpm\-pcrs is also supplied.
+.TP
+.B \-\-tpm\-pcrs=directory
+read a saved PCR snapshot from the specified directory when running tpmevlog.
+PCR files are named pcr-<algorithm>/<index>, where algorithm is sha1, sha256,
+sha384 or sha512 and index is 0 through 7. Each file contains the hexadecimal
+PCR value followed by a newline, using 40, 64, 96 or 128 digits respectively.
+The snapshot must come from the same TPM and boot as the event log. Only
+supported banks advertised by the log are compared. Missing bank directories
+are skipped. Unreadable banks and missing or malformed files within an
+existing bank are reported as failures.
+.TP
 .B \-u, \-\-utils
 run utilities. Designed to dump system information, such as annotated ACPI tables, CMOS memory,
 Int 15 E820 memory map, firmware ROM data.

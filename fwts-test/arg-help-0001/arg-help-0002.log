@@ -272,6 +272,13 @@
                              and then acpixtract,
                              e.g. --table-path=
                              /some/path/to/acpidumps
+--tpm-event-log              Read a TPM event log
+                             from the specified
+                             file.
+--tpm-pcrs                   Read pcr-<algorithm>
+                             /<index> files from
+                             the specified
+                             directory.
 --uefi-get-mn-count-multiple Run uefirtmisc
                              getnexthighmonotoniccount
                              test multiple times.
