@@ -20,7 +20,7 @@
 
 static int example_init(fwts_framework *fw)
 {
-	/* Put pre-test initialistion code here */
+	/* Put pre-test initialisation code here */
 
 	/* Returns:
 	 *	FWTS_ERROR - failed, abort test

@@ -76,7 +76,7 @@ static const fwts_pci_description_info descriptions[] = {
 	{ 0x06, 0x0a, "PCI-to-PCI bridge" },
 	{ 0x06, 0x80, "Bridge device" },
 	{ 0x07, 0x00, "Serial controller" },
-	{ 0x07, 0x01, "Parellel port" },
+	{ 0x07, 0x01, "Parallel port" },
 	{ 0x07, 0x02, "Multiport serial controller" },
 	{ 0x07, 0x03, "Generic modem" },
 	{ 0x07, 0x04, "IEEE 488.1/2 (GPIB) controller" },

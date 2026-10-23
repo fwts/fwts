@@ -165,7 +165,7 @@ static bool is_uniqueid_equal(fwts_framework *fw, acpi_ids *obj1, acpi_ids *obj2
 			break;
 		}
 
-		fwts_log_error(fw, "Unknow type for _HID or _CID.");
+		fwts_log_error(fw, "Unknown type for _HID or _CID.");
 		return true;
 	}
 

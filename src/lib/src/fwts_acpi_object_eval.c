@@ -1190,7 +1190,7 @@ void fwts_evaluate_found_method(
 }
 
 int fwts_evaluate_method(fwts_framework *fw,
-	const uint32_t test_type,  /* Manditory or optional */
+	const uint32_t test_type,  /* Mandatory or optional */
 	ACPI_HANDLE *parent,
 	char *name,
 	ACPI_OBJECT *args,

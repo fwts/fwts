@@ -65,7 +65,7 @@ void fwts_dump_raw_data(
  *  fwts_dump_raw_data_prefix()
  *	simply print raw uint8 data of length `nbytes` into a buffer (length len)
  *      as a hex dump. nbytes must be no more than 16 with prefix. The prefix could
- *	be used as alighment.
+ *	be used as alignment.
  */
 void fwts_dump_raw_data_prefix(
 	char *buffer,		/* buffer to contained formatted dump */
@@ -90,7 +90,7 @@ void fwts_dump_raw_data_prefix(
 /*
  *  fwts_hexdump_data_prefix_all()
  *	print all raw uint8 data of length `nbytes` as a hex dump with prefix.
- *	The prefix could be used as alighment.
+ *	The prefix could be used as alignment.
  */
 void fwts_hexdump_data_prefix_all(
 	fwts_framework *fw,

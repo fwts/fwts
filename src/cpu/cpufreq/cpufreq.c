@@ -400,7 +400,7 @@ static int cpufreq_test_cpu_performance(fwts_framework *fw)
 	else
 		fwts_failed(fw, LOG_LEVEL_MEDIUM,
 			"CPUFreqSlowerOnCPU",
-			"CPU frequencies do not refelect actual performance");
+			"CPU frequencies do not reflect actual performance");
 	return FWTS_OK;
 }
 

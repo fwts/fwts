@@ -101,7 +101,7 @@ static int crs_test1(fwts_framework *fw)
 			} else {
 				fwts_failed(fw, LOG_LEVEL_LOW,
 					"BIOSSupportBridgeWindows",
-					"Kernel was booted with pci=use_crs but this may be uncessary as "
+					"Kernel was booted with pci=use_crs but this may be unnecessary as "
 					"the BIOS is new enough to support automatic bridge windows configuring using _CRS from ACPI. "
 					"However, the workaround may be necessary because _CRS is incorrect or not implemented in the "
 					"DSDT.");
