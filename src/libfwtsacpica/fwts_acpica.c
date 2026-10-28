@@ -356,6 +356,13 @@ static ACPI_STATUS fwts_region_handler(
 			buffer[i] = (UINT8) (i);
 		return AE_OK;
 
+	case ACPI_ADR_SPACE_PLATFORM_COMM: /* ACPI 6.3 */
+		/*
+		 * Writing the PCC COMD field passes the subspace's internal
+		 * buffer here. There is no platform to respond, so leave it as is.
+		 */
+		return AE_OK;
+
 	case ACPI_ADR_SPACE_SYSTEM_MEMORY:
 	case ACPI_ADR_SPACE_EC:
 	case ACPI_ADR_SPACE_CMOS:
@@ -921,30 +928,40 @@ static int fwtsInstallLateHandlers(fwts_framework *fw)
 {
 	int i;
 	ACPI_STATUS status;
-	static ACPI_ADR_SPACE_TYPE fwts_space_id_list[] =
-	{
-		ACPI_ADR_SPACE_SYSTEM_MEMORY,
-		ACPI_ADR_SPACE_SYSTEM_IO,
-		ACPI_ADR_SPACE_EC,
-		ACPI_ADR_SPACE_SMBUS,
-		ACPI_ADR_SPACE_CMOS,
-		ACPI_ADR_SPACE_GSBUS,
-		ACPI_ADR_SPACE_GPIO,
-		ACPI_ADR_SPACE_PCI_BAR_TARGET,
-		ACPI_ADR_SPACE_IPMI,
-		ACPI_ADR_SPACE_FIXED_HARDWARE,
-		ACPI_ADR_SPACE_USER_DEFINED1,
-		ACPI_ADR_SPACE_USER_DEFINED2
+	/*
+	 * ACPICA writes subspace info into the handler context for PCC
+	 * and FFH regions, so these must have a non-NULL context.
+	 */
+	static ACPI_PCC_INFO fwts_pcc_context;
+	static ACPI_FFH_INFO fwts_ffh_context;
+	static const struct {
+		ACPI_ADR_SPACE_TYPE space_id;
+		void *context;
+	} fwts_space_id_list[] = {
+		{ ACPI_ADR_SPACE_SYSTEM_MEMORY,		NULL },
+		{ ACPI_ADR_SPACE_SYSTEM_IO,		NULL },
+		{ ACPI_ADR_SPACE_EC,			NULL },
+		{ ACPI_ADR_SPACE_SMBUS,			NULL },
+		{ ACPI_ADR_SPACE_CMOS,			NULL },
+		{ ACPI_ADR_SPACE_GSBUS,			NULL },
+		{ ACPI_ADR_SPACE_GPIO,			NULL },
+		{ ACPI_ADR_SPACE_PCI_BAR_TARGET,	NULL },
+		{ ACPI_ADR_SPACE_IPMI,			NULL },
+		{ ACPI_ADR_SPACE_PLATFORM_COMM,		&fwts_pcc_context },
+		{ ACPI_ADR_SPACE_FIXED_HARDWARE,	&fwts_ffh_context },
+		{ ACPI_ADR_SPACE_USER_DEFINED1,		NULL },
+		{ ACPI_ADR_SPACE_USER_DEFINED2,		NULL }
 	};
 
 	for (i = 0; i < ACPI_ARRAY_LENGTH(fwts_space_id_list); i++) {
 		status = AcpiInstallAddressSpaceHandler(ACPI_ROOT_OBJECT,
-		    fwts_space_id_list[i], fwts_region_handler, fwts_region_init, NULL);
+		    fwts_space_id_list[i].space_id, fwts_region_handler,
+		    fwts_region_init, fwts_space_id_list[i].context);
 		if ((status != AE_OK) && (status != AE_SAME_HANDLER)) {
 			fwts_log_error(fw,
 				"Failed to install an OpRegion handler for %s space(%u)",
-				AcpiUtGetRegionName((UINT8)fwts_space_id_list[i]),
-				fwts_space_id_list[i]);
+				AcpiUtGetRegionName((UINT8)fwts_space_id_list[i].space_id),
+				fwts_space_id_list[i].space_id);
 			return FWTS_ERROR;
 		}
 	}
