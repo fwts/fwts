@@ -25,7 +25,7 @@ iort              Revision:                 0x04
 iort              Identifier:               0x00000000
 iort              Number of ID mappings:    0x00000002
 iort              Reference to ID Array:    0x00000024
-iort              Node Flags:               0x00000000
+iort              Node Flags:               0x00000028
 iort              Cache Coherent Attribute: 0x00000001
 iort              Allocation Hints:         0x0f
 iort              Reserved:                 0x0000

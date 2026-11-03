@@ -440,6 +440,7 @@ static void iort_check_named_component(
 	fwts_acpi_table_iort_named_component_node *node =
 		(fwts_acpi_table_iort_named_component_node *)data;
 	uint8_t *obj_name;
+	uint8_t reserved_start;
 
 	iort_node_dump(fw, "IORT Named Component Node", (fwts_acpi_table_iort_node *)data);
 	fwts_log_info_simp_int(fw, "  Node Flags:               ", node->flags);
@@ -470,13 +471,14 @@ next:
 	iort_id_mappings_dump(fw, data, node_end);
 	iort_node_check(fw, data, false, false, passed);
 
-	if (node->flags) {
-		*passed = false;
-		fwts_failed(fw, LOG_LEVEL_HIGH,
-			"IORTNamedComponentNodeFlagsNonZero",
-			"IORT Named Component Node Flags is 0x%" PRIx32 " and is "
-			"reserved and should be zero.", node->flags);
-	}
+	/* Stall support was added in revision 1, substream width in revision 2. */
+	if (node->iort_node.revision == 0)
+		reserved_start = 0;
+	else if (node->iort_node.revision == 1)
+		reserved_start = 1;
+	else
+		reserved_start = 6;
+	fwts_acpi_reserved_bits("IORT", "Named Component Node Flags", node->flags, reserved_start, 31, passed);
 
 	iort_memory_access_properties_check(fw, "Named Component Node", &node->properties, passed);
 	iort_id_mappings_check(fw, data, node_end, passed);

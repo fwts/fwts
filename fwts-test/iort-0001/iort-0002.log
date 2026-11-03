@@ -34,7 +34,7 @@ iort              Revision:                 0x05
 iort              Identifier:               0x00000000
 iort              Number of ID mappings:    0x00000003
 iort              Reference to ID Array:    0x00000024
-iort              Node Flags:               0x00000000
+iort              Node Flags:               0x80000040
 iort              Cache Coherent Attribute: 0x00000004
 iort              Allocation Hints:         0x0f
 iort              Reserved:                 0xdead
@@ -55,6 +55,9 @@ iort              Output Reference:         0x88888888
 iort              Flags:                    0x00000001
 iort            FAILED [LOW] IORTNodeRevisionInvalid: Test 1, IORT Node
 iort            Revision field is 0x05 and should be less than 5.
+iort            FAILED [HIGH] IORTReservedBitsNonZero: Test 1, IORT Named
+iort            Component Node Flags Bits [31..6] must be zero, got
+iort            0x80000040 instead
 iort            FAILED [HIGH] IORTCacheCoherentAttrInvalid: Test 1, IORT
 iort            Named Component Node Coherent Attribute is 0x4 and should
 iort            be either 0 (device is fully coherent) or 1 (device is not
@@ -269,6 +272,6 @@ iort            field must be zero, got 0xddccbbaa instead
 iort            
 iort            
 iort            ==========================================================
-iort            0 passed, 36 failed, 0 warning, 0 aborted, 0 skipped, 0
+iort            0 passed, 37 failed, 0 warning, 0 aborted, 0 skipped, 0
 iort            info only.
 iort            ==========================================================
