@@ -17,7 +17,7 @@
  */
 #include "fwts.h"
 
-#if defined(FWTS_HAS_ACPI) && (FWTS_ARCH_RISCV)
+#if defined(FWTS_HAS_ACPI) && defined(FWTS_ARCH_RISCV)
 
 static const fwts_acpi_table_fadt *fadt;
 static const fwts_acpi_table_facs *facs;
