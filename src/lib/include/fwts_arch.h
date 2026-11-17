@@ -28,6 +28,7 @@ typedef enum {
 	FWTS_ARCH_IA64,
 	FWTS_ARCH_ARM64,
 	FWTS_ARCH_RISCV64,
+	FWTS_ARCH_LOONGARCH64,
 	FWTS_ARCH_OTHER
 } fwts_architecture;
 
