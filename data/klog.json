@@ -7545,6 +7545,20 @@
           "pattern": "E820 table full; ignoring \\[mem .*\\]",
           "advice": "The x86 E820 memory map table is full, so the kernel ignored a firmware-provided memory range. The system memory map may be incomplete, which can affect memory reservation and device resource handling.",
           "label": "KlogX86E820TableFull"
+         },
+         {
+          "compare_mode": "string",
+          "log_level": "LOG_LEVEL_HIGH",
+          "pattern": "Failed to install CMOS-RTC address space handler",
+          "advice": "The ACPI CMOS RTC driver could not install the ACPI CMOS address space handler. AML methods that access the CMOS/RTC operation region will fail, which may break RTC-related ACPI functionality such as wake alarms.",
+          "label": "KlogAcpiCmosRtcSpaceHandlerInstallFailed"
+         },
+         {
+          "compare_mode": "regex",
+          "log_level": "LOG_LEVEL_MEDIUM",
+          "pattern": "Failed to create a platform device for .*",
+          "advice": "The kernel did not create a new platform device for the reported ID. Check whether the device is already present and bound to a driver. If it is missing, check the surrounding kernel messages for the cause.",
+          "label": "KlogAcpiCmosRtcPlatformDeviceCreateFailed"
          }
         ],
  "pm_error_warning_patterns":
