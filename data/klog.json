@@ -7559,6 +7559,41 @@
           "pattern": "Failed to create a platform device for .*",
           "advice": "The kernel did not create a new platform device for the reported ID. Check whether the device is already present and bound to a driver. If it is missing, check the surrounding kernel messages for the cause.",
           "label": "KlogAcpiCmosRtcPlatformDeviceCreateFailed"
+         },
+         {
+          "compare_mode": "regex",
+          "log_level": "LOG_LEVEL_CRITICAL",
+          "pattern": ".*: Sending SIGBUS to .*:.* due to hardware memory corruption",
+          "advice": "The kernel reported hardware memory corruption and attempted to send SIGBUS to the named task. Check the surrounding kernel messages for hardware error records that identify the affected memory.",
+          "label": "KlogGhesMemoryCorruptionSigbus"
+         },
+         {
+          "compare_mode": "regex",
+          "log_level": "LOG_LEVEL_HIGH",
+          "pattern": "\\[Firmware Warn\\]: CXL CPER Invalid section length \\(.*\\)",
+          "advice": "Firmware reported a CXL component event CPER record via GHES with an invalid section length. The CXL event was dropped, so CXL device error information is lost. This is a firmware bug in the CPER record generation.",
+          "label": "KlogGhesCxlCperInvalidSectionLength"
+         },
+         {
+          "compare_mode": "string",
+          "log_level": "LOG_LEVEL_HIGH",
+          "pattern": "[Firmware Warn]: CXL CPER invalid event",
+          "advice": "Firmware reported a CXL component event CPER record via GHES without the component event log valid bit set. The CXL event was dropped, so CXL device error information is lost. This is a firmware bug in the CPER record generation.",
+          "label": "KlogGhesCxlCperInvalidEvent"
+         },
+         {
+          "compare_mode": "regex",
+          "log_level": "LOG_LEVEL_CRITICAL",
+          "pattern": "\\[Hardware Error\\]: GHES: .*:.*: synchronous unrecoverable error \\(SIGBUS\\)",
+          "advice": "GHES reported a synchronous unrecoverable hardware error and no memory failure recovery work was queued, so the kernel force killed the current task with SIGBUS. Investigate the preceding hardware error records to identify the failing component.",
+          "label": "KlogGhesSyncUnrecoverableErrorSigbus"
+         },
+         {
+          "compare_mode": "regex",
+          "log_level": "LOG_LEVEL_MEDIUM",
+          "pattern": "Failed to unregister ghes \\(.*\\)",
+          "advice": "The GHES driver failed to unregister an SDEI-notified error source during removal. The firmware SDEI event could not be stopped and the GHES resources are leaked.",
+          "label": "KlogGhesSdeiUnregisterFailed"
          }
         ],
  "pm_error_warning_patterns":
