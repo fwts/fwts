@@ -7643,6 +7643,13 @@
           "pattern": "Too many arguments for method \\[.*\\]",
           "advice": "An AML control method was invoked with more arguments than its declared parameter count. ACPICA aborted the call with AE_AML_TOO_MANY_ARGUMENTS, so the method did not run. This is an AML bug in the firmware ACPI tables.",
           "label": "KlogAcpiMethodTooManyArguments"
+         },
+         {
+          "compare_mode": "regex",
+          "log_level": "LOG_LEVEL_LOW",
+          "pattern": "Table \\[.*\\] is not invalidated during early boot stage",
+          "advice": "At the end of early boot, ACPICA found that the descriptor for the named table still held a pointer to it. Check that early boot callers paired each successful acpi_get_table() for this table with acpi_put_table().",
+          "label": "KlogAcpiTableNotInvalidatedEarlyBoot"
          }
         ],
  "pm_error_warning_patterns":
