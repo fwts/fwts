@@ -6989,13 +6989,6 @@
   {
    "compare_mode": "string",
    "log_level": "LOG_LEVEL_HIGH",
-   "pattern": "ACPI Error",
-   "advice": "The kernel has most probably detected an error while executing ACPI AML. The error lists the ACPI driver module and the line number where the bug has been caught and the method that caused the error.",
-   "label": "KlogAcpiExecFailure"
-  },
-  {
-   "compare_mode": "string",
-   "log_level": "LOG_LEVEL_HIGH",
    "pattern": "No object was returned from",
    "advice": "The ACPI interpreter was requested to evaluate an ACPI namespace object and was expecting an ACPI object to be returned, but nothing was returned.  This appears to be an ACPI AML bug.",
    "label": "KlogAcpiEvalObjNoObjReturned"
@@ -7657,6 +7650,13 @@
           "pattern": "Fatal ACPI BIOS error \\(Type 0x.* Code 0x.* Arg 0x.*\\)",
           "advice": "The firmware AML executed a Fatal() opcode, explicitly reporting a fatal BIOS error with the given type, code and argument. ACPICA aborted execution of the control method; the platform firmware considers its state unrecoverable. Consult the vendor for the meaning of the type/code values.",
           "label": "KlogAcpiFatalBiosError"
+         },
+         {
+          "compare_mode": "string",
+          "log_level": "LOG_LEVEL_HIGH",
+          "pattern": "ACPI Error",
+          "advice": "The kernel has most probably detected an error while executing ACPI AML. The error lists the ACPI driver module and the line number where the bug has been caught and the method that caused the error.",
+          "label": "KlogAcpiExecFailure"
          }
         ],
  "pm_error_warning_patterns":

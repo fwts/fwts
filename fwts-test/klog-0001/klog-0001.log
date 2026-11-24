@@ -5354,15 +5354,14 @@ klog
 klog            ADVICE: The ACPI Method returned an incorrect type, this
 klog            should be fixed.
 klog            
-klog            FAILED [HIGH] KlogAcpiExecFailure: Test 1, HIGH Kernel
-klog            message: [ 0.245810] ACPI Error (uteval-0307): Return
-klog            object type is incorrect [_SB_.PCI0.PCIB._PRT] (Node
-klog            f7022c48), AE_TYPE
+klog            FAILED [HIGH] KlogAcpiReturnObjectTypeIncorrect: Test 1,
+klog            HIGH Kernel message: [ 0.245810] ACPI Error (uteval-0307):
+klog            Return object type is incorrect [_SB_.PCI0.PCIB._PRT]
+klog            (Node f7022c48), AE_TYPE
 klog            
-klog            ADVICE: The kernel has most probably detected an error
-klog            while executing ACPI AML. The error lists the ACPI driver
-klog            module and the line number where the bug has been caught
-klog            and the method that caused the error.
+klog            ADVICE: Return object type is not the correct type, this
+klog            is an AML error in the DSDT or SSDT. See also
+klog            acpi_ut_evaluate_object().
 klog            
 klog            FAILED [HIGH] KlogAcpiIncorrectReturnType: Test 1, HIGH
 klog            Kernel message: [ 0.245830] ACPI Error: Type returned from
@@ -7081,15 +7080,14 @@ klog
 klog            ADVICE: The ACPI Method returned an incorrect type, this
 klog            should be fixed.
 klog            
-klog            FAILED [HIGH] KlogAcpiExecFailure: Test 1, HIGH Kernel
-klog            message: [ 0.353406] ACPI Error (uteval-0307): Return
-klog            object type is incorrect [_SB_.LATA._CRS] (Node
+klog            FAILED [HIGH] KlogAcpiReturnObjectTypeIncorrect: Test 1,
+klog            HIGH Kernel message: [ 0.353406] ACPI Error (uteval-0307):
+klog            Return object type is incorrect [_SB_.LATA._CRS] (Node
 klog            ffff88006df2eb00), AE_TYPE
 klog            
-klog            ADVICE: The kernel has most probably detected an error
-klog            while executing ACPI AML. The error lists the ACPI driver
-klog            module and the line number where the bug has been caught
-klog            and the method that caused the error.
+klog            ADVICE: Return object type is not the correct type, this
+klog            is an AML error in the DSDT or SSDT. See also
+klog            acpi_ut_evaluate_object().
 klog            
 klog            FAILED [HIGH] KlogAcpiCheckObjectTypeFailed: Test 1, HIGH
 klog            Kernel message: [ 0.353652] ACPI Error: Needed type
@@ -9447,15 +9445,14 @@ klog
 klog            ADVICE: The ACPI Method returned an incorrect type, this
 klog            should be fixed.
 klog            
-klog            FAILED [HIGH] KlogAcpiExecFailure: Test 1, HIGH Kernel
-klog            message: [ 0.725429] ACPI Error (uteval-0307): Return
-klog            object type is incorrect [_SB_.PCI0.LPC_.SYSR._CRS] (Node
-klog            ffff88013ba46cc0), AE_TYPE
+klog            FAILED [HIGH] KlogAcpiReturnObjectTypeIncorrect: Test 1,
+klog            HIGH Kernel message: [ 0.725429] ACPI Error (uteval-0307):
+klog            Return object type is incorrect [_SB_.PCI0.LPC_.SYSR._CRS]
+klog            (Node ffff88013ba46cc0), AE_TYPE
 klog            
-klog            ADVICE: The kernel has most probably detected an error
-klog            while executing ACPI AML. The error lists the ACPI driver
-klog            module and the line number where the bug has been caught
-klog            and the method that caused the error.
+klog            ADVICE: Return object type is not the correct type, this
+klog            is an AML error in the DSDT or SSDT. See also
+klog            acpi_ut_evaluate_object().
 klog            
 klog            FAILED [HIGH] KlogAcpiExecFailure: Test 1, HIGH Kernel
 klog            message: [ 0.725450] ACPI Error: Type returned from _CRS
