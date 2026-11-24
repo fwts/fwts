@@ -22,7 +22,7 @@
 # Get fwts sources, strip out .git directory, add in necessary debian packaging
 # files, build source package ready for upload.
 #
-RELEASES="bionic focal jammy noble resolute stonking"
+RELEASES="bionic focal jammy noble resolute stonking tenacious"
 REPO=https://github.com/fwts/fwts
 RELEASE_TAR_URL=https://github.com/fwts/fwts/archive/refs/tags/
 FWTS=fwts

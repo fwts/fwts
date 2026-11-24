@@ -19,7 +19,7 @@ jobs:
     permissions:
       contents: write
     env:
-      RELEASES: "bionic focal jammy noble resolute stonking"
+      RELEASES: "bionic focal jammy noble resolute stonking tenacious"
 
     steps:
       - name: Checkout fwts
