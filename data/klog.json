@@ -7615,6 +7615,13 @@
           "pattern": "Early ACPI HID map overflow - ignoring ivrs_acpihid.*",
           "advice": "Too many ivrs_acpihid kernel command line overrides were supplied, so the AMD IOMMU driver ignored this entry. The ACPI HID device mapping override will not be applied.",
           "label": "KlogAmdIommuEarlyAcpiHidMapOverflow"
+         },
+         {
+          "compare_mode": "regex",
+          "log_level": "LOG_LEVEL_HIGH",
+          "pattern": "Can't register timer .*",
+          "advice": "Linux could not register a platform device for a GTDT Generic Timer Block. The reported number is the platform device ID, not a timer frame number. The MMIO timer driver cannot use this block, but Linux continues enumerating other timers.",
+          "label": "KlogAcpiGtdtMmioTimerRegisterFailed"
          }
         ],
  "pm_error_warning_patterns":
