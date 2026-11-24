@@ -7622,6 +7622,13 @@
           "pattern": "Can't register timer .*",
           "advice": "Linux could not register a platform device for a GTDT Generic Timer Block. The reported number is the platform device ID, not a timer frame number. The MMIO timer driver cannot use this block, but Linux continues enumerating other timers.",
           "label": "KlogAcpiGtdtMmioTimerRegisterFailed"
+         },
+         {
+          "compare_mode": "regex",
+          "log_level": "LOG_LEVEL_MEDIUM",
+          "pattern": "Invalid PSCI power state .*",
+          "advice": "The kernel rejected a CPU idle-state value because it sets reserved bits in the active PSCI power-state format. For a 'CPUidle PSCI:' message, check the Device Tree arm,psci-suspend-param property. On an ACPI system, check the _LPI idle-state data. Deeper idle states may be unavailable.",
+          "label": "KlogCpuidleInvalidPsciPowerState"
          }
         ],
  "pm_error_warning_patterns":
