@@ -7629,6 +7629,20 @@
           "pattern": "Invalid PSCI power state .*",
           "advice": "The kernel rejected a CPU idle-state value because it sets reserved bits in the active PSCI power-state format. For a 'CPUidle PSCI:' message, check the Device Tree arm,psci-suspend-param property. On an ACPI system, check the _LPI idle-state data. Deeper idle states may be unavailable.",
           "label": "KlogCpuidleInvalidPsciPowerState"
+         },
+         {
+          "compare_mode": "regex",
+          "log_level": "LOG_LEVEL_HIGH",
+          "pattern": "Missing argument\\(s\\) for method \\[.*\\]",
+          "advice": "An AML control method was invoked with fewer arguments than its declared parameter count. ACPICA aborted the call with AE_AML_TOO_FEW_ARGUMENTS, so the method did not run. This is an AML bug in the firmware ACPI tables.",
+          "label": "KlogAcpiMethodMissingArguments"
+         },
+         {
+          "compare_mode": "regex",
+          "log_level": "LOG_LEVEL_HIGH",
+          "pattern": "Too many arguments for method \\[.*\\]",
+          "advice": "An AML control method was invoked with more arguments than its declared parameter count. ACPICA aborted the call with AE_AML_TOO_MANY_ARGUMENTS, so the method did not run. This is an AML bug in the firmware ACPI tables.",
+          "label": "KlogAcpiMethodTooManyArguments"
          }
         ],
  "pm_error_warning_patterns":
