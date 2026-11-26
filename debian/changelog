@@ -1,3 +1,41 @@
+fwts (26.11.00-0ubuntu1) tenacious; urgency=medium
+
+  [Colin Ian King]
+  * ACPICA: Update to version 20260930
+  * fwts-test: test output to match latest ACPICA update
+  * fwts: fix a handful of spelling mistakes
+
+  [Ivan Hu]
+  * libfwtsacpica: install a region handler for PCC operation regions
+  * acpi: iort: allow defined Named Component node flags
+  * klog.json: Add ACPI CMOS RTC address space handler and platform device error
+    messages to klog database
+  * klog.json: Add APEI GHES SIGBUS, CXL CPER and SDEI unregister error messages
+    to klog database
+  * klog.json: Add AMD IOMMU kdump device table reuse and ACPI HID map error
+    messages to klog database
+  * klog.json: Add ACPI GTDT MMIO timer registration error message to klog
+    database
+  * klog.json: Add cpuidle invalid PSCI power state message to klog database
+  * klog.json: Add ACPICA control method argument count error messages to klog
+    database
+  * klog.json: Add ACPICA early boot table invalidation error message to klog
+    database
+  * klog.json: Add ACPICA AML Fatal opcode error message to klog database
+  * klog.json: Match the generic ACPI Error rule last
+  * auto-packager: mkpackage.sh: add tenacious
+
+  [Maxwell Pirtle]
+  * tpmevlog: check event log bounds before reading variable fields
+  * tpmevlog: support saved event logs and PCR snapshots
+  * tpmevlog: warn when parsing unrecognized event types
+  * tpmevlog: replay and compare supported PCR banks
+
+  [Xiang W]
+  * brs-i: fadt: Fix architecture check
+
+ -- Ivan Hu <ivan.hu@ubuntu.com>  Thu, 26 Nov 2026 01:40:59 +0000
+
 fwts (26.09.00-0ubuntu1) stonking; urgency=medium
 
   [Ivan Hu]
