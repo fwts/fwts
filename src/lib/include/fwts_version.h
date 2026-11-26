@@ -15,5 +15,5 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/>.
  *
  */
-#define FWTS_VERSION "V26.09.00"
-#define FWTS_DATE    "2026-09-29 14:35:01"
+#define FWTS_VERSION "V26.11.00"
+#define FWTS_DATE    "2026-11-26 01:41:00"
